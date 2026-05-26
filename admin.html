@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Quản Trị Động - Vàng Kim Bảo</title>
+    <style>
+        :root {
+            --bordeaux: #6b0f1a;
+            --bordeaux-dark: #4a0911;
+            --gold: #d4af37;
+            --bg-light: #f8f9fa;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+        body { background-color: var(--bg-light); color: #333; padding: 30px 15px; }
+
+        /* MÀN HÌNH KHÓA */
+        .lock-screen {
+            max-width: 400px;
+            margin: 100px auto;
+            background: #ffffff;
+            padding: 40px 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-top: 5px solid var(--bordeaux);
+            text-align: center;
+        }
+        .lock-screen h2 { color: var(--bordeaux-dark); margin-bottom: 10px; font-size: 22px; text-transform: uppercase; }
+        .lock-screen p { color: #666; font-size: 14px; margin-bottom: 25px; }
+        .lock-screen input[type="password"] {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            text-align: center;
+            outline: none;
+        }
+        .lock-screen input[type="password"]:focus { border-color: var(--bordeaux); }
+        .lock-screen button {
+            background: var(--bordeaux); color: var(--gold); border: none; width: 100%;
+            padding: 12px; font-size: 16px; font-weight: bold; border-radius: 6px;
+            cursor: pointer; text-transform: uppercase;
+        }
+        .error-msg { color: #dc3545; font-size: 13px; margin-top: 10px; display: none; font-weight: 600; }
+
+        /* NỘI DUNG QUẢN TRỊ */
+        .admin-content { display: none; max-width: 900px; margin: 0 auto; }
+
+        .admin-header {
+            display: flex; justify-content: space-between; align-items: center;
+            background: linear-gradient(135deg, var(--bordeaux-dark) 0%, var(--bordeaux) 100%);
+            padding: 20px; border-radius: 10px; color: #fff; margin-bottom: 30px;
+            border-bottom: 3px solid var(--gold); box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .admin-header h1 { color: var(--gold); font-size: 24px; text-transform: uppercase; }
+        .logout-btn { background: #6c757d; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+
+        .panel-card {
+            background: white; border-radius: 10px; padding: 25px;
+            margin-bottom: 30px; border: 1px solid #e1e8ed; box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+        .panel-card h3 { color: var(--bordeaux); margin-bottom: 20px; border-left: 4px solid var(--gold); padding-left: 10px; font-size: 18px; }
+        
+        .row { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
+        .col { flex: 1; min-width: 180px; display: flex; flex-direction: column; }
+        label { font-size: 13px; font-weight: 700; color: #555; margin-bottom: 6px; text-transform: uppercase; }
+        input[type="text"], select { padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 15px; font-weight: 600; }
+        
+        /* Giao diện hàng sản phẩm động */
+        .gold-row { 
+            background: #fffcf5; padding: 15px; border-radius: 6px; 
+            border: 1px solid #f3e9d2; margin-bottom: 15px; position: relative;
+        }
+        .gold-row-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 10px; border-bottom: 1px dashed #f3e9d2; padding-bottom: 5px;
+        }
+        .gold-row-title { font-weight: bold; color: var(--bordeaux-dark); font-size: 14px; text-transform: uppercase; }
+        
+        /* Nút Xóa sản phẩm */
+        .btn-delete-item {
+            background: #dc3545; color: white; border: none; padding: 4px 10px;
+            border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer;
+        }
+        .btn-delete-item:hover { background: #c82333; }
+
+        /* Nút Thêm sản phẩm */
+        .btn-add-item {
+            background: #007bff; color: white; border: none; padding: 10px 20px;
+            border-radius: 5px; font-size: 14px; font-weight: bold; cursor: pointer;
+            margin-bottom: 20px; display: inline-flex; align-items: center; gap: 5px;
+        }
+        .btn-add-item:hover { background: #0069d9; }
+
+        /* Nút Lưu tổng thể */
+        .btn-submit {
+            background: #28a745; color: white; border: none; padding: 15px;
+            font-size: 18px; font-weight: bold; width: 100%; border-radius: 6px;
+            cursor: pointer; text-transform: uppercase; box-shadow: 0 4px 6px rgba(40, 167, 69, 0.2);
+        }
+        .btn-submit:hover { background: #218838; }
+
+        /* Studio phối màu */
+        .color-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
+        .color-item { display: flex; align-items: center; justify-content: space-between; padding: 10px; background: #fdfdfd; border: 1px solid #eee; border-radius: 5px; }
+        .color-item input[type="color"] { width: 40px; height: 30px; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<!-- MÀN HÌNH KHÓA BẢO MẬT -->
+<div class="lock-screen" id="lockScreen">
+    <h2>Hệ Thống Bảng Giá</h2>
+    <p>Vui lòng nhập mật khẩu quản trị viên để tiếp tục</p>
+    <input type="password" id="passwordInput" placeholder="Nhập mật khẩu tại đây..." onkeydown="if(event.key==='Enter') verifyPassword()">
+    <button onclick="verifyPassword()">🔓 Đăng Nhập Hệ Thống</button>
+    <div class="error-msg" id="errorMsg">❌ Mật khẩu chưa chính xác! Vui lòng thử lại.</div>
+</div>
+
+<!-- NỘI DUNG BIẾN ĐỔI ADMIN -->
+<div class="admin-content" id="adminContent">
+    <div class="admin-header">
+        <div>
+            <h1>BÀN ĐIỀU KHIỂN TRUNG TÂM</h1>
+            <p style="font-size: 12px; color: var(--gold); margin-top: 4px;">Quản lý sản phẩm linh hoạt - Tự động đồng bộ màn hình TV</p>
+        </div>
+        <button class="logout-btn" onclick="logout()">🔒 Thoát (Khóa lại)</button>
+    </div>
+
+    <!-- 1. QUẢN LÝ GIÁ VÀNG ĐỘNG -->
+    <div class="panel-card">
+        <h3>1. Cập nhật Danh mục sản phẩm & Giá vàng</h3>
+        
+        <!-- Khung chứa danh sách các hàng sản phẩm sinh ra tự động -->
+        <div id="gold-items-container"></div>
+        
+        <!-- NÚT THÊM SẢN PHẨM MỚI -->
+        <button type="button" class="btn-add-item" onclick="addNewProductRow('', '', '')">
+            ➕ Thêm sản phẩm kinh doanh mới
+        </button>
+    </div>
+
+    <!-- 2. QUẢN LÝ THÔNG TIN TV -->
+    <div class="panel-card">
+        <h3>2. Cấu hình thông tin hiển thị trên màn hình TV</h3>
+        <div class="row">
+            <div class="col">
+                <label>Tên thương hiệu lớn</label>
+                <input type="text" id="tv-brand" value="Vàng Kim Bảo">
+            </div>
+            <div class="col">
+                <label>Dòng Địa chỉ (Hiện dưới tên khi Full màn hình)</label>
+                <input type="text" id="tv-address" value="Số 259 Nguyễn Tất Thành, xã Nà Hang, tỉnh Tuyên Quang">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <label>Nội dung ô ghim Hotline (Góc trên bên phải TV)</label>
+                <input type="text" id="tv-hotline" value="HOTLINE TRỢ GIÁ: 0989.865.333">
+            </div>
+            <div class="col">
+                <label>Tốc độ chữ chạy đáy TV</label>
+                <select id="tv-marquee-speed">
+                    <option value="35s">Chạy rất chậm (Dễ đọc)</option>
+                    <option value="25s" selected>Chạy vừa phải (Khuyên dùng)</option>
+                    <option value="15s">Chạy nhanh</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <label>Nội dung dòng chữ chạy đáy màn hình TV</label>
+                <input type="text" id="tv-marquee" value="VÀNG BẠC KIM BẢO — GIỮ TÍN NHIỆM HƠN GIỮ VÀNG ——— CÔNG TY TNHH MTV THUẬN PHÁT TUYÊN QUANG ——— HOTLINE TRỢ GIÁ: 0989.865.333 — 0981.681.929">
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. STUDIO PHỐI MÀU CHẾ ĐỘ TV -->
+    <div class="panel-card">
+        <h3>3. Studio phối màu toàn diện (Dành riêng cho giao diện TV)</h3>
+        <div class="color-grid">
+            <div class="color-item"><label>Màu nền chính TV</label><input type="color" id="clr-bg-main" value="#4a0911"></div>
+            <div class="color-item"><label>Màu chữ thương hiệu</label><input type="color" id="clr-brand-txt" value="#d4af37"></div>
+            <div class="color-item"><label>Màu chữ địa chỉ</label><input type="color" id="clr-addr-txt" value="#ffffff"></div>
+            <div class="color-item"><label>Màu nền ô Hotline</label><input type="color" id="clr-hl-bg" value="#6b0f1a"></div>
+            <div class="color-item"><label>Màu chữ ô Hotline</label><input type="color" id="clr-hl-txt" value="#d4af37"></div>
+            <div class="color-item"><label>Màu viền ô Hotline</label><input type="color" id="clr-hl-border" value="#d4af37"></div>
+            <div class="color-item"><label>Màu viền khối bảng giá</label><input type="color" id="clr-card-border" value="#d4af37"></div>
+            <div class="color-item"><label>Màu nền lòng bảng giá</label><input type="color" id="clr-card-bg" value="#ffffff"></div>
+            <div class="color-item"><label>Màu nền tiêu đề cột (Th)</label><input type="color" id="clr-th-bg" value="#f4f6f8"></div>
+            <div class="color-item"><label>Màu chữ tiêu đề cột (Th)</label><input type="color" id="clr-th-txt" value="#555555"></div>
+            <div class="color-item"><label>Màu chữ hàng giá vàng (Td)</label><input type="color" id="clr-td-txt" value="#222222"></div>
+            <div class="color-item"><label>Màu kẻ vạch ngang dọc bảng</label><input type="color" id="clr-td-border" value="#edf0f2"></div>
+            <div class="color-item"><label>Màu nền thanh chữ chạy đáy</label><input type="color" id="clr-mar-bg" value="#1a0205"></div>
+            <div class="color-item"><label>Màu chữ chạy đáy</label><input type="color" id="clr-mar-txt" value="#d4af37"></div>
+            <div class="color-item"><label>Màu đường viền chữ chạy</label><input type="color" id="clr-mar-border" value="#d4af37"></div>
+        </div>
+    </div>
+
+    <!-- NÚT ÁP DỤNG -->
+    <div style="position: sticky; bottom: 20px; z-index: 999;">
+        <button class="btn-submit" onclick="saveAndSync()">💾 CẬP NHẬT & ĐỒNG BỘ GIÁ NGAY LẬP TỨC</button>
+    </div>
+</div>
+
+<script>
+    // MẬT KHẨU BẢO MẬT TRANG ADMIN
+    const ADMIN_PASSWORD = "Dungh*inhieu86";
+
+    // Danh sách sản phẩm mặc định ban đầu nếu bộ nhớ trống
+    const defaultProducts = [
+        { name: "Vàng Nhẫn Kim Bảo 9999", buy: "7,850,000", sell: "8,020,000" },
+        { name: "Vàng Nữ Trang 24K", buy: "7,700,000", sell: "7,950,000" },
+        { name: "Vàng Công Nghệ Ý 18K", buy: "5,800,000", sell: "6,050,000" }
+    ];
+
+    window.onload = function() {
+        if (sessionStorage.getItem('isAdminLoggedIn') === 'true') {
+            showAdminDashboard();
+        }
+        loadCurrentSettings();
+    };
+
+    function verifyPassword() {
+        const input = document.getElementById('passwordInput').value;
+        const errorMsg = document.getElementById('errorMsg');
+        if (input === ADMIN_PASSWORD) {
+            sessionStorage.setItem('isAdminLoggedIn', 'true');
+            errorMsg.style.display = 'none';
+            showAdminDashboard();
+        } else {
+            errorMsg.style.display = 'block';
+            document.getElementById('passwordInput').value = '';
+        }
+    }
+
+    function showAdminDashboard() {
+        document.getElementById('lockScreen').style.display = 'none';
+        document.getElementById('adminContent').style.display = 'block';
+    }
+
+    function logout() {
+        sessionStorage.removeItem('isAdminLoggedIn');
+        document.getElementById('passwordInput').value = '';
+        document.getElementById('lockScreen').style.display = 'block';
+        document.getElementById('adminContent').style.display = 'none';
+    }
+
+    // HÀM TỰ ĐỘNG SINH HÀNG SẢN PHẨM MỚI TRÊN GIAO DIỆN ADMIN
+    let productCounter = 0;
+    function addNewProductRow(name = '', buy = '', sell = '') {
+        const container = document.getElementById('gold-items-container');
+        const rowId = `product-row-${productCounter}`;
+        
+        const rowHTML = `
+            <div class="gold-row" id="${rowId}">
+                <div class="gold-row-header">
+                    <div class="gold-row-title">Sản phẩm sản xuất / Kinh doanh</div>
+                    <button type="button" class="btn-delete-item" onclick="deleteProductRow('${rowId}')">🗑 Xóa sản phẩm này</button>
+                </div>
+                <div class="row">
+                    <div class="col" style="flex: 2;">
+                        <label>Tên loại vàng</label>
+                        <input type="text" class="input-g-name" value="${name}" placeholder="Ví dụ: Vàng nữ trang 10K">
+                    </div>
+                    <div class="col">
+                        <label>Giá Mua Vào (Chỉ)</label>
+                        <input type="text" class="input-g-buy" value="${buy}" placeholder="7,100,000">
+                    </div>
+                    <div class="col">
+                        <label>Giá Bán Ra (Chỉ)</label>
+                        <input type="text" class="input-g-sell" value="${sell}" placeholder="7,350,000">
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        container.insertAdjacentHTML('beforeend', rowHTML);
+        productCounter++;
+    }
+
+    // HÀM XÓA SẢN PHẨM TRÊN ADMIN
+    function deleteProductRow(rowId) {
+        const rowElement = document.getElementById(rowId);
+        if (rowElement) {
+            rowElement.remove();
+        }
+    }
+
+    // THU THẬP VÀ LƯU TRỮ DỮ LIỆU ĐỘNG
+    function saveAndSync() {
+        let goldData = [];
+        const names = document.querySelectorAll('.input-g-name');
+        const buys = document.querySelectorAll('.input-g-buy');
+        const sells = document.querySelectorAll('.input-g-sell');
+
+        // Quét qua toàn bộ các ô nhập dữ liệu đang có trên giao diện
+        names.forEach((node, index) => {
+            const nameVal = node.value.trim();
+            if(nameVal !== "") { // Chỉ lưu những hàng có điền tên sản phẩm
+                goldData.push({
+                    name: nameVal,
+                    buy: buys[index].value.trim() || "0",
+                    sell: sells[index].value.trim() || "0"
+                });
+            }
+        });
+
+        if(goldData.length === 0) {
+            alert("⚠️ Cảnh báo: Bạn phải giữ lại ít nhất 1 sản phẩm trên bảng giá!");
+            return;
+        }
+
+        // Lưu danh sách mảng động vào LocalStorage
+        localStorage.setItem('vbtb_cloned_data', JSON.stringify(goldData));
+
+        // Lưu mốc thời gian đổi giá
+        const now = new Date();
+        const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')} - Ngày ${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()}`;
+        localStorage.setItem('vbtb_cloned_time', timeStr);
+
+        // Lưu các thông số chữ TV khác
+        localStorage.setItem('tv_txt_brand', document.getElementById('tv-brand').value);
+        localStorage.setItem('tv_txt_address', document.getElementById('tv-address').value);
+        localStorage.setItem('tv_txt_hotline', document.getElementById('tv-hotline').value);
+        localStorage.setItem('tv_txt_marquee', document.getElementById('tv-marquee').value);
+        localStorage.setItem('tv_marquee_speed', document.getElementById('tv-marquee-speed').value);
+
+        // Lưu bảng phối màu Studio
+        const colorKeys = ['bg-main', 'brand-txt', 'addr-txt', 'hl-bg', 'hl-txt', 'hl-border', 'card-border', 'card-bg', 'th-bg', 'th-txt', 'td-txt', 'td-border', 'mar-bg', 'mar-txt', 'mar-border'];
+        colorKeys.forEach(key => {
+            const val = document.getElementById('clr_' + key).value;
+            localStorage.setItem('clr_' + key, val);
+        });
+
+        alert(`🎉 HỆ THỐNG ĐỒNG BỘ THÀNH CÔNG!\nĐã cập nhật toàn bộ danh mục gồm ${goldData.length} sản phẩm lên màn hình TV.`);
+    }
+
+    // TẢI DỮ LIỆU HIỆN TẠI LÊN TRANG ADMIN
+    function loadCurrentSettings() {
+        document.getElementById('gold-items-container').innerHTML = ''; // Reset khung chứa sản phẩm
+        
+        const localData = localStorage.getItem('vbtb_cloned_data');
+        let list = localData ? JSON.parse(localData) : defaultProducts;
+        
+        // Tạo các hàng nhập liệu tương ứng với dữ liệu đã lưu
+        list.forEach(item => {
+            addNewProductRow(item.name, item.buy, item.sell);
+        });
+
+        // Khôi phục các thông số chữ cấu hình TV
+        if(localStorage.getItem('tv_txt_brand')) document.getElementById('tv-brand').value = localStorage.getItem('tv_txt_brand');
+        if(localStorage.getItem('tv_txt_address')) document.getElementById('tv-address').value = localStorage.getItem('tv_txt_address');
+        if(localStorage.getItem('tv_txt_hotline')) document.getElementById('tv-hotline').value = localStorage.getItem('tv_txt_hotline');
+        if(localStorage.getItem('tv_txt_marquee')) document.getElementById('tv-marquee').value = localStorage.getItem('tv_txt_marquee');
+        if(localStorage.getItem('tv_marquee_speed')) document.getElementById('tv-marquee-speed').value = localStorage.getItem('tv_marquee_speed');
+
+        // Khôi phục màu Studio
+        const colorKeys = ['bg-main', 'brand-txt', 'addr-txt', 'hl-bg', 'hl-txt', 'hl-border', 'card-border', 'card-bg', 'th-bg', 'th-txt', 'td-txt', 'td-border', 'mar-bg', 'mar-txt', 'mar-border'];
+        colorKeys.forEach(key => {
+            const val = localStorage.getItem('clr_' + key);
+            if(val) document.getElementById('clr_' + key).value = val;
+        });
+    }
+</script>
+</body>
+</html>
