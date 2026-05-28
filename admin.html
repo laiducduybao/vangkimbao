@@ -76,6 +76,9 @@
         .color-item { display: flex; align-items: center; justify-content: space-between; padding: 10px; background: #fdfdfd; border: 1px solid #eee; border-radius: 5px; }
         .color-item input[type="color"] { width: 40px; height: 30px; border: none; cursor: pointer; }
     </style>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
@@ -90,8 +93,8 @@
 <div class="admin-content" id="adminContent">
     <div class="admin-header">
         <div>
-            <h1>BÀN ĐIỀU KHIỂN TRUNG TÂM</h1>
-            <p style="font-size: 12px; color: var(--gold); margin-top: 4px;">Quản lý sản phẩm linh hoạt - Tự động đồng bộ màn hình TV</p>
+            <h1>BÀN ĐIỀU KHIỂ CENTRAL</h1>
+            <p style="font-size: 12px; color: var(--gold); margin-top: 4px;">Quản lý sản phẩm linh hoạt - Tự động đồng bộ màn hình TV TOÀN CẦU</p>
         </div>
         <button class="logout-btn" onclick="logout()">🔒 Thoát (Khóa lại)</button>
     </div>
@@ -151,7 +154,23 @@
 </div>
 
 <script>
-    const ADMIN_PASSWORD = "123";
+    // CHÚ Ý: ĐỔI ĐOẠN NÀY THÀNH CONFIG FIREBASE CỦA BẠN VỪA LẤY Ở BƯỚC 1
+    const firebaseConfig = {
+	apiKey: "AIzaSyCsoGBzs2HLgvUazOJQY4kRqcQb3tUKNDY",
+	authDomain: "vangkimbao.firebaseapp.com",
+	databaseURL: "https://vangkimbao-default-rtdb.firebaseio.com",
+  	projectId: "vangkimbao",
+  	storageBucket: "vangkimbao.firebasestorage.app",
+ 	 messagingSenderId: "453403966918",
+ 	 appId: "1:453403966918:web:d4220c7bfbda6538ddc6c7",
+ 	 measurementId: "G-7Y4XF22Q4H"
+    };
+    
+    // Khởi tạo Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const ADMIN_PASSWORD = "Dungh*inhieu86";
 
     const defaultProducts = [
         { name: "Vàng Nhẫn Kim Bảo 9999", buy: "7,850,000", sell: "8,020,000" },
@@ -191,7 +210,6 @@
         document.getElementById('adminContent').style.display = 'none';
     }
 
-    // HÀM TỰ ĐỘNG PHẨY SỐ (MỚI THÊM)
     function formatCurrencyInput(inputElement) {
         let value = inputElement.value.replace(/\D/g, "");
         if (value === "") {
@@ -259,47 +277,62 @@
             return;
         }
 
-        localStorage.setItem('vbtb_cloned_data', JSON.stringify(goldData));
-
         const now = new Date();
         const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')} - Ngày ${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()}`;
-        localStorage.setItem('vbtb_cloned_time', timeStr);
 
-        localStorage.setItem('tv_txt_brand', document.getElementById('tv-brand').value);
-        localStorage.setItem('tv_txt_address', document.getElementById('tv-address').value);
-        localStorage.setItem('tv_txt_hotline', document.getElementById('tv-hotline').value);
-        localStorage.setItem('tv_txt_marquee', document.getElementById('tv-marquee').value);
-        localStorage.setItem('tv_marquee_speed', document.getElementById('tv-marquee-speed').value);
+        // Gom tất cả cấu hình gửi 1 lần lên Firebase
+        const syncPayload = {
+            vbtb_cloned_data: goldData,
+            vbtb_cloned_time: timeStr,
+            tv_txt_brand: document.getElementById('tv-brand').value,
+            tv_txt_address: document.getElementById('tv-address').value,
+            tv_txt_hotline: document.getElementById('tv-hotline').value,
+            tv_txt_marquee: document.getElementById('tv-marquee').value,
+            tv_marquee_speed: document.getElementById('tv-marquee-speed').value,
+            colors: {}
+        };
 
         const colorKeys = ['bg-main', 'brand-txt', 'addr-txt', 'hl-bg', 'hl-txt', 'hl-border', 'card-border', 'card-bg', 'th-bg', 'th-txt', 'td-txt', 'td-border', 'mar-bg', 'mar-txt', 'mar-border'];
         colorKeys.forEach(key => {
-            const val = document.getElementById('clr_' + key).value;
-            localStorage.setItem('clr_' + key, val);
+            syncPayload.colors[key] = document.getElementById('clr_' + key).value;
         });
 
-        alert(`🎉 HỆ THỐNG ĐỒNG BỘ THÀNH CÔNG!\nĐã cập nhật toàn bộ danh mục gồm ${goldData.length} sản phẩm lên màn hình TV.`);
+        // Đẩy thẳng lên nhánh gốc của Database đám mây
+        db.ref('kimbao_sync_data').set(syncPayload, (error) => {
+            if (error) {
+                alert("❌ Lỗi đồng bộ đám mây: " + error.message);
+            } else {
+                alert(`🎉 ĐỒNG BỘ ĐÁM MÂY THÀNH CÔNG!\nDữ liệu bảng giá mới đã lập tức phát đến tất cả màn hình của khách hàng.`);
+            }
+        });
     }
 
     function loadCurrentSettings() {
         document.getElementById('gold-items-container').innerHTML = '';
         
-        const localData = localStorage.getItem('vbtb_cloned_data');
-        let list = localData ? JSON.parse(localData) : defaultProducts;
-        
-        list.forEach(item => {
-            addNewProductRow(item.name, item.buy, item.sell);
-        });
+        // Đọc dữ liệu từ Firebase về để hiển thị lên Form khi Admin load trang
+        db.ref('kimbao_sync_data').once('value').then((snapshot) => {
+            const serverData = snapshot.val();
+            
+            let list = (serverData && serverData.vbtb_cloned_data) ? serverData.vbtb_cloned_data : defaultProducts;
+            list.forEach(item => {
+                addNewProductRow(item.name, item.buy, item.sell);
+            });
 
-        if(localStorage.getItem('tv_txt_brand')) document.getElementById('tv-brand').value = localStorage.getItem('tv_txt_brand');
-        if(localStorage.getItem('tv_txt_address')) document.getElementById('tv-address').value = localStorage.getItem('tv_txt_address');
-        if(localStorage.getItem('tv_txt_hotline')) document.getElementById('tv-hotline').value = localStorage.getItem('tv_txt_hotline');
-        if(localStorage.getItem('tv_txt_marquee')) document.getElementById('tv-marquee').value = localStorage.getItem('tv_txt_marquee');
-        if(localStorage.getItem('tv_marquee_speed')) document.getElementById('tv-marquee-speed').value = localStorage.getItem('tv_marquee_speed');
+            if(!serverData) return; // Nếu chưa có dữ liệu đám mây thì dùng mặc định trong HTML
 
-        const colorKeys = ['bg-main', 'brand-txt', 'addr-txt', 'hl-bg', 'hl-txt', 'hl-border', 'card-border', 'card-bg', 'th-bg', 'th-txt', 'td-txt', 'td-border', 'mar-bg', 'mar-txt', 'mar-border'];
-        colorKeys.forEach(key => {
-            const val = localStorage.getItem('clr_' + key);
-            if(val) document.getElementById('clr_' + key).value = val;
+            if(serverData.tv_txt_brand) document.getElementById('tv-brand').value = serverData.tv_txt_brand;
+            if(serverData.tv_txt_address) document.getElementById('tv-address').value = serverData.tv_txt_address;
+            if(serverData.tv_txt_hotline) document.getElementById('tv-hotline').value = serverData.tv_txt_hotline;
+            if(serverData.tv_txt_marquee) document.getElementById('tv-marquee').value = serverData.tv_txt_marquee;
+            if(serverData.tv_marquee_speed) document.getElementById('tv-marquee-speed').value = serverData.tv_marquee_speed;
+
+            if(serverData.colors) {
+                for (const [key, val] of Object.entries(serverData.colors)) {
+                    const inputEl = document.getElementById('clr_' + key);
+                    if(inputEl) inputEl.value = val;
+                }
+            }
         });
     }
 </script>
