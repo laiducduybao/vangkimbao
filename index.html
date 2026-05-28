@@ -41,22 +41,32 @@
         
         body { background-color: #f7f9fa; color: var(--text-dark); transition: background 0.3s; }
 
-        /* Nút điều khiển TV Mode */
+        /* Nút điều khiển TV Mode - Đã được thiết kế lại theo yêu cầu */
         .tv-toggle-btn {
             position: fixed;
-            top: 15px;
-            right: 15px;
-            background: #28a745;
-            color: white;
-            border: none;
-            padding: 10px 15px;
+            bottom: 20px;
+            right: 20px;
+            z-index: 99999;
+            background: rgba(107, 15, 26, 0.85);
+            color: #d4af37;
+            border: 2px solid #d4af37;
+            padding: 10px 18px;
+            font-size: 13px;
             font-weight: bold;
-            border-radius: 5px;
+            border-radius: 30px;
             cursor: pointer;
-            z-index: 9999;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            opacity: 0.5; /* Mờ nhẹ để không cản trở tầm nhìn */
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
-        .tv-toggle-btn:hover { background: #218838; }
+        .tv-toggle-btn:hover { 
+            opacity: 1; 
+            background: #6b0f1a;
+            transform: scale(1.05);
+        }
 
         /* Giao diện thông thường */
         .top-bar {
@@ -107,7 +117,7 @@
         /* Khung Bảng Giá */
         .main-container {
             max-width: 1100px;
-            margin: 40px auto 10px auto; /* Thu hẹp margin đáy để cân đối với biểu đồ */
+            margin: 40px auto 10px auto; 
             padding: 0 20px;
             transition: all 0.3s;
         }
@@ -222,8 +232,9 @@
         body.tv-mode .top-bar,
         body.tv-mode .marquee-box,
         body.tv-mode header h2,
-        body.tv-mode .tradingview-container, /* TV Mode ẩn biểu đồ đi để dồn chỗ phóng to bảng giá */
-        body.tv-mode footer {
+        body.tv-mode .tradingview-container,
+        body.tv-mode footer,
+        body.tv-mode .tv-toggle-btn /* Tự động ẩn nút bấm đi khi lên TV */ {
             display: none !important;
         }
         
@@ -328,7 +339,9 @@
 </head>
 <body>
 
-<button class="tv-toggle-btn" id="tvBtn" onclick="toggleTVMode()">📺 CHẾ ĐỘ TV FULL MÀN HÌNH</button>
+<button class="tv-toggle-btn" id="tvBtn" onclick="toggleTVMode()">
+    <span>📺</span> CHẾ ĐỘ TV FULL MÀN HÌNH
+</button>
 
 <div class="top-bar">
     <span>Chào mừng quý khách đến với Hệ thống thương hiệu số <strong>Vàng Kim Bảo</strong></span>
@@ -438,20 +451,22 @@
 
     function toggleTVMode() {
         const body = document.body;
-        const btn = document.getElementById('tvBtn');
         
         if(!body.classList.contains('tv-mode')) {
             if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
             body.classList.add('tv-mode');
-            btn.innerText = " Thoát Chế Độ TV";
-            btn.style.background = "#dc3545";
         } else {
             if (document.exitFullscreen) document.exitFullscreen();
             body.classList.remove('tv-mode');
-            btn.innerText = "📺 CHẾ ĐỘ TV FULL MÀN HÌNH";
-            btn.style.background = "#28a745";
         }
     }
+
+    // Xử lý sự kiện thoát Fullscreen bằng nút Esc hoặc các cách native khác
+    document.addEventListener('fullscreenchange', () => {
+        if (!document.fullscreenElement) {
+            document.body.classList.remove('tv-mode');
+        }
+    });
 
     window.addEventListener('keydown', function(e) {
         if (e.key === 'f' || e.key === 'F') toggleTVMode();
