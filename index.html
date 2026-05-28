@@ -41,7 +41,7 @@
         
         body { background-color: #f7f9fa; color: var(--text-dark); transition: background 0.3s; }
 
-        /* Nút điều khiển TV Mode - Đã được thiết kế lại theo yêu cầu */
+        /* Nút điều khiển TV Mode */
         .tv-toggle-btn {
             position: fixed;
             bottom: 20px;
@@ -57,7 +57,7 @@
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             transition: all 0.3s ease;
-            opacity: 0.5; /* Mờ nhẹ để không cản trở tầm nhìn */
+            opacity: 0.5;
             display: flex;
             align-items: center;
             gap: 6px;
@@ -234,7 +234,7 @@
         body.tv-mode header h2,
         body.tv-mode .tradingview-container,
         body.tv-mode footer,
-        body.tv-mode .tv-toggle-btn /* Tự động ẩn nút bấm đi khi lên TV */ {
+        body.tv-mode .tv-toggle-btn {
             display: none !important;
         }
         
@@ -336,6 +336,9 @@
             100% { transform: translateX(-100%); }
         }
     </style>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
@@ -366,7 +369,7 @@
         <div class="card-header">
             <span class="live-dot"></span> BẢNG GIÁ VÀNG TRỰC TUYẾN
         </div>
-        <div class="time-bar" id="live-time">Đang kết nối máy chủ...</div>
+        <div class="time-bar" id="live-time">Đang kết nối máy chủ đám mây...</div>
         <table>
             <thead>
                 <tr>
@@ -407,16 +410,35 @@
 </footer>
 
 <script>
+    // CHÚ Ý: ĐỔI ĐOẠN NÀY THÀNH CONFIG FIREBASE CỦA BẠN (GIỐNG HỆT TRANG ADMIN)
+    const firebaseConfig = {
+ 	 apiKey: "AIzaSyCsoGBzs2HLgvUazOJQY4kRqcQb3tUKNDY",
+ 	 authDomain: "vangkimbao.firebaseapp.com",
+ 	 databaseURL: "https://vangkimbao-default-rtdb.firebaseio.com",
+ 	 projectId: "vangkimbao",
+ 	 storageBucket: "vangkimbao.firebasestorage.app",
+ 	 messagingSenderId: "453403966918",
+ 	 appId: "1:453403966918:web:d4220c7bfbda6538ddc6c7",
+ 	 measurementId: "G-7Y4XF22Q4H"
+    };
+
+    // Khởi tạo Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
     const fallbackData = [
         { name: "Vàng Nhẫn Kim Bảo 9999", buy: "7,850,000", sell: "8,020,000" },
         { name: "Vàng Nữ Trang 24K", buy: "7,700,000", sell: "7,950,000" },
         { name: "Vàng Công Nghệ Ý 18K", buy: "5,800,000", sell: "6,050,000" }
     ];
 
-    function syncSystemData() {
-        const localData = localStorage.getItem('vbtb_cloned_data');
-        const localTime = localStorage.getItem('vbtb_cloned_time');
-        let list = localData ? JSON.parse(localData) : fallbackData;
+    // LẮNG NGHE REAL-TIME DỮ LIỆU ĐÁM MÂY TỪ FIREBASE (KHÔNG DÙNG LOCALSTORAGE NỮA)
+    db.ref('kimbao_sync_data').on('value', (snapshot) => {
+        const serverData = snapshot.val();
+        
+        let list = (serverData && serverData.vbtb_cloned_data) ? serverData.vbtb_cloned_data : fallbackData;
+        const localTime = serverData ? serverData.vbtb_cloned_time : null;
+        
         const tbody = document.getElementById('web-table-body');
         tbody.innerHTML = '';
 
@@ -427,31 +449,33 @@
                 <td class="price-sell">${item.sell}</td>
             </tr>`;
         });
-        document.getElementById('live-time').innerText = "Cập nhật hệ thống lúc: " + (localTime ? localTime : "Vừa xong");
-
-        document.getElementById('tv-live-brand').innerText = localStorage.getItem('tv_txt_brand') || "Vàng Kim Bảo";
-        document.getElementById('tv-live-address').innerText = localStorage.getItem('tv_txt_address') || "Số 259 Nguyễn Tất Thành, xã Nà Hang, tỉnh Tuyên Quang";
-        document.getElementById('tv-live-hotline').innerText = localStorage.getItem('tv_txt_hotline') || "HOTLINE TRỢ GIÁ: 0989.865.333";
         
-        const marqueeTxt = localStorage.getItem('tv_txt_marquee') || "VÀNG BẠC KIM BẢO — GIỮ TÍN NHIỆM HƠN GIỮ VÀNG ——— HOTLINE TRỢ GIÁ: 0989.865.333";
+        document.getElementById('live-time').innerText = "Cập nhật hệ thống lúc: " + (localTime ? localTime : "Mặc định hệ thống");
+
+        if(!serverData) return; // Nếu database trống thì giữ nguyên CSS mặc định
+
+        document.getElementById('tv-live-brand').innerText = serverData.tv_txt_brand || "Vàng Kim Bảo";
+        document.getElementById('tv-live-address').innerText = serverData.tv_txt_address || "Số 259 Nguyễn Tất Thành, xã Nà Hang, tỉnh Tuyên Quang";
+        document.getElementById('tv-live-hotline').innerText = serverData.tv_txt_hotline || "HOTLINE TRỢ GIÁ: 0989.865.333";
+        
+        const marqueeTxt = serverData.tv_txt_marquee || "VÀNG BẠC KIM BẢO — GIỮ TÍN NHIỆM HƠN GIỮ VÀNG ——— HOTLINE TRỢ GIÁ: 0989.865.333";
         const marqueeDiv = document.getElementById('tv-live-marquee');
         if(marqueeDiv.innerText !== marqueeTxt) {
             marqueeDiv.innerText = marqueeTxt;
         }
 
         const root = document.documentElement;
-        root.style.setProperty('--tv-marquee-duration', localStorage.getItem('tv_marquee_speed') || "25s");
+        root.style.setProperty('--tv-marquee-duration', serverData.tv_marquee_speed || "25s");
         
-        const colorKeys = ['bg-main', 'brand-txt', 'addr-txt', 'hl-bg', 'hl-txt', 'hl-border', 'card-border', 'card-bg', 'th-bg', 'th-txt', 'td-txt', 'td-border', 'mar-bg', 'mar-txt', 'mar-border'];
-        colorKeys.forEach(key => {
-            const val = localStorage.getItem('clr_' + key);
-            if(val) root.style.setProperty(`--tv-${key}`, val);
-        });
-    }
+        if(serverData.colors) {
+            for (const [key, val] of Object.entries(serverData.colors)) {
+                if(val) root.style.setProperty(`--tv-${key}`, val);
+            }
+        }
+    });
 
     function toggleTVMode() {
         const body = document.body;
-        
         if(!body.classList.contains('tv-mode')) {
             if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
             body.classList.add('tv-mode');
@@ -461,7 +485,6 @@
         }
     }
 
-    // Xử lý sự kiện thoát Fullscreen bằng nút Esc hoặc các cách native khác
     document.addEventListener('fullscreenchange', () => {
         if (!document.fullscreenElement) {
             document.body.classList.remove('tv-mode');
@@ -471,9 +494,6 @@
     window.addEventListener('keydown', function(e) {
         if (e.key === 'f' || e.key === 'F') toggleTVMode();
     });
-
-    syncSystemData();
-    setInterval(syncSystemData, 1500);
 </script>
 </body>
 </html>
