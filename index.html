@@ -410,16 +410,16 @@
 </footer>
 
 <script>
-    // CHÚ Ý: ĐỔI ĐOẠN NÀY THÀNH CONFIG FIREBASE CỦA BẠN (GIỐNG HỆT TRANG ADMIN)
+    // CẤU HÌNH FIREBASE MỚI NHẤT
     const firebaseConfig = {
-	apiKey: "AIzaSyCsoGBzs2HLgvUazOJQY4kRqcQb3tUKNDY",
-	authDomain: "vangkimbao.firebaseapp.com",
-	databaseURL: "https://vangkimbao-default-rtdb.firebaseio.com",
-  	projectId: "vangkimbao",
-  	storageBucket: "vangkimbao.firebasestorage.app",
- 	messagingSenderId: "453403966918",
- 	appId: "1:453403966918:web:d4220c7bfbda6538ddc6c7",
- 	measurementId: "G-7Y4XF22Q4H"
+        apiKey: "AIzaSyCsoGBzs2HLgvUazOJQY4kRqcQb3tUKNDY",
+        authDomain: "vangkimbao.firebaseapp.com",
+        databaseURL: "https://vangkimbao-default-rtdb.firebaseio.com",
+        projectId: "vangkimbao",
+        storageBucket: "vangkimbao.firebasestorage.app",
+        messagingSenderId: "453403966918",
+        appId: "1:453403966918:web:d4220c7bfbda6538ddc6c7",
+        measurementId: "G-7Y4XF22Q4H"
     };
 
     // Khởi tạo Firebase
@@ -432,7 +432,7 @@
         { name: "Vàng Công Nghệ Ý 18K", buy: "5,800,000", sell: "6,050,000" }
     ];
 
-    // LẮNG NGHE REAL-TIME DỮ LIỆU ĐÁM MÂY TỪ FIREBASE (KHÔNG DÙNG LOCALSTORAGE NỮA)
+    // LẮNG NGHE REAL-TIME DỮ LIỆU ĐÁM MÂY TỪ FIREBASE
     db.ref('kimbao_sync_data').on('value', (snapshot) => {
         const serverData = snapshot.val();
         
