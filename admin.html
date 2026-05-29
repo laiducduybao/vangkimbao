@@ -93,7 +93,7 @@
 <div class="admin-content" id="adminContent">
     <div class="admin-header">
         <div>
-            <h1>BÀN ĐIỀU KHIỂ CENTRAL</h1>
+            <h1>BÀN ĐIỀU KHIỂN CENTRAL</h1>
             <p style="font-size: 12px; color: var(--gold); margin-top: 4px;">Quản lý sản phẩm linh hoạt - Tự động đồng bộ màn hình TV TOÀN CẦU</p>
         </div>
         <button class="logout-btn" onclick="logout()">🔒 Thoát (Khóa lại)</button>
@@ -154,16 +154,16 @@
 </div>
 
 <script>
-    // CHÚ Ý: ĐỔI ĐOẠN NÀY THÀNH CONFIG FIREBASE CỦA BẠN VỪA LẤY Ở BƯỚC 1
+    // CẤU HÌNH FIREBASE MỚI NHẤT
     const firebaseConfig = {
-	apiKey: "AIzaSyCsoGBzs2HLgvUazOJQY4kRqcQb3tUKNDY",
-	authDomain: "vangkimbao.firebaseapp.com",
-	databaseURL: "https://vangkimbao-default-rtdb.firebaseio.com",
-  	projectId: "vangkimbao",
-  	storageBucket: "vangkimbao.firebasestorage.app",
- 	messagingSenderId: "453403966918",
- 	appId: "1:453403966918:web:d4220c7bfbda6538ddc6c7",
- 	measurementId: "G-7Y4XF22Q4H"
+        apiKey: "AIzaSyCsoGBzs2HLgvUazOJQY4kRqcQb3tUKNDY",
+        authDomain: "vangkimbao.firebaseapp.com",
+        databaseURL: "https://vangkimbao-default-rtdb.firebaseio.com",
+        projectId: "vangkimbao",
+        storageBucket: "vangkimbao.firebasestorage.app",
+        messagingSenderId: "453403966918",
+        appId: "1:453403966918:web:d4220c7bfbda6538ddc6c7",
+        measurementId: "G-7Y4XF22Q4H"
     };
     
     // Khởi tạo Firebase
@@ -280,7 +280,6 @@
         const now = new Date();
         const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')} - Ngày ${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()}`;
 
-        // Gom tất cả cấu hình gửi 1 lần lên Firebase
         const syncPayload = {
             vbtb_cloned_data: goldData,
             vbtb_cloned_time: timeStr,
@@ -294,10 +293,10 @@
 
         const colorKeys = ['bg-main', 'brand-txt', 'addr-txt', 'hl-bg', 'hl-txt', 'hl-border', 'card-border', 'card-bg', 'th-bg', 'th-txt', 'td-txt', 'td-border', 'mar-bg', 'mar-txt', 'mar-border'];
         colorKeys.forEach(key => {
-            syncPayload.colors[key] = document.getElementById('clr_' + key).value;
+            syncPayload.colors[key] = document.getElementById('clr-' + key).value;
         });
 
-        // Đẩy thẳng lên nhánh gốc của Database đám mây
+        // Đẩy dữ liệu lên Firebase Database
         db.ref('kimbao_sync_data').set(syncPayload, (error) => {
             if (error) {
                 alert("❌ Lỗi đồng bộ đám mây: " + error.message);
@@ -310,7 +309,7 @@
     function loadCurrentSettings() {
         document.getElementById('gold-items-container').innerHTML = '';
         
-        // Đọc dữ liệu từ Firebase về để hiển thị lên Form khi Admin load trang
+        // Kéo dữ liệu từ máy chủ đám mây về khi mở trang
         db.ref('kimbao_sync_data').once('value').then((snapshot) => {
             const serverData = snapshot.val();
             
@@ -319,7 +318,7 @@
                 addNewProductRow(item.name, item.buy, item.sell);
             });
 
-            if(!serverData) return; // Nếu chưa có dữ liệu đám mây thì dùng mặc định trong HTML
+            if(!serverData) return;
 
             if(serverData.tv_txt_brand) document.getElementById('tv-brand').value = serverData.tv_txt_brand;
             if(serverData.tv_txt_address) document.getElementById('tv-address').value = serverData.tv_txt_address;
@@ -329,10 +328,15 @@
 
             if(serverData.colors) {
                 for (const [key, val] of Object.entries(serverData.colors)) {
-                    const inputEl = document.getElementById('clr_' + key);
+                    const inputEl = document.getElementById('clr-' + key);
                     if(inputEl) inputEl.value = val;
                 }
             }
+        }).catch(err => {
+            console.error("Lỗi đọc dữ liệu đám mây ban đầu:", err);
+            defaultProducts.forEach(item => {
+                addNewProductRow(item.name, item.buy, item.sell);
+            });
         });
     }
 </script>
