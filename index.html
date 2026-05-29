@@ -45,7 +45,7 @@
         }
         .tv-toggle-btn:hover { opacity: 1; background: #6b0f1a; transform: scale(1.05); }
 
-        /* Giao diện thông thường */
+        /* Giao diện thông thường (Máy tính / iPad lớn) */
         .top-bar {
             background: var(--bordeaux-dark); color: #fff; padding: 10px 20px;
             font-size: 13px; display: flex; justify-content: space-between;
@@ -84,11 +84,11 @@
         }
 
         /* Bảng kẻ dọc */
-        table { width: 100%; border-collapse: collapse; }
-        th { background-color: #f4f6f8; color: #555; padding: 16px; font-size: 14px; text-transform: uppercase; font-weight: 600; border-bottom: 2px solid #e1e8ed; text-align: center; }
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        th { background-color: #f4f6f8; color: #555; padding: 16px; font-size: 14px; text-transform: uppercase; font-weight: 600; border-bottom: 2px solid #e1e8ed; text-align: center; word-wrap: break-word; }
         th:not(:last-child) { border-right: 1px solid #dee2e6; }
 
-        td { padding: 18px 16px; text-align: center; font-size: 17px; font-weight: 700; border-bottom: 1px solid #edf0f2; }
+        td { padding: 18px 16px; text-align: center; font-size: 17px; font-weight: 700; border-bottom: 1px solid #edf0f2; word-wrap: break-word; }
         td:not(:last-child) { border-right: 1px solid #edf0f2; }
         tr:hover td { background-color: var(--gold-light); }
         
@@ -114,35 +114,77 @@
         .footer-hotline { background: var(--bordeaux); color: var(--gold); padding: 12px 30px; border-radius: 30px; display: inline-block; font-size: 20px; font-weight: 700; text-decoration: none; margin-top: 20px; }
 
         /* ======================================================= */
-        /* CẤU HÌNH PHÓNG TO FULL MÀN HÌNH (TV MODE) */
+        /* CẤU HÌNH TỐI ƯU GIAO DIỆN ĐIỆN THOẠI (MOBILE MODE)      */
+        /* ======================================================= */
+        @media (max-width: 767px) {
+            .top-bar { display: none; } /* Ẩn top-bar thanh mảnh để gọn màn hình */
+            header { padding: 20px 10px; }
+            header h1 { font-size: 28px; }
+            header h2 { font-size: 11px; }
+            .marquee-box { font-size: 12px; padding: 8px 0; }
+
+            .main-container { margin: 15px auto; padding: 0 8px; }
+            .card-header { font-size: 16px; padding: 12px; }
+            .time-bar { font-size: 11px; padding: 8px; }
+
+            /* Tối ưu hóa cấu trúc bảng trên Mobile */
+            th { font-size: 11px; padding: 10px 4px; }
+            td { font-size: 14px; padding: 12px 4px; }
+            .gold-type { padding-left: 8px !important; font-size: 13px; }
+            .trend-icon { font-size: 14px; }
+
+            /* Ép cứng tỉ lệ cột bằng CSS đè thuộc tính Inline HTML */
+            table th:nth-child(1), table td:nth-child(1) { width: 36% !important; text-align: left; }
+            table th:nth-child(2), table td:nth-child(2) { width: 26% !important; }
+            table th:nth-child(3), table td:nth-child(3) { width: 26% !important; }
+            table th:nth-child(4), table td:nth-child(4) { width: 12% !important; text-align: center; }
+
+            .negotiable-box { font-size: 13px; padding: 10px; margin-top: 12px; }
+            
+            .tradingview-container, .map-section { padding: 0 8px; margin: 20px auto; }
+            .tradingview-header { font-size: 13px; padding: 10px; }
+            .map-section h3 { font-size: 18px; }
+            .map-wrapper { height: 280px; }
+
+            footer { padding: 30px 15px; margin-top: 30px; }
+            footer h3 { font-size: 16px; }
+            footer p { font-size: 13px; }
+            .footer-hotline { font-size: 15px; padding: 10px 20px; margin-top: 15px; }
+        }
+
+        /* ======================================================= */
+        /* CẤU HÌNH PHÓNG TO FULL MÀN HÌNH TỐI ƯU CHO TV MODE      */
         /* ======================================================= */
         body.tv-mode { background-color: var(--tv-bg-main) !important; overflow: hidden; }
         body.tv-mode .top-bar, body.tv-mode .marquee-box, body.tv-mode header h2, 
         body.tv-mode .tradingview-container, body.tv-mode footer, body.tv-mode .tv-toggle-btn,
         body.tv-mode .map-section, body.tv-mode .negotiable-box { display: none !important; }
         
-        body.tv-mode header { background: transparent; box-shadow: none; padding: 20px 40px 5px 40px; border-bottom: none; text-align: left; }
-        body.tv-mode header h1 { color: var(--tv-brand-txt); font-size: 60px; letter-spacing: 3px; }
-        body.tv-mode .tv-address-sub { display: block !important; color: var(--tv-addr-txt); font-size: 22px; font-weight: 500; margin-top: 6px; }
+        body.tv-mode header { background: transparent; box-shadow: none; padding: 25px 40px 5px 40px; border-bottom: none; text-align: left; }
+        body.tv-mode header h1 { color: var(--tv-brand-txt); font-size: 52px; letter-spacing: 2px; }
+        body.tv-mode .tv-address-sub { display: block !important; color: var(--tv-addr-txt); font-size: 20px; font-weight: 500; margin-top: 4px; }
 
-        body.tv-mode .tv-fixed-hotline { display: flex !important; position: absolute; top: 25px; right: 40px; background-color: var(--tv-hl-bg); color: var(--tv-hl-txt); border: 3px solid var(--tv-hl-border); padding: 15px 30px; font-size: 28px; font-weight: 900; border-radius: 40px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); align-items: center; }
+        body.tv-mode .tv-fixed-hotline { display: flex !important; position: absolute; top: 25px; right: 40px; background-color: var(--tv-hl-bg); color: var(--tv-hl-txt); border: 3px solid var(--tv-hl-border); padding: 12px 25px; font-size: 24px; font-weight: 900; border-radius: 40px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); align-items: center; }
         
         body.tv-mode .main-container { max-width: 98%; margin: 5px auto; padding: 0; }
         body.tv-mode .price-card { border: 3px solid var(--tv-card-border); background-color: var(--tv-card-bg); border-radius: 16px; }
-        body.tv-mode .card-header { font-size: 30px; padding: 12px; }
-        body.tv-mode .time-bar { font-size: 18px; padding: 8px; }
+        body.tv-mode .card-header { font-size: 26px; padding: 10px; }
+        body.tv-mode .time-bar { font-size: 16px; padding: 6px; }
         
-        body.tv-mode th { font-size: 24px; padding: 18px; background-color: var(--tv-th-bg); color: var(--tv-th-txt); }
+        body.tv-mode th { font-size: 20px; padding: 12px; background-color: var(--tv-th-bg); color: var(--tv-th-txt); }
         body.tv-mode th:not(:last-child) { border-right: 2px solid rgba(0,0,0,0.1); }
         
-        body.tv-mode td { font-size: 36px; padding: 22px 20px; color: var(--tv-td-txt); border-bottom: 2px solid var(--tv-td-border); }
+        body.tv-mode td { font-size: 26px; padding: 12px 15px; color: var(--tv-td-txt); border-bottom: 2px solid var(--tv-td-border); }
         body.tv-mode td:not(:last-child) { border-right: 2px solid var(--tv-td-border); }
-        body.tv-mode .gold-type { font-size: 32px; color: var(--tv-td-txt); }
+        body.tv-mode .gold-type { font-size: 23px; color: var(--tv-td-txt); }
         body.tv-mode .price-buy { color: #2f9e44 !important; }
         body.tv-mode .price-sell { color: #e03131 !important; }
         
-        body.tv-mode th:nth-child(4), body.tv-mode td:nth-child(4) { text-align: center; width: 12%; }
-        body.tv-mode .trend-icon { font-size: 55px !important; line-height: 1; margin-top: -5px; } 
+        body.tv-mode table th:nth-child(1), body.tv-mode table td:nth-child(1) { width: 40% !important; }
+        body.tv-mode table th:nth-child(2), body.tv-mode table td:nth-child(2) { width: 24% !important; }
+        body.tv-mode table th:nth-child(3), body.tv-mode table td:nth-child(3) { width: 24% !important; }
+        body.tv-mode table th:nth-child(4), body.tv-mode table td:nth-child(4) { width: 12% !important; text-align: center; }
+        body.tv-mode .trend-icon { font-size: 35px !important; line-height: 1; margin-top: -3px; } 
 
         body.tv-mode .tv-footer-container { display: block !important; position: fixed; bottom: 0; left: 0; width: 100%; background-color: var(--tv-mar-bg); border-top: 3px solid var(--tv-mar-border); padding: 15px 0; overflow: hidden; z-index: 9998; }
         body.tv-mode .tv-moving-text { display: inline-block; white-space: nowrap; color: var(--tv-mar-txt); font-size: 28px; font-weight: bold; letter-spacing: 2px; padding-left: 100%; animation: moveRightToLeft var(--tv-marquee-duration) linear infinite; }
@@ -186,10 +228,10 @@
         <table>
             <thead>
                 <tr>
-                    <th style="width: 40%; text-align: left; padding-left: 30px;">Sản phẩm vàng</th>
-                    <th style="width: 24%;">Mua vào (VNĐ/Chỉ)</th>
-                    <th style="width: 24%;">Bán ra (VNĐ/Chỉ)</th>
-                    <th style="width: 12%;">Xu hướng</th>
+                    <th>Sản phẩm vàng</th>
+                    <th>Mua vào<br><small style="font-size:9px;font-weight:normal;opacity:0.8;">(VNĐ/Chỉ)</small></th>
+                    <th>Bán ra<br><small style="font-size:9px;font-weight:normal;opacity:0.8;">(VNĐ/Chỉ)</small></th>
+                    <th>Xu hướng</th>
                 </tr>
             </thead>
             <tbody id="web-table-body"></tbody>
@@ -211,7 +253,6 @@
     </div>
 </div>
 
-<!-- KHU VỰC BẢN ĐỒ ĐÃ ĐƯỢC CHUYỂN ĐỔI CHUẨN TỪ LINK BẠN CUNG CẤP -->
 <div class="map-section">
     <h3>Hệ thống cửa hàng</h3>
     <div class="map-wrapper">
