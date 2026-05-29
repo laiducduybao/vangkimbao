@@ -5,58 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hệ Thống Quản Trị Động - Vàng Kim Bảo</title>
     <style>
-        :root {
-            --bordeaux: #6b0f1a;
-            --bordeaux-dark: #4a0911;
-            --gold: #d4af37;
-            --bg-light: #f8f9fa;
-        }
-
+        :root { --bordeaux: #6b0f1a; --bordeaux-dark: #4a0911; --gold: #d4af37; --bg-light: #f8f9fa; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
         body { background-color: var(--bg-light); color: #333; padding: 30px 15px; }
 
         /* MÀN HÌNH KHÓA */
-        .lock-screen {
-            max-width: 400px;
-            margin: 100px auto;
-            background: #ffffff;
-            padding: 40px 30px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            border-top: 5px solid var(--bordeaux);
-            text-align: center;
-        }
+        .lock-screen { max-width: 400px; margin: 100px auto; background: #ffffff; padding: 40px 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-top: 5px solid var(--bordeaux); text-align: center; }
         .lock-screen h2 { color: var(--bordeaux-dark); margin-bottom: 10px; font-size: 22px; text-transform: uppercase; }
         .lock-screen p { color: #666; font-size: 14px; margin-bottom: 25px; }
-        .lock-screen input[type="password"] {
-            width: 100%; padding: 12px 15px; font-size: 16px; border: 2px solid #ddd;
-            border-radius: 6px; margin-bottom: 20px; text-align: center; outline: none;
-        }
+        .lock-screen input[type="password"] { width: 100%; padding: 12px 15px; font-size: 16px; border: 2px solid #ddd; border-radius: 6px; margin-bottom: 20px; text-align: center; outline: none; }
         .lock-screen input[type="password"]:focus { border-color: var(--bordeaux); }
-        .lock-screen button {
-            background: var(--bordeaux); color: var(--gold); border: none; width: 100%;
-            padding: 12px; font-size: 16px; font-weight: bold; border-radius: 6px;
-            cursor: pointer; text-transform: uppercase;
-        }
+        .lock-screen button { background: var(--bordeaux); color: var(--gold); border: none; width: 100%; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; text-transform: uppercase; }
         .error-msg { color: #dc3545; font-size: 13px; margin-top: 10px; display: none; font-weight: 600; }
 
         /* NỘI DUNG QUẢN TRỊ */
         .admin-content { display: none; max-width: 900px; margin: 0 auto; }
 
-        .admin-header {
-            display: flex; justify-content: space-between; align-items: center;
-            background: linear-gradient(135deg, var(--bordeaux-dark) 0%, var(--bordeaux) 100%);
-            padding: 20px; border-radius: 10px; color: #fff; margin-bottom: 30px;
-            border-bottom: 3px solid var(--gold); box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, var(--bordeaux-dark) 0%, var(--bordeaux) 100%); padding: 20px; border-radius: 10px; color: #fff; margin-bottom: 30px; border-bottom: 3px solid var(--gold); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         .admin-header h1 { color: var(--gold); font-size: 24px; text-transform: uppercase; }
         .logout-btn { background: #6c757d; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
 
-        .panel-card {
-            background: white; border-radius: 10px; padding: 25px;
-            margin-bottom: 30px; border: 1px solid #e1e8ed; box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-        }
-        .panel-card h3 { color: var(--bordeaux); margin-bottom: 20px; border-left: 4px solid var(--gold); padding-left: 10px; font-size: 18px; }
+        .panel-card { background: white; border-radius: 10px; padding: 25px; margin-bottom: 30px; border: 1px solid #e1e8ed; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+        .panel-card h3 { color: var(--bordeaux); margin-bottom: 20px; border-left: 4px solid var(--gold); padding-left: 10px; font-size: 18px; text-transform: uppercase; font-weight: 800;}
         
         .row { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
         .col { flex: 1; min-width: 180px; display: flex; flex-direction: column; }
@@ -75,10 +45,17 @@
         .color-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
         .color-item { display: flex; align-items: center; justify-content: space-between; padding: 10px; background: #fdfdfd; border: 1px solid #eee; border-radius: 5px; }
         .color-item input[type="color"] { width: 40px; height: 30px; border: none; cursor: pointer; }
+
+        /* Nút lọc biểu đồ */
+        .chart-filters { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .btn-filter { background: #f4f6f8; border: 1px solid #ccc; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: bold; color: #555; transition: all 0.2s; }
+        .btn-filter:hover { background: #e1e8ed; }
+        .btn-filter.active { background: var(--bordeaux); color: var(--gold); border-color: var(--bordeaux); }
     </style>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -106,7 +83,18 @@
     </div>
 
     <div class="panel-card">
-        <h3>2. Cấu hình thông tin hiển thị trên màn hình TV</h3>
+        <h3>📊 2. Biểu đồ biến động giá (Bán ra)</h3>
+        <div class="chart-filters">
+            <button class="btn-filter" id="btn-day" onclick="updateChart('day')">Hôm nay</button>
+            <button class="btn-filter active" id="btn-week" onclick="updateChart('week')">7 Ngày qua</button>
+            <button class="btn-filter" id="btn-month" onclick="updateChart('month')">30 Ngày qua</button>
+            <button class="btn-filter" id="btn-year" onclick="updateChart('year')">1 Năm qua</button>
+        </div>
+        <canvas id="priceChart" height="120"></canvas>
+    </div>
+
+    <div class="panel-card">
+        <h3>3. Cấu hình thông tin hiển thị trên màn hình TV & Web</h3>
         <div class="row">
             <div class="col"><label>Tên thương hiệu lớn</label><input type="text" id="tv-brand" value="Vàng Kim Bảo"></div>
             <div class="col"><label>Dòng Địa chỉ</label><input type="text" id="tv-address" value="Số 259 Nguyễn Tất Thành, xã Nà Hang, tỉnh Tuyên Quang"></div>
@@ -123,12 +111,13 @@
             </div>
         </div>
         <div class="row">
-            <div class="col"><label>Nội dung dòng chữ chạy đáy</label><input type="text" id="tv-marquee" value="VÀNG BẠC KIM BẢO — GIỮ TÍN NHIỆM HƠN GIỮ VÀNG ——— CÔNG TY TNHH MTV THUẬN PHÁT TUYÊN QUANG ——— HOTLINE TRỢ GIÁ: 0989.865.333 — 0981.681.929"></div>
+            <div class="col" style="flex: 2;"><label>Nội dung dòng chữ chạy đáy</label><input type="text" id="tv-marquee" value="VÀNG BẠC KIM BẢO — GIỮ TÍN NHIỆM HƠN GIỮ VÀNG ——— CÔNG TY TNHH MTV THUẬN PHÁT TUYÊN QUANG ——— HOTLINE TRỢ GIÁ: 0989.865.333 — 0981.681.929"></div>
+            <div class="col" style="flex: 1;"><label>Ghi chú dưới bảng giá (Chỉ hiện Web)</label><input type="text" id="web-negotiable" value="Giá còn có thể thương lượng"></div>
         </div>
     </div>
 
     <div class="panel-card">
-        <h3>3. Studio phối màu toàn diện</h3>
+        <h3>4. Studio phối màu toàn diện</h3>
         <div class="color-grid">
             <div class="color-item"><label>Màu nền chính TV</label><input type="color" id="clr-bg-main" value="#4a0911"></div>
             <div class="color-item"><label>Màu chữ thương hiệu</label><input type="color" id="clr-brand-txt" value="#d4af37"></div>
@@ -154,7 +143,6 @@
 </div>
 
 <script>
-    // CẤU HÌNH FIREBASE MỚI NHẤT
     const firebaseConfig = {
         apiKey: "AIzaSyCsoGBzs2HLgvUazOJQY4kRqcQb3tUKNDY",
         authDomain: "vangkimbao.firebaseapp.com",
@@ -162,15 +150,16 @@
         projectId: "vangkimbao",
         storageBucket: "vangkimbao.firebasestorage.app",
         messagingSenderId: "453403966918",
-        appId: "1:453403966918:web:d4220c7bfbda6538ddc6c7",
-        measurementId: "G-7Y4XF22Q4H"
+        appId: "1:453403966918:web:d4220c7bfbda6538ddc6c7"
     };
     
-    // Khởi tạo Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
     const ADMIN_PASSWORD = "Dungh*inhieu86";
+    let currentSavedProducts = [];
+    let fullHistoryData = [];
+    let priceChartInstance = null;
 
     const defaultProducts = [
         { name: "Vàng Nhẫn Kim Bảo 9999", buy: "7,850,000", sell: "8,020,000" },
@@ -179,10 +168,9 @@
     ];
 
     window.onload = function() {
-        if (sessionStorage.getItem('isAdminLoggedIn') === 'true') {
-            showAdminDashboard();
-        }
+        if (sessionStorage.getItem('isAdminLoggedIn') === 'true') showAdminDashboard();
         loadCurrentSettings();
+        loadPriceHistory();
     };
 
     function verifyPassword() {
@@ -212,10 +200,7 @@
 
     function formatCurrencyInput(inputElement) {
         let value = inputElement.value.replace(/\D/g, "");
-        if (value === "") {
-            inputElement.value = "";
-            return;
-        }
+        if (value === "") { inputElement.value = ""; return; }
         inputElement.value = Number(value).toLocaleString('en-US');
     }
 
@@ -260,14 +245,30 @@
         const names = document.querySelectorAll('.input-g-name');
         const buys = document.querySelectorAll('.input-g-buy');
         const sells = document.querySelectorAll('.input-g-sell');
+        
+        const nowMs = Date.now();
 
         names.forEach((node, index) => {
             const nameVal = node.value.trim();
+            const sellValStr = sells[index].value.trim() || "0";
+            const sellValNum = parseInt(sellValStr.replace(/,/g, ''));
+
+            let trend = 'flat';
+            
+            const oldProduct = currentSavedProducts.find(p => p.name === nameVal);
+            if (oldProduct) {
+                const oldSellNum = parseInt(oldProduct.sell.replace(/,/g, ''));
+                if (sellValNum > oldSellNum) trend = 'up';
+                else if (sellValNum < oldSellNum) trend = 'down';
+            }
+
             if(nameVal !== "") {
                 goldData.push({
                     name: nameVal,
                     buy: buys[index].value.trim() || "0",
-                    sell: sells[index].value.trim() || "0"
+                    sell: sellValStr,
+                    trend: trend,
+                    last_updated: nowMs
                 });
             }
         });
@@ -287,6 +288,7 @@
             tv_txt_address: document.getElementById('tv-address').value,
             tv_txt_hotline: document.getElementById('tv-hotline').value,
             tv_txt_marquee: document.getElementById('tv-marquee').value,
+            web_txt_negotiable: document.getElementById('web-negotiable').value,
             tv_marquee_speed: document.getElementById('tv-marquee-speed').value,
             colors: {}
         };
@@ -296,11 +298,18 @@
             syncPayload.colors[key] = document.getElementById('clr-' + key).value;
         });
 
-        // Đẩy dữ liệu lên Firebase Database
         db.ref('kimbao_sync_data').set(syncPayload, (error) => {
             if (error) {
                 alert("❌ Lỗi đồng bộ đám mây: " + error.message);
             } else {
+                currentSavedProducts = goldData;
+                
+                const historyRef = db.ref('kimbao_price_history').push();
+                historyRef.set({
+                    timestamp: nowMs,
+                    data: goldData
+                });
+
                 alert(`🎉 ĐỒNG BỘ ĐÁM MÂY THÀNH CÔNG!\nDữ liệu bảng giá mới đã lập tức phát đến tất cả màn hình của khách hàng.`);
             }
         });
@@ -309,11 +318,12 @@
     function loadCurrentSettings() {
         document.getElementById('gold-items-container').innerHTML = '';
         
-        // Kéo dữ liệu từ máy chủ đám mây về khi mở trang
         db.ref('kimbao_sync_data').once('value').then((snapshot) => {
             const serverData = snapshot.val();
             
             let list = (serverData && serverData.vbtb_cloned_data) ? serverData.vbtb_cloned_data : defaultProducts;
+            currentSavedProducts = list;
+
             list.forEach(item => {
                 addNewProductRow(item.name, item.buy, item.sell);
             });
@@ -324,6 +334,7 @@
             if(serverData.tv_txt_address) document.getElementById('tv-address').value = serverData.tv_txt_address;
             if(serverData.tv_txt_hotline) document.getElementById('tv-hotline').value = serverData.tv_txt_hotline;
             if(serverData.tv_txt_marquee) document.getElementById('tv-marquee').value = serverData.tv_txt_marquee;
+            if(serverData.web_txt_negotiable) document.getElementById('web-negotiable').value = serverData.web_txt_negotiable;
             if(serverData.tv_marquee_speed) document.getElementById('tv-marquee-speed').value = serverData.tv_marquee_speed;
 
             if(serverData.colors) {
@@ -333,10 +344,101 @@
                 }
             }
         }).catch(err => {
-            console.error("Lỗi đọc dữ liệu đám mây ban đầu:", err);
-            defaultProducts.forEach(item => {
-                addNewProductRow(item.name, item.buy, item.sell);
+            defaultProducts.forEach(item => addNewProductRow(item.name, item.buy, item.sell));
+        });
+    }
+
+    function loadPriceHistory() {
+        db.ref('kimbao_price_history').on('value', snap => {
+            const data = snap.val();
+            fullHistoryData = [];
+            if(data) {
+                Object.keys(data).forEach(key => {
+                    fullHistoryData.push(data[key]);
+                });
+            }
+            updateChart('week');
+        });
+    }
+
+    function updateChart(timeframe) {
+        document.querySelectorAll('.btn-filter').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('btn-' + timeframe).classList.add('active');
+
+        const now = Date.now();
+        let limit = 0;
+        if(timeframe === 'day') limit = now - 24*60*60*1000;
+        if(timeframe === 'week') limit = now - 7*24*60*60*1000;
+        if(timeframe === 'month') limit = now - 30*24*60*60*1000;
+        if(timeframe === 'year') limit = now - 365*24*60*60*1000;
+
+        const filtered = fullHistoryData.filter(item => item.timestamp >= limit);
+
+        const labels = filtered.map(item => {
+            const d = new Date(item.timestamp);
+            if(timeframe === 'day') return `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+            return `${d.getDate()}/${d.getMonth()+1}`;
+        });
+
+        const productNames = new Set();
+        filtered.forEach(item => item.data.forEach(p => productNames.add(p.name)));
+
+        const colors = ['#d4af37', '#6b0f1a', '#28a745', '#007bff', '#6f42c1', '#e03131'];
+        let colorIdx = 0;
+
+        const datasets = Array.from(productNames).map(name => {
+            const dataPoints = filtered.map(item => {
+                const prod = item.data.find(p => p.name === name);
+                return prod ? parseInt(prod.sell.replace(/,/g, '')) : null;
             });
+            const color = colors[colorIdx % colors.length];
+            colorIdx++;
+            return {
+                label: name,
+                data: dataPoints,
+                borderColor: color,
+                backgroundColor: color,
+                fill: false,
+                tension: 0.1,
+                borderWidth: 2,
+                pointRadius: 3
+            };
+        });
+
+        const ctx = document.getElementById('priceChart').getContext('2d');
+        
+        if(priceChartInstance) {
+            priceChartInstance.destroy();
+        }
+
+        priceChartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) { label += ': '; }
+                                if (context.parsed.y !== null) {
+                                    label += new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(context.parsed.y);
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: { ticks: { callback: function(value) { return value.toLocaleString('vi-VN'); } } }
+                }
+            }
         });
     }
 </script>
