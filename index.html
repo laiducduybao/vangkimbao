@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vàng Kim Bảo - Thuận Phát Tuyên Quang</title>
     <style>
-        /* Hệ thống biến màu động nhận lệnh từ Admin */
         :root {
             --bordeaux: #6b0f1a;
             --bordeaux-dark: #4a0911;
@@ -13,7 +12,7 @@
             --gold-light: #fdfaf0;
             --text-dark: #222222;
 
-            /* Cấu hình TV mặc định (Sẽ bị Admin đè khi thay đổi) */
+            /* Cấu hình TV mặc định */
             --tv-bg-main: #4a0911;
             --tv-brand-txt: #d4af37;
             --tv-addr-txt: #ffffff;
@@ -32,147 +31,61 @@
             --tv-marquee-duration: 25s;
         }
 
-        * { 
-            box-sizing: border-box; 
-            margin: 0; 
-            padding: 0; 
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
-        }
-        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
         body { background-color: #f7f9fa; color: var(--text-dark); transition: background 0.3s; }
 
         /* Nút điều khiển TV Mode */
         .tv-toggle-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 99999;
-            background: rgba(107, 15, 26, 0.85);
-            color: #d4af37;
-            border: 2px solid #d4af37;
-            padding: 10px 18px;
-            font-size: 13px;
-            font-weight: bold;
-            border-radius: 30px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            transition: all 0.3s ease;
-            opacity: 0.5;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            position: fixed; bottom: 20px; right: 20px; z-index: 99999;
+            background: rgba(107, 15, 26, 0.85); color: #d4af37;
+            border: 2px solid #d4af37; padding: 10px 18px; font-size: 13px;
+            font-weight: bold; border-radius: 30px; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: all 0.3s ease;
+            opacity: 0.5; display: flex; align-items: center; gap: 6px;
         }
-        .tv-toggle-btn:hover { 
-            opacity: 1; 
-            background: #6b0f1a;
-            transform: scale(1.05);
-        }
+        .tv-toggle-btn:hover { opacity: 1; background: #6b0f1a; transform: scale(1.05); }
 
         /* Giao diện thông thường */
         .top-bar {
-            background: var(--bordeaux-dark);
-            color: #fff;
-            padding: 10px 20px;
-            font-size: 13px;
-            display: flex;
-            justify-content: space-between;
+            background: var(--bordeaux-dark); color: #fff; padding: 10px 20px;
+            font-size: 13px; display: flex; justify-content: space-between;
             border-bottom: 1px solid rgba(212, 175, 55, 0.3);
         }
         .top-bar span strong { color: var(--gold); }
         
         header {
             background: linear-gradient(135deg, var(--bordeaux-dark) 0%, var(--bordeaux) 100%);
-            padding: 35px 20px;
-            text-align: center;
-            border-bottom: 4px solid var(--gold);
-            position: relative;
+            padding: 35px 20px; text-align: center; border-bottom: 4px solid var(--gold); position: relative;
         }
         header h1 {
-            color: var(--gold);
-            font-size: 40px;
-            text-transform: uppercase;
-            font-weight: 800;
-            letter-spacing: 1px;
-            margin-bottom: 10px;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+            color: var(--gold); font-size: 40px; text-transform: uppercase; font-weight: 800;
+            letter-spacing: 1px; margin-bottom: 10px; text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
         }
-        header h2 {
-            color: #ffffff;
-            font-size: 15px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+        header h2 { color: #ffffff; font-size: 15px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
 
         .tv-address-sub, .tv-fixed-hotline { display: none; }
-
-        .marquee-box {
-            background-color: var(--gold);
-            color: var(--bordeaux-dark);
-            padding: 12px 0;
-            font-weight: 700;
-            font-size: 14px;
-        }
+        .marquee-box { background-color: var(--gold); color: var(--bordeaux-dark); padding: 12px 0; font-weight: 700; font-size: 14px; }
 
         /* Khung Bảng Giá */
-        .main-container {
-            max-width: 1100px;
-            margin: 40px auto 10px auto; 
-            padding: 0 20px;
-            transition: all 0.3s;
-        }
-        .price-card {
-            background: #ffffff;
-            border-radius: 12px;
-            border: 1px solid #e1e8ed;
-            overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-        }
-        .card-header {
-            background: var(--bordeaux);
-            color: var(--gold);
-            padding: 20px;
-            text-align: center;
-            font-size: 22px;
-            font-weight: 700;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-        }
+        .main-container { max-width: 1100px; margin: 40px auto 10px auto; padding: 0 20px; transition: all 0.3s; }
+        .price-card { background: #ffffff; border-radius: 12px; border: 1px solid #e1e8ed; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        .card-header { background: var(--bordeaux); color: var(--gold); padding: 20px; text-align: center; font-size: 22px; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 10px; }
         
-        .live-dot {
-            width: 10px;
-            height: 10px;
-            background-color: #ff3b30;
-            border-radius: 50%;
-            display: inline-block;
-            animation: blink 1.2s infinite;
-        }
+        .live-dot { width: 10px; height: 10px; background-color: #ff3b30; border-radius: 50%; display: inline-block; animation: blink 1.2s infinite; }
         @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+        .time-bar { text-align: center; padding: 12px; background-color: var(--gold-light); color: var(--bordeaux); font-style: italic; font-weight: 600; font-size: 13px; border-bottom: 1px solid #edf0f2; }
 
-        .time-bar {
-            text-align: center;
-            padding: 12px;
-            background-color: var(--gold-light);
-            color: var(--bordeaux);
-            font-style: italic;
-            font-weight: 600;
-            font-size: 13px;
-            border-bottom: 1px solid #edf0f2;
+        /* Ô thông báo Thương Lượng dưới bảng giá */
+        .negotiable-box {
+            background-color: #fff9db; color: #cc5de8; border: 1px dashed #f59f00;
+            padding: 14px; text-align: center; font-weight: 800; font-size: 16px;
+            border-radius: 8px; margin-top: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+            text-transform: uppercase; letter-spacing: 0.5px;
         }
 
         /* Bảng kẻ dọc */
         table { width: 100%; border-collapse: collapse; }
-        th { 
-            background-color: #f4f6f8; 
-            color: #555; 
-            padding: 16px; 
-            font-size: 14px; 
-            text-transform: uppercase; 
-            font-weight: 600;
-            border-bottom: 2px solid #e1e8ed;
-        }
+        th { background-color: #f4f6f8; color: #555; padding: 16px; font-size: 14px; text-transform: uppercase; font-weight: 600; border-bottom: 2px solid #e1e8ed; text-align: center; }
         th:not(:last-child) { border-right: 1px solid #dee2e6; }
 
         td { padding: 18px 16px; text-align: center; font-size: 17px; font-weight: 700; border-bottom: 1px solid #edf0f2; }
@@ -182,42 +95,20 @@
         .gold-type { color: var(--bordeaux); text-align: left; padding-left: 30px; }
         .price-buy { color: #2f9e44; }
         .price-sell { color: #e03131; }
+        .trend-icon { font-size: 18px; display: inline-block; vertical-align: middle; }
 
-        /* KHU VỰC KHUNG BIỂU ĐỒ TRADINGVIEW PHÍA DƯỚI BẢNG GIÁ */
-        .tradingview-container {
-            max-width: 1100px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-        .tradingview-box {
-            background: #ffffff;
-            border-radius: 12px;
-            border: 1px solid #e1e8ed;
-            overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-        }
-        .tradingview-header {
-            background: #222222;
-            color: #ffffff;
-            padding: 12px 20px;
-            font-size: 15px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .tradingview-dot {
-            width: 8px;
-            height: 8px;
-            background-color: #00ca4e;
-            border-radius: 50%;
-            display: inline-block;
-        }
+        /* KHU VỰC KHUNG BIỂU ĐỒ TRADINGVIEW */
+        .tradingview-container { max-width: 1100px; margin: 30px auto; padding: 0 20px; }
+        .tradingview-box { background: #ffffff; border-radius: 12px; border: 1px solid #e1e8ed; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        .tradingview-header { background: #222222; color: #ffffff; padding: 12px 20px; font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; }
+        .tradingview-dot { width: 8px; height: 8px; background-color: #00ca4e; border-radius: 50%; display: inline-block; }
+
+        /* BẢN ĐỒ GOOGLE MAPS */
+        .map-section { max-width: 1100px; margin: 40px auto; padding: 0 20px; text-align: center; }
+        .map-section h3 { color: var(--bordeaux); margin-bottom: 20px; font-size: 24px; text-transform: uppercase; font-weight: 800; border-bottom: 3px solid var(--gold); display: inline-block; padding-bottom: 10px; }
+        .map-wrapper { border-radius: 12px; overflow: hidden; border: 2px solid #e1e8ed; box-shadow: 0 10px 25px rgba(0,0,0,0.05); height: 400px; }
 
         .tv-footer-container { display: none; }
-
         footer { background: #1a0205; color: #ffffff; padding: 50px 20px; text-align: center; border-top: 5px solid var(--gold); margin-top: 50px; }
         footer h3 { color: var(--gold); font-size: 22px; text-transform: uppercase; margin-bottom: 20px; }
         .footer-hotline { background: var(--bordeaux); color: var(--gold); padding: 12px 30px; border-radius: 30px; display: inline-block; font-size: 20px; font-weight: 700; text-decoration: none; margin-top: 20px; }
@@ -225,116 +116,38 @@
         /* ======================================================= */
         /* CẤU HÌNH PHÓNG TO FULL MÀN HÌNH (TV MODE) */
         /* ======================================================= */
-        body.tv-mode {
-            background-color: var(--tv-bg-main) !important;
-            overflow: hidden;
-        }
-        body.tv-mode .top-bar,
-        body.tv-mode .marquee-box,
-        body.tv-mode header h2,
-        body.tv-mode .tradingview-container,
-        body.tv-mode footer,
-        body.tv-mode .tv-toggle-btn {
-            display: none !important;
-        }
+        body.tv-mode { background-color: var(--tv-bg-main) !important; overflow: hidden; }
+        body.tv-mode .top-bar, body.tv-mode .marquee-box, body.tv-mode header h2, 
+        body.tv-mode .tradingview-container, body.tv-mode footer, body.tv-mode .tv-toggle-btn,
+        body.tv-mode .map-section, body.tv-mode .negotiable-box { display: none !important; }
         
-        body.tv-mode header {
-            background: transparent;
-            box-shadow: none;
-            padding: 20px 40px 5px 40px;
-            border-bottom: none;
-            text-align: left;
-        }
-        body.tv-mode header h1 {
-            color: var(--tv-brand-txt);
-            font-size: 60px;
-            letter-spacing: 3px;
-        }
+        body.tv-mode header { background: transparent; box-shadow: none; padding: 20px 40px 5px 40px; border-bottom: none; text-align: left; }
+        body.tv-mode header h1 { color: var(--tv-brand-txt); font-size: 60px; letter-spacing: 3px; }
+        body.tv-mode .tv-address-sub { display: block !important; color: var(--tv-addr-txt); font-size: 22px; font-weight: 500; margin-top: 6px; }
 
-        body.tv-mode .tv-address-sub {
-            display: block !important;
-            color: var(--tv-addr-txt);
-            font-size: 22px;
-            font-weight: 500;
-            margin-top: 6px;
-        }
-
-        body.tv-mode .tv-fixed-hotline {
-            display: flex !important;
-            position: absolute;
-            top: 25px;
-            right: 40px;
-            background-color: var(--tv-hl-bg);
-            color: var(--tv-hl-txt);
-            border: 3px solid var(--tv-hl-border);
-            padding: 15px 30px;
-            font-size: 28px;
-            font-weight: 900;
-            border-radius: 40px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            align-items: center;
-        }
+        body.tv-mode .tv-fixed-hotline { display: flex !important; position: absolute; top: 25px; right: 40px; background-color: var(--tv-hl-bg); color: var(--tv-hl-txt); border: 3px solid var(--tv-hl-border); padding: 15px 30px; font-size: 28px; font-weight: 900; border-radius: 40px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); align-items: center; }
         
-        body.tv-mode .main-container {
-            max-width: 98%;
-            margin: 5px auto;
-            padding: 0;
-        }
-        body.tv-mode .price-card {
-            border: 3px solid var(--tv-card-border);
-            background-color: var(--tv-card-bg);
-            border-radius: 16px;
-        }
+        body.tv-mode .main-container { max-width: 98%; margin: 5px auto; padding: 0; }
+        body.tv-mode .price-card { border: 3px solid var(--tv-card-border); background-color: var(--tv-card-bg); border-radius: 16px; }
         body.tv-mode .card-header { font-size: 30px; padding: 12px; }
         body.tv-mode .time-bar { font-size: 18px; padding: 8px; }
         
-        body.tv-mode th {
-            font-size: 24px;
-            padding: 18px;
-            background-color: var(--tv-th-bg);
-            color: var(--tv-th-txt);
-        }
+        body.tv-mode th { font-size: 24px; padding: 18px; background-color: var(--tv-th-bg); color: var(--tv-th-txt); }
         body.tv-mode th:not(:last-child) { border-right: 2px solid rgba(0,0,0,0.1); }
         
-        body.tv-mode td { 
-            font-size: 36px; 
-            padding: 22px 20px; 
-            color: var(--tv-td-txt);
-            border-bottom: 2px solid var(--tv-td-border); 
-        }
+        body.tv-mode td { font-size: 36px; padding: 22px 20px; color: var(--tv-td-txt); border-bottom: 2px solid var(--tv-td-border); }
         body.tv-mode td:not(:last-child) { border-right: 2px solid var(--tv-td-border); }
         body.tv-mode .gold-type { font-size: 32px; color: var(--tv-td-txt); }
         body.tv-mode .price-buy { color: #2f9e44 !important; }
         body.tv-mode .price-sell { color: #e03131 !important; }
+        
+        body.tv-mode th:nth-child(4), body.tv-mode td:nth-child(4) { text-align: center; width: 12%; }
+        body.tv-mode .trend-icon { font-size: 55px !important; line-height: 1; margin-top: -5px; } 
 
-        body.tv-mode .tv-footer-container {
-            display: block !important;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: var(--tv-mar-bg);
-            border-top: 3px solid var(--tv-mar-border);
-            padding: 15px 0;
-            overflow: hidden;
-            z-index: 9998;
-        }
+        body.tv-mode .tv-footer-container { display: block !important; position: fixed; bottom: 0; left: 0; width: 100%; background-color: var(--tv-mar-bg); border-top: 3px solid var(--tv-mar-border); padding: 15px 0; overflow: hidden; z-index: 9998; }
+        body.tv-mode .tv-moving-text { display: inline-block; white-space: nowrap; color: var(--tv-mar-txt); font-size: 28px; font-weight: bold; letter-spacing: 2px; padding-left: 100%; animation: moveRightToLeft var(--tv-marquee-duration) linear infinite; }
 
-        body.tv-mode .tv-moving-text {
-            display: inline-block;
-            white-space: nowrap;
-            color: var(--tv-mar-txt);
-            font-size: 28px;
-            font-weight: bold;
-            letter-spacing: 2px;
-            padding-left: 100%; 
-            animation: moveRightToLeft var(--tv-marquee-duration) linear infinite;
-        }
-
-        @keyframes moveRightToLeft {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-100%); }
-        }
+        @keyframes moveRightToLeft { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
     </style>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -352,8 +165,8 @@
 </div>
 
 <header>
-    <h1 id="tv-live-brand">Vàng Bạc Kim Bảo</h1>
-    <h2>Nơi Giao Dịch Vàng Uy Tín - Tin Cậy</h2>
+    <h1 id="tv-live-brand">Vàng Kim Bảo</h1>
+    <h2>Công ty TNHH MTV Thuận Phát Tuyên Quang</h2>
     <div class="tv-address-sub" id="tv-live-address">Đang tải địa chỉ...</div>
     <div class="tv-fixed-hotline" id="tv-live-hotline">HOTLINE</div>
 </header>
@@ -373,14 +186,17 @@
         <table>
             <thead>
                 <tr>
-                    <th style="width: 45%; text-align: left; padding-left: 30px;">Sản phẩm vàng</th>
-                    <th style="width: 27.5%;">Mua vào (VNĐ/Chỉ)</th>
-                    <th style="width: 27.5%;">Bán ra (VNĐ/Chỉ)</th>
+                    <th style="width: 40%; text-align: left; padding-left: 30px;">Sản phẩm vàng</th>
+                    <th style="width: 24%;">Mua vào (VNĐ/Chỉ)</th>
+                    <th style="width: 24%;">Bán ra (VNĐ/Chỉ)</th>
+                    <th style="width: 12%;">Xu hướng</th>
                 </tr>
             </thead>
             <tbody id="web-table-body"></tbody>
         </table>
     </div>
+
+    <div class="negotiable-box" id="web-live-negotiable">Giá còn có thể thương lượng</div>
 </div>
 
 <div class="tradingview-container">
@@ -390,10 +206,16 @@
         </div>
         <div class="tradingview-widget-container" style="height: 400px; width: 100%;">
             <iframe src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_chart&symbol=FX_IDC%3AXAUUSD&interval=D&symboledit=0&saveimage=1&toolbarbg=f1f3f6&studies=%5B%5D&theme=light&style=1&timezone=Asia%2FHo_Chi_Minh&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=vi&utm_source=localhost&utm_medium=widget&utm_campaign=chart&utm_term=FX_IDC%3AXAUUSD" 
-                    style="width: 100%; height: 100%; border: none; margin: 0; padding: 0;" 
-                    allowfullscreen>
-            </iframe>
+                    style="width: 100%; height: 100%; border: none; margin: 0; padding: 0;" allowfullscreen></iframe>
         </div>
+    </div>
+</div>
+
+<div class="map-section">
+    <h3>Hệ thống cửa hàng</h3>
+    <div class="map-wrapper">
+        <iframe src="https://maps.google.com/maps?q=259%20Nguy%E1%BB%85n%20T%E1%BA%A5t%20Th%C3%A0nh,%20N%C3%A0%20Hang,%20Tuy%C3%AAn%20Quang&t=&z=16&ie=UTF8&iwloc=&output=embed" 
+                width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
     </div>
 </div>
 
@@ -410,7 +232,6 @@
 </footer>
 
 <script>
-    // CẤU HÌNH FIREBASE MỚI NHẤT
     const firebaseConfig = {
         apiKey: "AIzaSyCsoGBzs2HLgvUazOJQY4kRqcQb3tUKNDY",
         authDomain: "vangkimbao.firebaseapp.com",
@@ -418,11 +239,9 @@
         projectId: "vangkimbao",
         storageBucket: "vangkimbao.firebasestorage.app",
         messagingSenderId: "453403966918",
-        appId: "1:453403966918:web:d4220c7bfbda6538ddc6c7",
-        measurementId: "G-7Y4XF22Q4H"
+        appId: "1:453403966918:web:d4220c7bfbda6538ddc6c7"
     };
 
-    // Khởi tạo Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
@@ -432,7 +251,6 @@
         { name: "Vàng Công Nghệ Ý 18K", buy: "5,800,000", sell: "6,050,000" }
     ];
 
-    // LẮNG NGHE REAL-TIME DỮ LIỆU ĐÁM MÂY TỪ FIREBASE
     db.ref('kimbao_sync_data').on('value', (snapshot) => {
         const serverData = snapshot.val();
         
@@ -441,28 +259,36 @@
         
         const tbody = document.getElementById('web-table-body');
         tbody.innerHTML = '';
+        const now = Date.now();
 
         list.forEach(item => {
+            let trendIcon = '<span class="trend-icon" style="color: #d4af37;">▶</span>';
+            
+            if (item.last_updated && (now - item.last_updated) <= 8 * 60 * 60 * 1000) {
+                if (item.trend === 'up') trendIcon = '<span class="trend-icon" style="color: #2f9e44;">▲</span>';
+                else if (item.trend === 'down') trendIcon = '<span class="trend-icon" style="color: #e03131;">▼</span>';
+            }
+
             tbody.innerHTML += `<tr>
                 <td class="gold-type"><strong>${item.name}</strong></td>
                 <td class="price-buy">${item.buy}</td>
                 <td class="price-sell">${item.sell}</td>
+                <td>${trendIcon}</td>
             </tr>`;
         });
         
         document.getElementById('live-time').innerText = "Cập nhật hệ thống lúc: " + (localTime ? localTime : "Mặc định hệ thống");
 
-        if(!serverData) return; // Nếu database trống thì giữ nguyên CSS mặc định
+        if(!serverData) return;
 
         document.getElementById('tv-live-brand').innerText = serverData.tv_txt_brand || "Vàng Kim Bảo";
         document.getElementById('tv-live-address').innerText = serverData.tv_txt_address || "Số 259 Nguyễn Tất Thành, xã Nà Hang, tỉnh Tuyên Quang";
         document.getElementById('tv-live-hotline').innerText = serverData.tv_txt_hotline || "HOTLINE TRỢ GIÁ: 0989.865.333";
+        document.getElementById('web-live-negotiable').innerText = serverData.web_txt_negotiable || "Giá còn có thể thương lượng";
         
         const marqueeTxt = serverData.tv_txt_marquee || "VÀNG BẠC KIM BẢO — GIỮ TÍN NHIỆM HƠN GIỮ VÀNG ——— HOTLINE TRỢ GIÁ: 0989.865.333";
         const marqueeDiv = document.getElementById('tv-live-marquee');
-        if(marqueeDiv.innerText !== marqueeTxt) {
-            marqueeDiv.innerText = marqueeTxt;
-        }
+        if(marqueeDiv.innerText !== marqueeTxt) marqueeDiv.innerText = marqueeTxt;
 
         const root = document.documentElement;
         root.style.setProperty('--tv-marquee-duration', serverData.tv_marquee_speed || "25s");
@@ -486,9 +312,7 @@
     }
 
     document.addEventListener('fullscreenchange', () => {
-        if (!document.fullscreenElement) {
-            document.body.classList.remove('tv-mode');
-        }
+        if (!document.fullscreenElement) document.body.classList.remove('tv-mode');
     });
 
     window.addEventListener('keydown', function(e) {
