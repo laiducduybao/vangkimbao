@@ -309,7 +309,7 @@
             // LOGIC KIỂM TRA 8 TIẾNG:
             // 8 tiếng * 60 phút * 60 giây * 1000 mili-giây = 28,800,000
             // Nếu thời gian kể từ lần cập nhật cuối cùng nhỏ hơn 8 tiếng, mới hiện mũi tên Xanh / Đỏ
-            if (item.last_updated && (now - item.last_updated) <= 8 * 60 * 60 * 1000) {
+            if (item.last_updated && (now - item.last_updated) <= 4 * 60 * 60 * 1000) {
                 if (item.trend === 'up') {
                     trendIcon = '<span class="trend-icon" style="color: #2f9e44;">▲</span>';
                 } else if (item.trend === 'down') {
