@@ -61,7 +61,7 @@
         .color-item { display: flex; align-items: center; justify-content: space-between; padding: 10px; background: #fdfdfd; border: 1px solid #eee; border-radius: 5px; }
         .color-item input[type="color"] { width: 40px; height: 30px; border: none; cursor: pointer; }
 
-        .chart-filters { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .chart-filters { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
         .btn-filter { background: #f4f6f8; border: 1px solid #ccc; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: bold; color: #555; transition: all 0.2s; }
         .btn-filter:hover { background: #e1e8ed; }
         .btn-filter.active { background: var(--bordeaux); color: var(--gold); border-color: var(--bordeaux); }
@@ -99,6 +99,9 @@
     <div class="panel-card">
         <h3>📊 2. Biểu đồ biến động giá (Bán ra)</h3>
         <div class="chart-filters">
+            <select id="productFilter" class="btn-filter" onchange="updateChart(currentChartTimeframe)" style="margin-right: 15px; cursor: pointer; font-weight: bold; padding: 8px 10px;">
+                <option value="all">Tất cả sản phẩm</option>
+            </select>
             <button class="btn-filter" id="btn-day" onclick="updateChart('day')">Hôm nay</button>
             <button class="btn-filter active" id="btn-week" onclick="updateChart('week')">7 Ngày qua</button>
             <button class="btn-filter" id="btn-month" onclick="updateChart('month')">30 Ngày qua</button>
@@ -174,6 +177,7 @@
     let currentSavedProducts = [];
     let fullHistoryData = [];
     let priceChartInstance = null;
+    let currentChartTimeframe = 'week'; // Thêm biến lưu mốc thời gian hiện tại
 
     const defaultProducts = [
         { name: "Vàng Nhẫn Kim Bảo 9999", buy: "7,850,000", sell: "8,020,000", showWeb: true, showTv: true },
@@ -430,7 +434,10 @@
     }
 
     function updateChart(timeframe) {
-        document.querySelectorAll('.btn-filter').forEach(btn => btn.classList.remove('active'));
+        currentChartTimeframe = timeframe; // Cập nhật mốc thời gian
+
+        // Bỏ qua thẻ Select khi cập nhật class active cho nút bấm
+        document.querySelectorAll('.btn-filter:not(select)').forEach(btn => btn.classList.remove('active'));
         document.getElementById('btn-' + timeframe).classList.add('active');
 
         const now = Date.now();
@@ -451,10 +458,34 @@
         const productNames = new Set();
         filtered.forEach(item => item.data.forEach(p => productNames.add(p.name)));
 
+        // Tự động cập nhật danh sách option cho Select dựa trên dữ liệu sản phẩm
+        const selectEl = document.getElementById('productFilter');
+        const currentSelected = selectEl.value;
+        selectEl.innerHTML = '<option value="all">Tất cả sản phẩm</option>';
+        productNames.forEach(name => {
+            const option = document.createElement('option');
+            option.value = name;
+            option.textContent = name;
+            selectEl.appendChild(option);
+        });
+        // Giữ lại lựa chọn hiện tại nếu nó vẫn tồn tại trong danh sách
+        if (Array.from(productNames).includes(currentSelected)) {
+            selectEl.value = currentSelected;
+        } else {
+            selectEl.value = 'all';
+        }
+
         const colors = ['#d4af37', '#6b0f1a', '#28a745', '#007bff', '#6f42c1', '#e03131'];
         let colorIdx = 0;
 
-        const datasets = Array.from(productNames).map(name => {
+        // Xử lý logic lọc biểu đồ: NẾU người dùng chọn 1 sản phẩm cụ thể thì chỉ hiện món đó
+        const selectedProduct = selectEl.value;
+        let displayNames = Array.from(productNames);
+        if (selectedProduct !== 'all') {
+            displayNames = [selectedProduct];
+        }
+
+        const datasets = displayNames.map(name => {
             const dataPoints = filtered.map(item => {
                 const prod = item.data.find(p => p.name === name);
                 return prod ? parseInt(prod.sell.replace(/,/g, '')) : null;
