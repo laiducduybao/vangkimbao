@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- CÁC THẺ QUAN TRỌNG ĐỂ ẨN THANH ĐỊA CHỈ TRÊN TIVI/MOBILE -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -51,6 +50,30 @@
             opacity: 0.5; display: flex; align-items: center; gap: 6px;
         }
         .tv-toggle-btn:hover { opacity: 1; background: #6b0f1a; transform: scale(1.05); }
+
+        /* Bảng hiển thị nhập mật khẩu (Custom Modal) */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 100000; justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background: #fff; padding: 30px; border-radius: 12px; text-align: center;
+            max-width: 350px; width: 90%; box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+        .modal-content h3 { color: var(--bordeaux); margin-bottom: 20px; text-transform: uppercase; font-size: 18px;}
+        .modal-content input {
+            width: 100%; padding: 12px; margin-bottom: 20px; border: 2px solid #edf0f2;
+            border-radius: 6px; font-size: 16px; text-align: center; outline: none;
+            transition: border 0.3s;
+        }
+        .modal-content input:focus { border-color: var(--gold); }
+        .modal-btn {
+            background: var(--bordeaux); color: var(--gold); padding: 12px 20px; border: none;
+            border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 16px; width: 100%;
+            transition: background 0.3s;
+        }
+        .modal-btn:hover { background: var(--bordeaux-dark); }
+        .modal-close { margin-top: 15px; color: #777; cursor: pointer; font-size: 14px; display: inline-block; text-decoration: underline; }
 
         /* Giao diện thông thường (Máy tính / iPad lớn) */
         .top-bar {
@@ -164,7 +187,7 @@
         
         body.tv-mode .top-bar, body.tv-mode .marquee-box, body.tv-mode header h2, 
         body.tv-mode .tradingview-container, body.tv-mode footer, body.tv-mode .tv-toggle-btn,
-        body.tv-mode .map-section, body.tv-mode .negotiable-box { display: none !important; }
+        body.tv-mode .map-section, body.tv-mode .negotiable-box, body.tv-mode .modal-overlay { display: none !important; }
         
         body.tv-mode header { background: transparent; box-shadow: none; padding: 25px 40px 5px 40px; border-bottom: none; text-align: left; }
         body.tv-mode header h1 { color: var(--tv-brand-txt); font-size: 52px; letter-spacing: 2px; }
@@ -209,6 +232,16 @@
 <button class="tv-toggle-btn" id="tvBtn" onclick="toggleTVMode()">
     <span>📺</span> CHẾ ĐỘ TV FULL MÀN HÌNH
 </button>
+
+<div class="modal-overlay" id="passwordModal">
+    <div class="modal-content">
+        <h3>Hệ thống trung tâm</h3>
+        <p style="font-size: 14px; color: #555; margin-bottom: 15px;">Vui lòng nhập mật khẩu xác thực:</p>
+        <input type="password" id="tvPasswordInput" placeholder="Nhập mật khẩu..." autocomplete="off">
+        <button class="modal-btn" onclick="submitPassword()">Xác nhận kích hoạt</button>
+        <span class="modal-close" onclick="closePasswordModal()">Hủy bỏ</span>
+    </div>
+</div>
 
 <div class="top-bar">
     <span>Chào mừng quý khách đến với Hệ thống thương hiệu số <strong>Vàng Kim Bảo</strong></span>
@@ -296,7 +329,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // Biến lưu trữ mật khẩu thời gian thực kết nối với trang Admin
+    // Biến lưu trữ mật khẩu
     let currentTvPassword = "031220"; 
 
     const fallbackData = [
@@ -342,7 +375,6 @@
 
         if(!serverData) return;
 
-        // Cập nhật cấu hình mật khẩu động từ trường tv_password gửi từ admin lên Firebase
         if (serverData.tv_password) {
             currentTvPassword = serverData.tv_password;
         }
@@ -366,20 +398,20 @@
         }
     });
 
-    // Hàm gọi Fullscreen nâng cao hỗ trợ đa nền tảng phần cứng Smart TV
+    // Hàm gọi Fullscreen nâng cao
     function enterFullscreenMax(element) {
         if (element.requestFullscreen) {
             element.requestFullscreen();
-        } else if (element.webkitRequestFullscreen) { /* Safari / Tizen / WebOS Chrome */
+        } else if (element.webkitRequestFullscreen) {
             element.webkitRequestFullscreen();
-        } else if (element.mozRequestFullScreen) { /* Firefox older */
+        } else if (element.mozRequestFullScreen) {
             element.mozRequestFullScreen();
-        } else if (element.msRequestFullscreen) { /* IE / Edge older */
+        } else if (element.msRequestFullscreen) {
             element.msRequestFullscreen();
         }
     }
 
-    // Hàm thoát Fullscreen nâng cao cho TV
+    // Hàm thoát Fullscreen
     function exitFullscreenMax() {
         if (document.exitFullscreen) {
             document.exitFullscreen();
@@ -392,25 +424,43 @@
         }
     }
 
+    // Xử lý bật tắt Modal Mật Khẩu
     function toggleTVMode() {
         const body = document.body;
         if(!body.classList.contains('tv-mode')) {
-            let pass = prompt("HỆ THỐNG TRUNG TÂM:\nVui lòng nhập mật khẩu xác thực để kích hoạt TV Mode:");
-            
-            // Đối chiếu với mật khẩu lấy từ cơ sở dữ liệu thời gian thực
-            if (pass !== currentTvPassword) {
-                alert("❌ Mật khẩu bảo mật không chính xác! Thao tác bị hủy bỏ.");
-                return;
-            }
-            enterFullscreenMax(document.documentElement);
-            body.classList.add('tv-mode');
+            // Mở modal thay vì dùng prompt
+            document.getElementById('passwordModal').style.display = 'flex';
+            document.getElementById('tvPasswordInput').value = '';
+            document.getElementById('tvPasswordInput').focus();
         } else {
             exitFullscreenMax();
             body.classList.remove('tv-mode');
         }
     }
 
-    // Đảm bảo đồng bộ khi thoát bằng phím cứng trên Remote TV hoặc phím ESC điều hướng hệ thống
+    function closePasswordModal() {
+        document.getElementById('passwordModal').style.display = 'none';
+    }
+
+    // Xử lý khi xác nhận mật khẩu
+    function submitPassword() {
+        const pass = document.getElementById('tvPasswordInput').value;
+        if (pass !== currentTvPassword) {
+            alert("❌ Mật khẩu bảo mật không chính xác!");
+            return;
+        }
+        
+        // Mật khẩu đúng -> Đóng modal và gọi lệnh fullscreen trực tiếp
+        closePasswordModal();
+        enterFullscreenMax(document.documentElement);
+        document.body.classList.add('tv-mode');
+    }
+
+    // Cho phép ấn Enter để xác nhận mật khẩu
+    document.getElementById('tvPasswordInput').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') submitPassword();
+    });
+
     const handleFullscreenChange = () => {
         if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
             document.body.classList.remove('tv-mode');
@@ -421,7 +471,6 @@
     document.addEventListener('mozfullscreenchange', handleFullscreenChange);
     document.addEventListener('MSFullscreenChange', handleFullscreenChange);
 
-    // Lắng nghe phím hệ thống
     window.addEventListener('keydown', function(e) {
         if (e.key === 'f' || e.key === 'F') {
             toggleTVMode();
@@ -430,6 +479,7 @@
         if (e.key === 'Escape') {
             exitFullscreenMax();
             document.body.classList.remove('tv-mode');
+            closePasswordModal();
         }
     });
 </script>
