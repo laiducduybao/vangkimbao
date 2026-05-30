@@ -154,6 +154,7 @@
         /* CẤU HÌNH PHÓNG TO FULL MÀN HÌNH TỐI ƯU CHO TV MODE      */
         /* ======================================================= */
         body.tv-mode { background-color: var(--tv-bg-main) !important; overflow: hidden; }
+        
         body.tv-mode .top-bar, body.tv-mode .marquee-box, body.tv-mode header h2, 
         body.tv-mode .tradingview-container, body.tv-mode footer, body.tv-mode .tv-toggle-btn,
         body.tv-mode .map-section, body.tv-mode .negotiable-box { display: none !important; }
@@ -172,7 +173,6 @@
         body.tv-mode th { font-size: 24px; padding: 12px; background-color: var(--tv-th-bg); color: var(--tv-th-txt); }
         body.tv-mode th:not(:last-child) { border-right: 2px solid rgba(0,0,0,0.1); }
         
-        /* CỠ CHỮ LỚN, ĐẬM, ĐẢM BẢO NHÌN RÕ TỪ XA TRÊN MÀN HÌNH TV TRỰC QUAN */
         body.tv-mode td { font-size: 34px; padding: 14px 15px; color: var(--tv-td-txt); border-bottom: 2px solid var(--tv-td-border); font-weight: 800; }
         body.tv-mode td:not(:last-child) { border-right: 2px solid var(--tv-td-border); }
         body.tv-mode .gold-type { font-size: 30px; color: var(--tv-td-txt); font-weight: 800; }
@@ -190,7 +190,6 @@
 
         @keyframes moveRightToLeft { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-        /* BƯỚC 1: BỘ LỌC ẨN/HIỆN LINH HOẠT THEO CHẾ ĐỘ MÀN HÌNH */
         body:not(.tv-mode) tr.hide-web { display: none !important; }
         body.tv-mode tr.hide-tv { display: none !important; }
     </style>
@@ -290,6 +289,9 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    // Biến lưu trữ mật khẩu thời gian thực kết nối với trang Admin
+    let currentTvPassword = "Dungh*inhieu86"; 
+
     const fallbackData = [
         { name: "Vàng Nhẫn Kim Bảo 9999", buy: "7,850,000", sell: "8,020,000" },
         { name: "Vàng Nữ Trang 24K", buy: "7,700,000", sell: "7,950,000" },
@@ -307,10 +309,8 @@
         const now = Date.now();
 
         list.forEach(item => {
-            // MẶC ĐỊNH TRẢ VỀ MŨI TÊN MÀU VÀNG CHỈ SANG PHẢI (Khi quá 8 tiếng)
             let trendIcon = '<span class="trend-icon" style="color: #d4af37;">▶</span>';
             
-            // BƯỚC 2A: ĐIỀU CHỈNH CHÍNH XÁC LOGIC HẸN GIỜ XU HƯỚNG 8 TIẾNG (8 * 60 * 60 * 1000 ms)
             if (item.last_updated && (now - item.last_updated) <= 8 * 60 * 60 * 1000) {
                 if (item.trend === 'up') {
                     trendIcon = '<span class="trend-icon" style="color: #2f9e44;">▲</span>';
@@ -319,7 +319,6 @@
                 }
             }
 
-            // BƯỚC 2B: THIẾT LẬP CLASS PHÂN LOẠI ĐỂ ẨN HIỆN THEO ĐIỀU KHIỂN ĐỘNG TỪ TRANG ADMIN
             let rowClass = "";
             if (item.showWeb === false) rowClass += " hide-web";
             if (item.showTv === false) rowClass += " hide-tv";
@@ -335,6 +334,11 @@
         document.getElementById('live-time').innerText = "Cập nhật hệ thống lúc: " + (localTime ? localTime : "Mặc định hệ thống");
 
         if(!serverData) return;
+
+        // Cập nhật cấu hình mật khẩu động từ trường tv_password gửi từ admin lên Firebase
+        if (serverData.tv_password) {
+            currentTvPassword = serverData.tv_password;
+        }
 
         document.getElementById('tv-live-brand').innerText = serverData.tv_txt_brand || "Vàng Kim Bảo";
         document.getElementById('tv-live-address').innerText = serverData.tv_txt_address || "Số 259 Nguyễn Tất Thành, xã Nà Hang, tỉnh Tuyên Quang";
@@ -355,30 +359,71 @@
         }
     });
 
-    // BƯỚC 3: MÃ HÓA MẬT KHẨU BẢO VỆ CHO NÚT KÍCH HOẠT CHẾ ĐỘ FULL MÀN HÌNH (TV MODE)
+    // Hàm gọi Fullscreen nâng cao hỗ trợ đa nền tảng phần cứng Smart TV
+    function enterFullscreenMax(element) {
+        if (element.requestFullscreen) {
+            element.requestFullscreen();
+        } else if (element.webkitRequestFullscreen) { /* Safari / Tizen / WebOS Chrome */
+            element.webkitRequestFullscreen();
+        } else if (element.mozRequestFullScreen) { /* Firefox older */
+            element.mozRequestFullScreen();
+        } else if (element.msRequestFullscreen) { /* IE / Edge older */
+            element.msRequestFullscreen();
+        }
+    }
+
+    // Hàm thoát Fullscreen nâng cao cho TV
+    function exitFullscreenMax() {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        }
+    }
+
     function toggleTVMode() {
         const body = document.body;
         if(!body.classList.contains('tv-mode')) {
-            // Yêu cầu nhập mật khẩu trùng khớp với mật khẩu quản trị hệ thống
             let pass = prompt("HỆ THỐNG TRUNG TÂM:\nVui lòng nhập mật khẩu xác thực để kích hoạt TV Mode:");
-            if (pass !== "Dungh*inhieu86") {
+            
+            // Đối chiếu với mật khẩu lấy từ cơ sở dữ liệu thời gian thực
+            if (pass !== currentTvPassword) {
                 alert("❌ Mật khẩu bảo mật không chính xác! Thao tác bị hủy bỏ.");
                 return;
             }
-            if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
+            enterFullscreenMax(document.documentElement);
             body.classList.add('tv-mode');
         } else {
-            if (document.exitFullscreen) document.exitFullscreen();
+            exitFullscreenMax();
             body.classList.remove('tv-mode');
         }
     }
 
-    document.addEventListener('fullscreenchange', () => {
-        if (!document.fullscreenElement) document.body.classList.remove('tv-mode');
-    });
+    // Đảm bảo đồng bộ khi thoát bằng phím cứng trên Remote TV hoặc phím ESC điều hướng hệ thống
+    const handleFullscreenChange = () => {
+        if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
+            document.body.classList.remove('tv-mode');
+        }
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
 
+    // Lắng nghe phím hệ thống
     window.addEventListener('keydown', function(e) {
-        if (e.key === 'f' || e.key === 'F') toggleTVMode();
+        if (e.key === 'f' || e.key === 'F') {
+            toggleTVMode();
+        }
+        
+        if (e.key === 'Escape') {
+            exitFullscreenMax();
+            document.body.classList.remove('tv-mode');
+        }
     });
 </script>
 </body>
