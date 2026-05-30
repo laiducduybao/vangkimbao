@@ -29,14 +29,29 @@
         .panel-card h3 { color: var(--bordeaux); margin-bottom: 20px; border-left: 4px solid var(--gold); padding-left: 10px; font-size: 18px; text-transform: uppercase; font-weight: 800;}
         
         .row { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
-        .col { flex: 1; min-width: 180px; display: flex; flex-direction: column; }
+        .col { flex: 1; min-width: 180px; display: flex; flex-direction: column; justify-content: center;}
         label { font-size: 13px; font-weight: 700; color: #555; margin-bottom: 6px; text-transform: uppercase; }
         input[type="text"], select { padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 15px; font-weight: 600; }
         
+        /* GIAO DIỆN HÀNG SẢN PHẨM MỚI */
         .gold-row { background: #fffcf5; padding: 15px; border-radius: 6px; border: 1px solid #f3e9d2; margin-bottom: 15px; position: relative; }
         .gold-row-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px dashed #f3e9d2; padding-bottom: 5px; }
         .gold-row-title { font-weight: bold; color: var(--bordeaux-dark); font-size: 14px; text-transform: uppercase; }
         
+        /* BOX ĐIỀU CHỈNH GIÁ */
+        .price-input-group { display: flex; align-items: stretch; border: 1px solid #ccc; border-radius: 5px; overflow: hidden; background: #fff; height: 40px;}
+        .price-input-group input { border: none; flex: 1; padding: 0 10px; min-width: 0; outline: none; font-size: 15px; font-weight: 600;}
+        .price-input-group input:focus { background: #fdfaf0; }
+        .price-spinners { display: flex; flex-direction: column; width: 34px; background: #e9ecef; border-left: 1px solid #ccc; }
+        .price-spinners button { flex: 1; border: none; background: transparent; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center; padding: 0; color: #555;}
+        .price-spinners button:hover { background: #d4af37; color: #fff; }
+        .price-spinners button:first-child { border-bottom: 1px solid #ccc; }
+
+        /* STYLE CHECKBOX HIỂN THỊ */
+        .display-options { display: flex; gap: 20px; background: #fff; padding: 8px 15px; border-radius: 5px; border: 1px solid #e1e8ed; margin-top: 5px; }
+        .display-options label { margin-bottom: 0; display: flex; align-items: center; gap: 8px; cursor: pointer; text-transform: none; color: #222; font-weight: 600; font-size: 14px;}
+        .display-options input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--bordeaux); cursor: pointer; }
+
         .btn-delete-item { background: #dc3545; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; }
         .btn-add-item { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-size: 14px; font-weight: bold; cursor: pointer; margin-bottom: 20px; display: inline-flex; align-items: center; gap: 5px; }
         .btn-submit { background: #28a745; color: white; border: none; padding: 15px; font-size: 18px; font-weight: bold; width: 100%; border-radius: 6px; cursor: pointer; text-transform: uppercase; box-shadow: 0 4px 6px rgba(40, 167, 69, 0.2); }
@@ -46,7 +61,6 @@
         .color-item { display: flex; align-items: center; justify-content: space-between; padding: 10px; background: #fdfdfd; border: 1px solid #eee; border-radius: 5px; }
         .color-item input[type="color"] { width: 40px; height: 30px; border: none; cursor: pointer; }
 
-        /* Nút lọc biểu đồ */
         .chart-filters { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
         .btn-filter { background: #f4f6f8; border: 1px solid #ccc; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: bold; color: #555; transition: all 0.2s; }
         .btn-filter:hover { background: #e1e8ed; }
@@ -162,9 +176,9 @@
     let priceChartInstance = null;
 
     const defaultProducts = [
-        { name: "Vàng Nhẫn Kim Bảo 9999", buy: "7,850,000", sell: "8,020,000" },
-        { name: "Vàng Nữ Trang 24K", buy: "7,700,000", sell: "7,950,000" },
-        { name: "Vàng Công Nghệ Ý 18K", buy: "5,800,000", sell: "6,050,000" }
+        { name: "Vàng Nhẫn Kim Bảo 9999", buy: "7,850,000", sell: "8,020,000", showWeb: true, showTv: true },
+        { name: "Vàng Nữ Trang 24K", buy: "7,700,000", sell: "7,950,000", showWeb: true, showTv: true },
+        { name: "Vàng Công Nghệ Ý 18K", buy: "5,800,000", sell: "6,050,000", showWeb: true, showTv: true }
     ];
 
     window.onload = function() {
@@ -204,30 +218,77 @@
         inputElement.value = Number(value).toLocaleString('en-US');
     }
 
+    // XỬ LÝ LĂN CHUỘT (Tăng giảm 10k)
+    function handleWheelPrice(event, inputElement) {
+        event.preventDefault(); // Chống cuộn trang
+        let val = parseInt(inputElement.value.replace(/,/g, '')) || 0;
+        if (event.deltaY < 0) {
+            val += 10000; // Cuộn lên -> Tăng 10k
+        } else {
+            val -= 10000; // Cuộn xuống -> Giảm 10k
+            if (val < 0) val = 0;
+        }
+        inputElement.value = val.toLocaleString('en-US');
+    }
+
+    // XỬ LÝ NÚT BẤM (Tăng giảm 50k)
+    function adjustPrice(btnElement, amount) {
+        // Lấy thẻ input nằm cùng cấp với khối chứa nút bấm
+        const inputElement = btnElement.parentElement.previousElementSibling;
+        let val = parseInt(inputElement.value.replace(/,/g, '')) || 0;
+        val += amount;
+        if (val < 0) val = 0;
+        inputElement.value = val.toLocaleString('en-US');
+    }
+
     let productCounter = 0;
-    function addNewProductRow(name = '', buy = '', sell = '') {
+    function addNewProductRow(name = '', buy = '', sell = '', showWeb = true, showTv = true) {
         const container = document.getElementById('gold-items-container');
         const rowId = `product-row-${productCounter}`;
         
+        // Trạng thái checked của checkbox
+        const webChecked = showWeb !== false ? 'checked' : '';
+        const tvChecked = showTv !== false ? 'checked' : '';
+
         const rowHTML = `
             <div class="gold-row" id="${rowId}">
                 <div class="gold-row-header">
                     <div class="gold-row-title">Sản phẩm sản xuất / Kinh doanh</div>
                     <button type="button" class="btn-delete-item" onclick="deleteProductRow('${rowId}')">🗑 Xóa sản phẩm này</button>
                 </div>
-                <div class="row">
+                <div class="row" style="margin-bottom: 5px;">
                     <div class="col" style="flex: 2;">
                         <label>Tên loại vàng</label>
                         <input type="text" class="input-g-name" value="${name}">
                     </div>
                     <div class="col">
                         <label>Giá Mua Vào (Chỉ)</label>
-                        <input type="text" class="input-g-buy" value="${buy}" oninput="formatCurrencyInput(this)">
+                        <div class="price-input-group">
+                            <input type="text" class="input-g-buy" value="${buy}" oninput="formatCurrencyInput(this)" onwheel="handleWheelPrice(event, this)">
+                            <div class="price-spinners">
+                                <button type="button" onclick="adjustPrice(this, 50000)" title="Tăng 50,000đ">▲</button>
+                                <button type="button" onclick="adjustPrice(this, -50000)" title="Giảm 50,000đ">▼</button>
+                            </div>
+                        </div>
                     </div>
                     <div class="col">
                         <label>Giá Bán Ra (Chỉ)</label>
-                        <input type="text" class="input-g-sell" value="${sell}" oninput="formatCurrencyInput(this)">
+                        <div class="price-input-group">
+                            <input type="text" class="input-g-sell" value="${sell}" oninput="formatCurrencyInput(this)" onwheel="handleWheelPrice(event, this)">
+                            <div class="price-spinners">
+                                <button type="button" onclick="adjustPrice(this, 50000)" title="Tăng 50,000đ">▲</button>
+                                <button type="button" onclick="adjustPrice(this, -50000)" title="Giảm 50,000đ">▼</button>
+                            </div>
+                        </div>
                     </div>
+                </div>
+                <div class="display-options">
+                    <label>
+                        <input type="checkbox" class="cb-show-web" ${webChecked}> Mở hiển thị trên Web/Mobile
+                    </label>
+                    <label>
+                        <input type="checkbox" class="cb-show-tv" ${tvChecked}> Mở hiển thị trên màn hình TV
+                    </label>
                 </div>
             </div>
         `;
@@ -242,19 +303,21 @@
 
     function saveAndSync() {
         let goldData = [];
-        const names = document.querySelectorAll('.input-g-name');
-        const buys = document.querySelectorAll('.input-g-buy');
-        const sells = document.querySelectorAll('.input-g-sell');
-        
+        const rows = document.querySelectorAll('.gold-row');
         const nowMs = Date.now();
 
-        names.forEach((node, index) => {
-            const nameVal = node.value.trim();
-            const sellValStr = sells[index].value.trim() || "0";
+        rows.forEach((row) => {
+            const nameVal = row.querySelector('.input-g-name').value.trim();
+            const buyVal = row.querySelector('.input-g-buy').value.trim() || "0";
+            const sellValStr = row.querySelector('.input-g-sell').value.trim() || "0";
+            
+            // Đọc trạng thái 2 checkbox
+            const showWeb = row.querySelector('.cb-show-web').checked;
+            const showTv = row.querySelector('.cb-show-tv').checked;
+
             const sellValNum = parseInt(sellValStr.replace(/,/g, ''));
 
             let trend = 'flat';
-            
             const oldProduct = currentSavedProducts.find(p => p.name === nameVal);
             if (oldProduct) {
                 const oldSellNum = parseInt(oldProduct.sell.replace(/,/g, ''));
@@ -265,10 +328,12 @@
             if(nameVal !== "") {
                 goldData.push({
                     name: nameVal,
-                    buy: buys[index].value.trim() || "0",
+                    buy: buyVal,
                     sell: sellValStr,
                     trend: trend,
-                    last_updated: nowMs
+                    last_updated: nowMs,
+                    showWeb: showWeb,
+                    showTv: showTv
                 });
             }
         });
@@ -325,7 +390,10 @@
             currentSavedProducts = list;
 
             list.forEach(item => {
-                addNewProductRow(item.name, item.buy, item.sell);
+                // Truyền thêm showWeb, showTv (nếu dữ liệu cũ chưa có thì mặc định coi là true)
+                const sWeb = item.showWeb !== undefined ? item.showWeb : true;
+                const sTv = item.showTv !== undefined ? item.showTv : true;
+                addNewProductRow(item.name, item.buy, item.sell, sWeb, sTv);
             });
 
             if(!serverData) return;
@@ -344,7 +412,7 @@
                 }
             }
         }).catch(err => {
-            defaultProducts.forEach(item => addNewProductRow(item.name, item.buy, item.sell));
+            defaultProducts.forEach(item => addNewProductRow(item.name, item.buy, item.sell, item.showWeb, item.showTv));
         });
     }
 
