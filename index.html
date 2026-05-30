@@ -69,7 +69,7 @@
         /* Khung Bảng Giá */
         .main-container { max-width: 1100px; margin: 40px auto 10px auto; padding: 0 20px; transition: all 0.3s; }
         .price-card { background: #ffffff; border-radius: 12px; border: 1px solid #e1e8ed; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-        .card-header { background: var(--bordeaux); color: var(--gold); padding: 20px; text-align: center; font-size: 28px; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 10px; }
+        .card-header { background: var(--bordeaux); color: var(--gold); padding: 20px; text-align: center; font-size: 22px; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 10px; }
         
         .live-dot { width: 10px; height: 10px; background-color: #ff3b30; border-radius: 50%; display: inline-block; animation: blink 1.2s infinite; }
         @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
@@ -117,7 +117,7 @@
         /* CẤU HÌNH TỐI ƯU GIAO DIỆN ĐIỆN THOẠI (MOBILE MODE)      */
         /* ======================================================= */
         @media (max-width: 767px) {
-            .top-bar { display: none; } /* Ẩn top-bar thanh mảnh để gọn màn hình */
+            .top-bar { display: none; }
             header { padding: 20px 10px; }
             header h1 { font-size: 28px; }
             header h2 { font-size: 11px; }
@@ -127,13 +127,11 @@
             .card-header { font-size: 16px; padding: 12px; }
             .time-bar { font-size: 11px; padding: 8px; }
 
-            /* Tối ưu hóa cấu trúc bảng trên Mobile */
             th { font-size: 11px; padding: 10px 4px; }
             td { font-size: 14px; padding: 12px 4px; }
             .gold-type { padding-left: 8px !important; font-size: 13px; }
             .trend-icon { font-size: 14px; }
 
-            /* Ép cứng tỉ lệ cột bằng CSS đè thuộc tính Inline HTML */
             table th:nth-child(1), table td:nth-child(1) { width: 36% !important; text-align: left; }
             table th:nth-child(2), table td:nth-child(2) { width: 26% !important; }
             table th:nth-child(3), table td:nth-child(3) { width: 26% !important; }
@@ -168,15 +166,16 @@
         
         body.tv-mode .main-container { max-width: 98%; margin: 5px auto; padding: 0; }
         body.tv-mode .price-card { border: 3px solid var(--tv-card-border); background-color: var(--tv-card-bg); border-radius: 16px; }
-        body.tv-mode .card-header { font-size: 26px; padding: 10px; }
-        body.tv-mode .time-bar { font-size: 16px; padding: 6px; }
+        body.tv-mode .card-header { font-size: 28px; padding: 10px; }
+        body.tv-mode .time-bar { font-size: 18px; padding: 6px; }
         
-        body.tv-mode th { font-size: 20px; padding: 12px; background-color: var(--tv-th-bg); color: var(--tv-th-txt); }
+        body.tv-mode th { font-size: 24px; padding: 12px; background-color: var(--tv-th-bg); color: var(--tv-th-txt); }
         body.tv-mode th:not(:last-child) { border-right: 2px solid rgba(0,0,0,0.1); }
         
-        body.tv-mode td { font-size: 26px; padding: 12px 15px; color: var(--tv-td-txt); border-bottom: 2px solid var(--tv-td-border); }
+        /* TĂNG KÍCH THƯỚC CHỮ, IN ĐẬM VÀ GIỮ GỌN PADDING ĐỂ NHÌN TỪ XA TRÊN TV */
+        body.tv-mode td { font-size: 34px; padding: 14px 15px; color: var(--tv-td-txt); border-bottom: 2px solid var(--tv-td-border); font-weight: 800; }
         body.tv-mode td:not(:last-child) { border-right: 2px solid var(--tv-td-border); }
-        body.tv-mode .gold-type { font-size: 23px; color: var(--tv-td-txt); }
+        body.tv-mode .gold-type { font-size: 30px; color: var(--tv-td-txt); font-weight: 800; }
         body.tv-mode .price-buy { color: #2f9e44 !important; }
         body.tv-mode .price-sell { color: #e03131 !important; }
         
@@ -184,7 +183,7 @@
         body.tv-mode table th:nth-child(2), body.tv-mode table td:nth-child(2) { width: 24% !important; }
         body.tv-mode table th:nth-child(3), body.tv-mode table td:nth-child(3) { width: 24% !important; }
         body.tv-mode table th:nth-child(4), body.tv-mode table td:nth-child(4) { width: 12% !important; text-align: center; }
-        body.tv-mode .trend-icon { font-size: 35px !important; line-height: 1; margin-top: -3px; } 
+        body.tv-mode .trend-icon { font-size: 40px !important; line-height: 1; margin-top: -3px; } 
 
         body.tv-mode .tv-footer-container { display: block !important; position: fixed; bottom: 0; left: 0; width: 100%; background-color: var(--tv-mar-bg); border-top: 3px solid var(--tv-mar-border); padding: 15px 0; overflow: hidden; z-index: 9998; }
         body.tv-mode .tv-moving-text { display: inline-block; white-space: nowrap; color: var(--tv-mar-txt); font-size: 28px; font-weight: bold; letter-spacing: 2px; padding-left: 100%; animation: moveRightToLeft var(--tv-marquee-duration) linear infinite; }
@@ -229,8 +228,8 @@
             <thead>
                 <tr>
                     <th>Sản phẩm vàng</th>
-                    <th>Mua vào<br><small style="font-size:9px;font-weight:normal;opacity:0.8;">(VNĐ/Chỉ)</small></th>
-                    <th>Bán ra<br><small style="font-size:9px;font-weight:normal;opacity:0.8;">(VNĐ/Chỉ)</small></th>
+                    <th>Mua vào<br><small style="font-size:12px;font-weight:normal;opacity:0.8;">(VNĐ/Chỉ)</small></th>
+                    <th>Bán ra<br><small style="font-size:12px;font-weight:normal;opacity:0.8;">(VNĐ/Chỉ)</small></th>
                     <th>Xu hướng</th>
                 </tr>
             </thead>
@@ -304,11 +303,18 @@
         const now = Date.now();
 
         list.forEach(item => {
+            // MẶC ĐỊNH LÀ MŨI TÊN MÀU VÀNG CHỈ SANG PHẢI (Không thay đổi giá trị)
             let trendIcon = '<span class="trend-icon" style="color: #d4af37;">▶</span>';
             
+            // LOGIC KIỂM TRA 8 TIẾNG:
+            // 8 tiếng * 60 phút * 60 giây * 1000 mili-giây = 28,800,000
+            // Nếu thời gian kể từ lần cập nhật cuối cùng nhỏ hơn 8 tiếng, mới hiện mũi tên Xanh / Đỏ
             if (item.last_updated && (now - item.last_updated) <= 8 * 60 * 60 * 1000) {
-                if (item.trend === 'up') trendIcon = '<span class="trend-icon" style="color: #2f9e44;">▲</span>';
-                else if (item.trend === 'down') trendIcon = '<span class="trend-icon" style="color: #e03131;">▼</span>';
+                if (item.trend === 'up') {
+                    trendIcon = '<span class="trend-icon" style="color: #2f9e44;">▲</span>';
+                } else if (item.trend === 'down') {
+                    trendIcon = '<span class="trend-icon" style="color: #e03131;">▼</span>';
+                }
             }
 
             tbody.innerHTML += `<tr>
