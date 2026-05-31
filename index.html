@@ -9,7 +9,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Vàng Kim Bảo">
     
-    <title>Vàng Kim Bảo - Cập nhật giá vàng mới nhất - Mua Bán Vàng Uy Tín - TIn Cậy</title>
+    <title>Vàng Kim Bảo - Cập nhật giá vàng mới nhất - Mua Bán Vàng Uy Tín - Tin Cậy</title>
     <style>
         :root {
             --bordeaux: #6b0f1a;
@@ -91,8 +91,22 @@
             color: var(--gold); font-size: 40px; text-transform: uppercase; font-weight: 800;
             letter-spacing: 1px; margin-bottom: 10px; text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
         }
-        header h2 { color: #ffffff; font-size: 16px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
-        header h3 { color: #fdfaf0; font-size: 13px; font-weight: 400; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9; }
+        
+        /* Chỉnh lại CSS 2 dòng phụ tiêu đề */
+        header h2 { 
+            color: var(--gold); 
+            font-size: 16px; 
+            font-weight: 600; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            margin-bottom: 8px;
+        }
+        header h2.sub-title { 
+            font-size: 13px; 
+            font-weight: 500; 
+            margin-bottom: 0;
+            opacity: 0.9;
+        }
 
         .tv-address-sub, .tv-fixed-hotline { display: none; }
         .marquee-box { background-color: var(--gold); color: var(--bordeaux-dark); padding: 12px 0; font-weight: 700; font-size: 14px; }
@@ -151,8 +165,8 @@
             .top-bar { display: none; }
             header { padding: 20px 10px; }
             header h1 { font-size: 28px; }
-            header h2 { font-size: 12px; margin-bottom: 4px; }
-            header h3 { font-size: 10px; }
+            header h2 { font-size: 12px; margin-bottom: 6px; }
+            header h2.sub-title { font-size: 10px; }
             .marquee-box { font-size: 12px; padding: 8px 0; }
 
             .main-container { margin: 15px auto; padding: 0 8px; }
@@ -187,8 +201,7 @@
         /* ======================================================= */
         body.tv-mode { background-color: var(--tv-bg-main) !important; overflow: hidden; }
         
-        /* Đã ẩn thêm thẻ h3 trong TV mode để giữ nguyên giao diện TV cũ */
-        body.tv-mode .top-bar, body.tv-mode .marquee-box, body.tv-mode header h2, body.tv-mode header h3, 
+        body.tv-mode .top-bar, body.tv-mode .marquee-box, body.tv-mode header h2, 
         body.tv-mode .tradingview-container, body.tv-mode footer, body.tv-mode .tv-toggle-btn,
         body.tv-mode .map-section, body.tv-mode .negotiable-box, body.tv-mode .modal-overlay { display: none !important; }
         
@@ -254,7 +267,8 @@
 <header>
     <h1 id="tv-live-brand">Vàng Kim Bảo</h1>
     <h2>NƠI GIAO DỊCH VÀNG UY TÍN - TIN CẬY</h2>
-    <h3>THƯƠNG HIỆU ĐỘC QUYỀN THUỘC SỞ HỮU CỦA CÔNG TY TNHH MTV THUẬN PHÁT TUYÊN QUANG</h3>
+    <h2 class="sub-title">THƯƠNG HIỆU ĐỘC QUYỀN THUỘC SỞ HỮU CỦA CÔNG TY TNHH MTV THUẬN PHÁT TUYÊN QUANG</h2>
+    
     <div class="tv-address-sub" id="tv-live-address">Đang tải địa chỉ...</div>
     <div class="tv-fixed-hotline" id="tv-live-hotline">HOTLINE</div>
 </header>
