@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Vàng Kim Bảo">
-    
+
     <title>Vàng Kim Bảo - Cập nhật giá vàng mới nhất - Mua Bán Vàng Uy Tín - Tin Cậy</title>
     <style>
         :root {
@@ -37,569 +38,1309 @@
             --tv-marquee-duration: 25s;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-        body { background-color: #f7f9fa; color: var(--text-dark); transition: background 0.3s; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background-color: #f7f9fa;
+            color: var(--text-dark);
+            transition: background 0.3s;
+        }
 
         /* Nút điều khiển TV Mode */
         .tv-toggle-btn {
-            position: fixed; bottom: 20px; right: 20px; z-index: 99999;
-            background: rgba(107, 15, 26, 0.85); color: #d4af37;
-            border: 2px solid #d4af37; padding: 10px 18px; font-size: 13px;
-            font-weight: bold; border-radius: 30px; cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: all 0.3s ease;
-            opacity: 0.5; display: flex; align-items: center; gap: 6px;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 99999;
+            background: rgba(107, 15, 26, 0.85);
+            color: #d4af37;
+            border: 2px solid #d4af37;
+            padding: 10px 18px;
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            opacity: 0.5;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
-        .tv-toggle-btn:hover { opacity: 1; background: #6b0f1a; transform: scale(1.05); }
+
+        .tv-toggle-btn:hover {
+            opacity: 1;
+            background: #6b0f1a;
+            transform: scale(1.05);
+        }
 
         /* Bảng hiển thị nhập mật khẩu (Custom Modal) */
         .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); z-index: 100000; justify-content: center; align-items: center;
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 100000;
+            justify-content: center;
+            align-items: center;
         }
+
         .modal-content {
-            background: #fff; padding: 30px; border-radius: 12px; text-align: center;
-            max-width: 350px; width: 90%; box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 350px;
+            width: 90%;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
         }
-        .modal-content h3 { color: var(--bordeaux); margin-bottom: 20px; text-transform: uppercase; font-size: 18px;}
+
+        .modal-content h3 {
+            color: var(--bordeaux);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            font-size: 18px;
+        }
+
         .modal-content input {
-            width: 100%; padding: 12px; margin-bottom: 20px; border: 2px solid #edf0f2;
-            border-radius: 6px; font-size: 16px; text-align: center; outline: none;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #edf0f2;
+            border-radius: 6px;
+            font-size: 16px;
+            text-align: center;
+            outline: none;
             transition: border 0.3s;
         }
-        .modal-content input:focus { border-color: var(--gold); }
+
+        .modal-content input:focus {
+            border-color: var(--gold);
+        }
+
         .modal-btn {
-            background: var(--bordeaux); color: var(--gold); padding: 12px 20px; border: none;
-            border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 16px; width: 100%;
+            background: var(--bordeaux);
+            color: var(--gold);
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
             transition: background 0.3s;
         }
-        .modal-btn:hover { background: var(--bordeaux-dark); }
-        .modal-close { margin-top: 15px; color: #777; cursor: pointer; font-size: 14px; display: inline-block; text-decoration: underline; }
+
+        .modal-btn:hover {
+            background: var(--bordeaux-dark);
+        }
+
+        .modal-close {
+            margin-top: 15px;
+            color: #777;
+            cursor: pointer;
+            font-size: 14px;
+            display: inline-block;
+            text-decoration: underline;
+        }
 
         /* Giao diện thông thường */
         .top-bar {
-            background: var(--bordeaux-dark); color: #fff; padding: 10px 20px;
-            font-size: 13px; display: flex; justify-content: space-between;
+            background: var(--bordeaux-dark);
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
             border-bottom: 1px solid rgba(212, 175, 55, 0.3);
         }
-        .top-bar span strong { color: var(--gold); }
-        
+
+        .top-bar span strong {
+            color: var(--gold);
+        }
+
         header {
             background: linear-gradient(135deg, var(--bordeaux-dark) 0%, var(--bordeaux) 100%);
-            padding: 35px 20px; text-align: center; border-bottom: 4px solid var(--gold); position: relative;
+            padding: 35px 20px;
+            text-align: center;
+            border-bottom: 4px solid var(--gold);
+            position: relative;
         }
+
         header h1 {
-            color: var(--gold); font-size: 40px; text-transform: uppercase; font-weight: 800;
-            letter-spacing: 1px; margin-bottom: 10px; text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+            color: var(--gold);
+            font-size: 40px;
+            text-transform: uppercase;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
         }
-        
-        header h2 { 
-            color: var(--gold); font-size: 16px; font-weight: 600; text-transform: uppercase; 
-            letter-spacing: 1px; margin-bottom: 8px;
+
+        header h2 {
+            color: var(--gold);
+            font-size: 16px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
         }
-        header h2.sub-title { font-size: 13px; font-weight: 500; margin-bottom: 0; opacity: 0.9; }
 
-        .tv-address-sub, .tv-fixed-hotline { display: none; }
-        .marquee-box { background-color: var(--gold); color: var(--bordeaux-dark); padding: 12px 0; font-weight: 700; font-size: 14px; }
+        header h2.sub-title {
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 0;
+            opacity: 0.9;
+        }
 
-        .main-container { max-width: 1100px; margin: 40px auto 10px auto; padding: 0 20px; transition: all 0.3s; }
-        
-        .tab-content { background: #ffffff; border-radius: 12px; border: 1px solid #e1e8ed; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        .tv-address-sub,
+        .tv-fixed-hotline {
+            display: none;
+        }
 
-        .card-header { background: var(--bordeaux); color: var(--gold); padding: 20px; text-align: center; font-size: 22px; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 10px; }
-        .live-dot { width: 10px; height: 10px; background-color: #ff3b30; border-radius: 50%; display: inline-block; animation: blink 1.2s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
-        .time-bar { text-align: center; padding: 12px; background-color: var(--gold-light); color: var(--bordeaux); font-style: italic; font-weight: 600; font-size: 13px; border-bottom: 1px solid #edf0f2; }
+        .marquee-box {
+            background-color: var(--gold);
+            color: var(--bordeaux-dark);
+            padding: 12px 0;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .main-container {
+            max-width: 1100px;
+            margin: 40px auto 10px auto;
+            padding: 0 20px;
+            transition: all 0.3s;
+        }
+
+        .tab-content {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e1e8ed;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header {
+            background: var(--bordeaux);
+            color: var(--gold);
+            padding: 20px;
+            text-align: center;
+            font-size: 22px;
+            font-weight: 700;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .live-dot {
+            width: 10px;
+            height: 10px;
+            background-color: #ff3b30;
+            border-radius: 50%;
+            display: inline-block;
+            animation: blink 1.2s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 0.3;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .time-bar {
+            text-align: center;
+            padding: 12px;
+            background-color: var(--gold-light);
+            color: var(--bordeaux);
+            font-style: italic;
+            font-weight: 600;
+            font-size: 13px;
+            border-bottom: 1px solid #edf0f2;
+        }
 
         .negotiable-box {
-            background-color: #fff9db; color: #cc5de8; border: 1px dashed #f59f00;
-            padding: 14px; text-align: center; font-weight: 800; font-size: 20px;
-            border-radius: 8px; margin-top: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.02);
-            text-transform: uppercase; letter-spacing: 0.5px;
+            background-color: #fff9db;
+            color: #cc5de8;
+            border: 1px dashed #f59f00;
+            padding: 14px;
+            text-align: center;
+            font-weight: 800;
+            font-size: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* KHU VỰC CAM KẾT CHẤT LƯỢNG */
+        .commitments-box {
+            background: linear-gradient(135deg, #ffffff 0%, #fdfaf0 100%);
+            border: 2px solid var(--gold);
+            border-radius: 12px;
+            padding: 20px 25px;
+            margin-top: 25px;
+            box-shadow: 0 8px 20px rgba(107, 15, 26, 0.08);
+            position: relative;
+        }
+
+        .commitments-box::before {
+            content: "🌟 CAM KẾT CỦA CHÚNG TÔI 🌟";
+            display: block;
+            text-align: center;
+            color: var(--bordeaux);
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            border-bottom: 2px dashed rgba(212, 175, 55, 0.5);
+            padding-bottom: 12px;
+            letter-spacing: 1px;
+        }
+
+        .commitments-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .commitments-list li {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            line-height: 1.5;
+        }
+
+        .commitments-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        .commitments-list li .icon {
+            color: var(--gold);
+            font-size: 16px;
+            font-weight: bold;
+            background: var(--bordeaux);
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            flex-shrink: 0;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
         }
 
         /* Giao diện Bảng Vàng Trong Nước */
-        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        th { background-color: #f4f6f8; color: #555; padding: 16px; font-size: 14px; text-transform: uppercase; font-weight: 600; border-bottom: 2px solid #e1e8ed; text-align: center; word-wrap: break-word; }
-        th:not(:last-child) { border-right: 1px solid #dee2e6; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
 
-        td { padding: 18px 16px; text-align: center; font-size: 17px; font-weight: 700; border-bottom: 1px solid #edf0f2; word-wrap: break-word; }
-        td:not(:last-child) { border-right: 1px solid #edf0f2; }
-        tr:hover td { background-color: var(--gold-light); }
-        
-        .gold-type { color: var(--bordeaux); text-align: left; padding-left: 30px; }
-        .price-buy { color: #2f9e44; }
-        .price-sell { color: #e03131; }
-        .trend-icon { font-size: 18px; display: inline-block; vertical-align: middle; }
+        th {
+            background-color: #f4f6f8;
+            color: #555;
+            padding: 16px;
+            font-size: 14px;
+            text-transform: uppercase;
+            font-weight: 600;
+            border-bottom: 2px solid #e1e8ed;
+            text-align: center;
+            word-wrap: break-word;
+        }
+
+        th:not(:last-child) {
+            border-right: 1px solid #dee2e6;
+        }
+
+        td {
+            padding: 18px 16px;
+            text-align: center;
+            font-size: 17px;
+            font-weight: 700;
+            border-bottom: 1px solid #edf0f2;
+            word-wrap: break-word;
+        }
+
+        td:not(:last-child) {
+            border-right: 1px solid #edf0f2;
+        }
+
+        tr:hover td {
+            background-color: var(--gold-light);
+        }
+
+        .gold-type {
+            color: var(--bordeaux);
+            text-align: left;
+            padding-left: 30px;
+        }
+
+        .price-buy {
+            color: #2f9e44;
+        }
+
+        .price-sell {
+            color: #e03131;
+        }
+
+        .trend-icon {
+            font-size: 18px;
+            display: inline-block;
+            vertical-align: middle;
+        }
 
         /* Nút Liên hệ nổi (Floating Contact) */
-        .floating-contact { position: fixed; bottom: 30px; left: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 15px; }
-        .float-btn { width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: transform 0.3s; text-decoration: none; color: white; font-size: 24px; font-weight: bold; }
-        .float-btn:hover { transform: scale(1.1); }
-        .float-zalo { background-color: #0068ff; }
-        .float-phone { background-color: #2f9e44; }
+        .floating-contact {
+            position: fixed;
+            bottom: 30px;
+            left: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .float-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s;
+            text-decoration: none;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .float-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .float-zalo {
+            background-color: #0068ff;
+        }
+
+        .float-phone {
+            background-color: #2f9e44;
+        }
 
         /* KHU VỰC KHUNG BIỂU ĐỒ TRADINGVIEW & TÓM TẮT */
-        .tradingview-container { max-width: 1100px; margin: 30px auto 10px auto; padding: 0 20px; }
-        .tradingview-box { background: #ffffff; border-radius: 12px; border: 1px solid #e1e8ed; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        .tradingview-header { background: #222222; color: #ffffff; padding: 12px 20px; font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; }
-        .tradingview-dot { width: 8px; height: 8px; background-color: #00ca4e; border-radius: 50%; display: inline-block; }
-        
-        .summary-header { background: var(--bordeaux); color: var(--gold); padding: 12px 20px; font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; }
-        .summary-table { width: 100%; border-collapse: collapse; }
-        .summary-table td { padding: 15px 20px; text-align: left; font-size: 16px; border-bottom: 1px solid #edf0f2; font-weight: 500; }
-        .summary-table td:first-child { width: 45%; color: #555; background-color: #fcfcfc; border-right: 1px solid #edf0f2; }
-        .summary-table td:last-child { width: 55%; color: var(--bordeaux-dark); font-weight: 700; }
-        .summary-table tr:last-child td { border-bottom: none; }
-        .summary-table small { font-weight: normal; color: #777; font-size: 13px; }
+        .tradingview-container {
+            max-width: 1100px;
+            margin: 30px auto 10px auto;
+            padding: 0 20px;
+        }
+
+        .tradingview-box {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e1e8ed;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .tradingview-header {
+            background: #222222;
+            color: #ffffff;
+            padding: 12px 20px;
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tradingview-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #00ca4e;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .summary-header {
+            background: var(--bordeaux);
+            color: var(--gold);
+            padding: 12px 20px;
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .summary-table td {
+            padding: 15px 20px;
+            text-align: left;
+            font-size: 16px;
+            border-bottom: 1px solid #edf0f2;
+            font-weight: 500;
+        }
+
+        .summary-table td:first-child {
+            width: 45%;
+            color: #555;
+            background-color: #fcfcfc;
+            border-right: 1px solid #edf0f2;
+        }
+
+        .summary-table td:last-child {
+            width: 55%;
+            color: var(--bordeaux-dark);
+            font-weight: 700;
+        }
+
+        .summary-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .summary-table small {
+            font-weight: normal;
+            color: #777;
+            font-size: 13px;
+        }
 
         /* BẢN ĐỒ GOOGLE MAPS */
-        .map-section { max-width: 1100px; margin: 40px auto; padding: 0 20px; text-align: center; }
-        .map-section h3 { color: var(--bordeaux); margin-bottom: 20px; font-size: 24px; text-transform: uppercase; font-weight: 800; border-bottom: 3px solid var(--gold); display: inline-block; padding-bottom: 10px; }
-        .map-wrapper { border-radius: 12px; overflow: hidden; border: 2px solid #e1e8ed; box-shadow: 0 10px 25px rgba(0,0,0,0.05); height: 400px; }
+        .map-section {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+            text-align: center;
+        }
 
-        .tv-footer-container { display: none; }
-        footer { background: #1a0205; color: #ffffff; padding: 50px 20px; text-align: center; border-top: 5px solid var(--gold); margin-top: 50px; }
-        footer h3 { color: var(--gold); font-size: 22px; text-transform: uppercase; margin-bottom: 20px; }
-        .footer-hotline { background: var(--bordeaux); color: var(--gold); padding: 12px 30px; border-radius: 30px; display: inline-block; font-size: 20px; font-weight: 700; text-decoration: none; margin-top: 20px; }
+        .map-section h3 {
+            color: var(--bordeaux);
+            margin-bottom: 20px;
+            font-size: 24px;
+            text-transform: uppercase;
+            font-weight: 800;
+            border-bottom: 3px solid var(--gold);
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+
+        .map-wrapper {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #e1e8ed;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            height: 400px;
+        }
+
+        .tv-footer-container {
+            display: none;
+        }
+
+        footer {
+            background: #1a0205;
+            color: #ffffff;
+            padding: 50px 20px;
+            text-align: center;
+            border-top: 5px solid var(--gold);
+            margin-top: 50px;
+        }
+
+        footer h3 {
+            color: var(--gold);
+            font-size: 22px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .footer-hotline {
+            background: var(--bordeaux);
+            color: var(--gold);
+            padding: 12px 30px;
+            border-radius: 30px;
+            display: inline-block;
+            font-size: 20px;
+            font-weight: 700;
+            text-decoration: none;
+            margin-top: 20px;
+        }
 
         /* ======================================================= */
         /* CẤU HÌNH TỐI ƯU GIAO DIỆN ĐIỆN THOẠI (MOBILE MODE)      */
         /* ======================================================= */
         @media (max-width: 767px) {
-            .top-bar { display: none; }
-            header { padding: 20px 10px; }
-            header h1 { font-size: 28px; }
-            header h2 { font-size: 12px; margin-bottom: 6px; }
-            header h2.sub-title { font-size: 10px; }
-            .marquee-box { font-size: 12px; padding: 8px 0; }
+            .top-bar {
+                display: none;
+            }
 
-            .main-container { margin: 15px auto; padding: 0 8px; }
-            .card-header { font-size: 16px; padding: 12px; }
-            .time-bar { font-size: 11px; padding: 8px; }
+            header {
+                padding: 20px 10px;
+            }
 
-            th { font-size: 11px; padding: 10px 4px; }
-            td { font-size: 14px; padding: 12px 4px; }
-            .gold-type { padding-left: 8px !important; font-size: 13px; }
-            .trend-icon { font-size: 14px; }
+            header h1 {
+                font-size: 28px;
+            }
 
-            table th:nth-child(1), table td:nth-child(1) { width: 36% !important; text-align: left; }
-            table th:nth-child(2), table td:nth-child(2) { width: 26% !important; }
-            table th:nth-child(3), table td:nth-child(3) { width: 26% !important; }
-            table th:nth-child(4), table td:nth-child(4) { width: 12% !important; text-align: center; }
+            header h2 {
+                font-size: 12px;
+                margin-bottom: 6px;
+            }
 
-            .negotiable-box { font-size: 13px; padding: 10px; margin-top: 12px; }
-            
-            .floating-contact { bottom: 20px; left: 10px; gap: 10px; }
-            .float-btn { width: 40px; height: 40px; font-size: 20px; }
+            header h2.sub-title {
+                font-size: 10px;
+            }
 
-            .tradingview-container, .map-section { padding: 0 8px; margin: 20px auto; }
-            .tradingview-header, .summary-header { font-size: 13px; padding: 10px; }
-            
-            .summary-table td { padding: 10px; font-size: 13px; }
-            .summary-table td:first-child { width: 50%; }
-            .summary-table td:last-child { width: 50%; }
+            .marquee-box {
+                font-size: 12px;
+                padding: 8px 0;
+            }
 
-            .map-section h3 { font-size: 18px; }
-            .map-wrapper { height: 280px; }
+            .main-container {
+                margin: 15px auto;
+                padding: 0 8px;
+            }
 
-            footer { padding: 30px 15px; margin-top: 30px; }
-            footer h3 { font-size: 16px; }
-            footer p { font-size: 13px; }
-            .footer-hotline { font-size: 15px; padding: 10px 20px; margin-top: 15px; }
+            .card-header {
+                font-size: 16px;
+                padding: 12px;
+            }
+
+            .time-bar {
+                font-size: 11px;
+                padding: 8px;
+            }
+
+            th {
+                font-size: 11px;
+                padding: 10px 4px;
+            }
+
+            td {
+                font-size: 14px;
+                padding: 12px 4px;
+            }
+
+            .gold-type {
+                padding-left: 8px !important;
+                font-size: 13px;
+            }
+
+            .trend-icon {
+                font-size: 14px;
+            }
+
+            table th:nth-child(1),
+            table td:nth-child(1) {
+                width: 36% !important;
+                text-align: left;
+            }
+
+            table th:nth-child(2),
+            table td:nth-child(2) {
+                width: 26% !important;
+            }
+
+            table th:nth-child(3),
+            table td:nth-child(3) {
+                width: 26% !important;
+            }
+
+            table th:nth-child(4),
+            table td:nth-child(4) {
+                width: 12% !important;
+                text-align: center;
+            }
+
+            .negotiable-box {
+                font-size: 13px;
+                padding: 10px;
+                margin-top: 12px;
+            }
+
+            .commitments-box {
+                padding: 15px;
+                margin-top: 20px;
+            }
+
+            .commitments-box::before {
+                font-size: 15px;
+                margin-bottom: 12px;
+                padding-bottom: 10px;
+            }
+
+            .commitments-list li {
+                font-size: 14px;
+                gap: 10px;
+            }
+
+            .commitments-list li .icon {
+                width: 26px;
+                height: 26px;
+                font-size: 14px;
+            }
+
+            .floating-contact {
+                bottom: 20px;
+                left: 10px;
+                gap: 10px;
+            }
+
+            .float-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+
+            .tradingview-container,
+            .map-section {
+                padding: 0 8px;
+                margin: 20px auto;
+            }
+
+            .tradingview-header,
+            .summary-header {
+                font-size: 13px;
+                padding: 10px;
+            }
+
+            .summary-table td {
+                padding: 10px;
+                font-size: 13px;
+            }
+
+            .summary-table td:first-child {
+                width: 50%;
+            }
+
+            .summary-table td:last-child {
+                width: 50%;
+            }
+
+            .map-section h3 {
+                font-size: 18px;
+            }
+
+            .map-wrapper {
+                height: 280px;
+            }
+
+            footer {
+                padding: 30px 15px;
+                margin-top: 30px;
+            }
+
+            footer h3 {
+                font-size: 16px;
+            }
+
+            footer p {
+                font-size: 13px;
+            }
+
+            .footer-hotline {
+                font-size: 15px;
+                padding: 10px 20px;
+                margin-top: 15px;
+            }
         }
 
         /* ======================================================= */
         /* CẤU HÌNH PHÓNG TO FULL MÀN HÌNH TỐI ƯU CHO TV MODE      */
         /* ======================================================= */
-        body.tv-mode { background-color: var(--tv-bg-main) !important; overflow: hidden; }
-        
-        body.tv-mode .top-bar, body.tv-mode .marquee-box, body.tv-mode header h2, 
-        body.tv-mode .tradingview-container, body.tv-mode footer, body.tv-mode .tv-toggle-btn,
-        body.tv-mode .map-section, body.tv-mode .negotiable-box, body.tv-mode .modal-overlay,
-        body.tv-mode .floating-contact { display: none !important; }
-        
-        body.tv-mode header { background: transparent; box-shadow: none; padding: 25px 40px 5px 40px; border-bottom: none; text-align: left; }
-        body.tv-mode header h1 { color: var(--tv-brand-txt); font-size: 52px; letter-spacing: 2px; }
-        body.tv-mode .tv-address-sub { display: block !important; color: var(--tv-addr-txt); font-size: 20px; font-weight: 500; margin-top: 4px; }
+        body.tv-mode {
+            background-color: var(--tv-bg-main) !important;
+            overflow: hidden;
+        }
 
-        body.tv-mode .tv-fixed-hotline { display: flex !important; position: absolute; top: 25px; right: 40px; background-color: var(--tv-hl-bg); color: var(--tv-hl-txt); border: 3px solid var(--tv-hl-border); padding: 12px 25px; font-size: 24px; font-weight: 900; border-radius: 40px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); align-items: center; }
-        
-        body.tv-mode .main-container { max-width: 98%; margin: 5px auto; padding: 0; }
-        body.tv-mode .tab-content { border: 3px solid var(--tv-card-border); background-color: var(--tv-card-bg); border-radius: 16px; }
-        body.tv-mode .card-header { font-size: 28px; padding: 10px; }
-        body.tv-mode .time-bar { font-size: 18px; padding: 6px; }
-        
-        body.tv-mode th { font-size: 24px; padding: 12px; background-color: var(--tv-th-bg); color: var(--tv-th-txt); }
-        body.tv-mode th:not(:last-child) { border-right: 2px solid rgba(0,0,0,0.1); }
-        
-        body.tv-mode td { font-size: 34px; padding: 14px 15px; color: var(--tv-td-txt); border-bottom: 2px solid var(--tv-td-border); font-weight: 800; }
-        body.tv-mode td:not(:last-child) { border-right: 2px solid var(--tv-td-border); }
-        body.tv-mode .gold-type { font-size: 30px; color: var(--tv-td-txt); font-weight: 800; }
-        body.tv-mode .price-buy { color: #2f9e44 !important; }
-        body.tv-mode .price-sell { color: #e03131 !important; }
-        
-        body.tv-mode table th:nth-child(1), body.tv-mode table td:nth-child(1) { width: 40% !important; }
-        body.tv-mode table th:nth-child(2), body.tv-mode table td:nth-child(2) { width: 24% !important; }
-        body.tv-mode table th:nth-child(3), body.tv-mode table td:nth-child(3) { width: 24% !important; }
-        body.tv-mode table th:nth-child(4), body.tv-mode table td:nth-child(4) { width: 12% !important; text-align: center; }
-        body.tv-mode .trend-icon { font-size: 40px !important; line-height: 1; margin-top: -3px; } 
+        body.tv-mode .top-bar,
+        body.tv-mode .marquee-box,
+        body.tv-mode header h2,
+        body.tv-mode .tradingview-container,
+        body.tv-mode footer,
+        body.tv-mode .tv-toggle-btn,
+        body.tv-mode .map-section,
+        body.tv-mode .negotiable-box,
+        body.tv-mode .modal-overlay,
+        body.tv-mode .floating-contact,
+        body.tv-mode .commitments-box {
+            display: none !important;
+        }
 
-        body.tv-mode .tv-footer-container { display: block !important; position: fixed; bottom: 0; left: 0; width: 100%; background-color: var(--tv-mar-bg); border-top: 3px solid var(--tv-mar-border); padding: 15px 0; overflow: hidden; z-index: 9998; }
-        body.tv-mode .tv-moving-text { display: inline-block; white-space: nowrap; color: var(--tv-mar-txt); font-size: 28px; font-weight: bold; letter-spacing: 2px; padding-left: 100%; animation: moveRightToLeft var(--tv-marquee-duration) linear infinite; }
+        body.tv-mode header {
+            background: transparent;
+            box-shadow: none;
+            padding: 25px 40px 5px 40px;
+            border-bottom: none;
+            text-align: left;
+        }
 
-        @keyframes moveRightToLeft { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+        body.tv-mode header h1 {
+            color: var(--tv-brand-txt);
+            font-size: 52px;
+            letter-spacing: 2px;
+        }
 
-        body:not(.tv-mode) tr.hide-web { display: none !important; }
-        body.tv-mode tr.hide-tv { display: none !important; }
+        body.tv-mode .tv-address-sub {
+            display: block !important;
+            color: var(--tv-addr-txt);
+            font-size: 20px;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        body.tv-mode .tv-fixed-hotline {
+            display: flex !important;
+            position: absolute;
+            top: 25px;
+            right: 40px;
+            background-color: var(--tv-hl-bg);
+            color: var(--tv-hl-txt);
+            border: 3px solid var(--tv-hl-border);
+            padding: 12px 25px;
+            font-size: 24px;
+            font-weight: 900;
+            border-radius: 40px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            align-items: center;
+        }
+
+        body.tv-mode .main-container {
+            max-width: 98%;
+            margin: 5px auto;
+            padding: 0;
+        }
+
+        body.tv-mode .tab-content {
+            border: 3px solid var(--tv-card-border);
+            background-color: var(--tv-card-bg);
+            border-radius: 16px;
+        }
+
+        body.tv-mode .card-header {
+            font-size: 28px;
+            padding: 10px;
+        }
+
+        body.tv-mode .time-bar {
+            font-size: 18px;
+            padding: 6px;
+        }
+
+        body.tv-mode th {
+            font-size: 24px;
+            padding: 12px;
+            background-color: var(--tv-th-bg);
+            color: var(--tv-th-txt);
+        }
+
+        body.tv-mode th:not(:last-child) {
+            border-right: 2px solid rgba(0, 0, 0, 0.1);
+        }
+
+        body.tv-mode td {
+            font-size: 34px;
+            padding: 14px 15px;
+            color: var(--tv-td-txt);
+            border-bottom: 2px solid var(--tv-td-border);
+            font-weight: 800;
+        }
+
+        body.tv-mode td:not(:last-child) {
+            border-right: 2px solid var(--tv-td-border);
+        }
+
+        body.tv-mode .gold-type {
+            font-size: 30px;
+            color: var(--tv-td-txt);
+            font-weight: 800;
+        }
+
+        body.tv-mode .price-buy {
+            color: #2f9e44 !important;
+        }
+
+        body.tv-mode .price-sell {
+            color: #e03131 !important;
+        }
+
+        body.tv-mode table th:nth-child(1),
+        body.tv-mode table td:nth-child(1) {
+            width: 40% !important;
+        }
+
+        body.tv-mode table th:nth-child(2),
+        body.tv-mode table td:nth-child(2) {
+            width: 24% !important;
+        }
+
+        body.tv-mode table th:nth-child(3),
+        body.tv-mode table td:nth-child(3) {
+            width: 24% !important;
+        }
+
+        body.tv-mode table th:nth-child(4),
+        body.tv-mode table td:nth-child(4) {
+            width: 12% !important;
+            text-align: center;
+        }
+
+        body.tv-mode .trend-icon {
+            font-size: 40px !important;
+            line-height: 1;
+            margin-top: -3px;
+        }
+
+        body.tv-mode .tv-footer-container {
+            display: block !important;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--tv-mar-bg);
+            border-top: 3px solid var(--tv-mar-border);
+            padding: 15px 0;
+            overflow: hidden;
+            z-index: 9998;
+        }
+
+        body.tv-mode .tv-moving-text {
+            display: inline-block;
+            white-space: nowrap;
+            color: var(--tv-mar-txt);
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            padding-left: 100%;
+            animation: moveRightToLeft var(--tv-marquee-duration) linear infinite;
+        }
+
+        @keyframes moveRightToLeft {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        body:not(.tv-mode) tr.hide-web {
+            display: none !important;
+        }
+
+        body.tv-mode tr.hide-tv {
+            display: none !important;
+        }
     </style>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 </head>
+
 <body>
 
-<button class="tv-toggle-btn" id="tvBtn" onclick="toggleTVMode()">
-    <span>📺</span> CHẾ ĐỘ TV FULL MÀN HÌNH
-</button>
+    <button class="tv-toggle-btn" id="tvBtn" onclick="toggleTVMode()">
+        <span>📺</span> CHẾ ĐỘ TV FULL MÀN HÌNH
+    </button>
 
-<!-- Nút Liên Hệ Nổi (Floating Buttons) -->
-<div class="floating-contact">
-    <a href="https://zalo.me/0989865333" target="_blank" class="float-btn float-zalo" title="Chat Zalo số 0989865333">Z</a>
-    <a href="tel:0989865333" class="float-btn float-phone" title="Gọi số 0989865333">📞</a>
-</div>
-
-<div class="modal-overlay" id="passwordModal">
-    <div class="modal-content">
-        <h3>Hệ thống trung tâm</h3>
-        <p style="font-size: 14px; color: #555; margin-bottom: 15px;">Vui lòng nhập mật khẩu xác thực:</p>
-        <input type="password" id="tvPasswordInput" placeholder="Nhập mật khẩu..." autocomplete="off">
-        <button class="modal-btn" onclick="submitPassword()">Xác nhận kích hoạt</button>
-        <span class="modal-close" onclick="closePasswordModal()">Hủy bỏ</span>
-    </div>
-</div>
-
-<div class="top-bar">
-    <span>Chào mừng quý khách đến với Hệ thống thương hiệu số <strong>Vàng Kim Bảo</strong></span>
-    <span>Hỗ trợ: 0989.865.333 - 0981.681.929</span>
-</div>
-
-<header>
-    <h1 id="tv-live-brand">Vàng Kim Bảo</h1>
-    <h2>NƠI GIAO DỊCH VÀNG UY TÍN - TIN CẬY</h2>
-    <h2 class="sub-title">THƯƠNG HIỆU ĐỘC QUYỀN THUỘC SỞ HỮU CỦA CÔNG TY TNHH MTV THUẬN PHÁT TUYÊN QUANG</h2>
-    
-    <div class="tv-address-sub" id="tv-live-address">Đang tải địa chỉ...</div>
-    <div class="tv-fixed-hotline" id="tv-live-hotline">HOTLINE</div>
-</header>
-
-<div class="marquee-box">
-    <marquee behavior="scroll" direction="left" scrollamount="5">
-        CÔNG TY TNHH MTV THUẬN PHÁT TUYÊN QUANG - MÃ SỐ THUẾ: 5000900828 - ĐỊA CHỈ: SỐ 259 NGUYỄN TẤT THÀNH, XÃ NÀ HANG, TỈNH TUYÊN QUANG.
-    </marquee>
-</div>
-
-<div class="main-container">
-    <!-- KHU VỰC BẢNG GIÁ VÀNG TRONG NƯỚC -->
-    <div class="tab-content" id="tab-price">
-        <div class="card-header">
-            <span class="live-dot"></span> BẢNG GIÁ VÀNG TRỰC TUYẾN
-        </div>
-        <div class="time-bar" id="live-time">Đang kết nối máy chủ đám mây...</div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Sản phẩm vàng</th>
-                    <th>Mua vào<br><small style="font-size:12px;font-weight:normal;opacity:0.8;">(VNĐ/Chỉ)</small></th>
-                    <th>Bán ra<br><small style="font-size:12px;font-weight:normal;opacity:0.8;">(VNĐ/Chỉ)</small></th>
-                    <th>Xu hướng</th>
-                </tr>
-            </thead>
-            <tbody id="web-table-body"></tbody>
-        </table>
+    <div class="floating-contact">
+        <a href="https://zalo.me/0989865333" target="_blank" rel="noopener noreferrer" class="float-btn float-zalo"
+            title="Chat Zalo số 0989865333">Z</a>
+        <a href="tel:0989865333" class="float-btn float-phone" title="Gọi số 0989865333">📞</a>
     </div>
 
-    <div class="negotiable-box" id="web-live-negotiable">Giá còn có thể thương lượng</div>
-</div>
-
-<!-- KHU VỰC KHUNG BIỂU ĐỒ TRADINGVIEW VÀ TÓM TẮT -->
-<div class="tradingview-container">
-    <!-- Khung biểu đồ -->
-    <div class="tradingview-box">
-        <div class="tradingview-header">
-            <span class="tradingview-dot"></span> Tỷ giá Vàng thế giới trực tuyến (XAU/USD)
+    <div class="modal-overlay" id="passwordModal">
+        <div class="modal-content">
+            <h3>Hệ thống trung tâm</h3>
+            <p style="font-size: 14px; color: #555; margin-bottom: 15px;">Vui lòng nhập mật khẩu xác thực:</p>
+            <input type="password" id="tvPasswordInput" placeholder="Nhập mật khẩu..." autocomplete="off">
+            <button class="modal-btn" onclick="submitPassword()">Xác nhận kích hoạt</button>
+            <span class="modal-close" onclick="closePasswordModal()">Hủy bỏ</span>
         </div>
-        <div class="tradingview-widget-container" style="height: 400px; width: 100%;">
-            <iframe src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_chart&symbol=FX_IDC%3AXAUUSD&interval=D&symboledit=0&saveimage=1&toolbarbg=f1f3f6&studies=%5B%5D&theme=light&style=1&timezone=Asia%2FHo_Chi_Minh&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=vi&utm_source=localhost&utm_medium=widget&utm_campaign=chart&utm_term=FX_IDC%3AXAUUSD" 
+    </div>
+
+    <div class="top-bar">
+        <span>Chào mừng quý khách đến với Hệ thống thương hiệu số <strong>Vàng Kim Bảo</strong></span>
+        <span>Hỗ trợ: 0989.865.333 - 0981.681.929</span>
+    </div>
+
+    <header>
+        <h1 id="tv-live-brand">Vàng Kim Bảo</h1>
+        <h2>NƠI GIAO DỊCH VÀNG UY TÍN - TIN CẬY</h2>
+        <h2 class="sub-title">THƯƠNG HIỆU ĐỘC QUYỀN THUỘC SỞ HỮU CỦA CÔNG TY TNHH MTV THUẬN PHÁT TUYÊN QUANG</h2>
+
+        <div class="tv-address-sub" id="tv-live-address">Đang tải địa chỉ...</div>
+        <div class="tv-fixed-hotline" id="tv-live-hotline">HOTLINE</div>
+    </header>
+
+    <div class="marquee-box">
+        <marquee behavior="scroll" direction="left" scrollamount="5">
+            CÔNG TY TNHH MTV THUẬN PHÁT TUYÊN QUANG - MÃ SỐ THUẾ: 5000900828 - ĐỊA CHỈ: SỐ 259 NGUYỄN TẤT THÀNH, XÃ NÀ
+            HANG, TỈNH TUYÊN QUANG.
+        </marquee>
+    </div>
+
+    <div class="main-container">
+        <div class="tab-content" id="tab-price">
+            <div class="card-header">
+                <span class="live-dot"></span> BẢNG GIÁ VÀNG TRỰC TUYẾN
+            </div>
+            <div class="time-bar" id="live-time">Đang kết nối máy chủ đám mây...</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sản phẩm vàng</th>
+                        <th>Mua vào<br><small style="font-size:12px;font-weight:normal;opacity:0.8;">(VNĐ/Chỉ)</small>
+                        </th>
+                        <th>Bán ra<br><small style="font-size:12px;font-weight:normal;opacity:0.8;">(VNĐ/Chỉ)</small>
+                        </th>
+                        <th>Xu hướng</th>
+                    </tr>
+                </thead>
+                <tbody id="web-table-body"></tbody>
+            </table>
+        </div>
+
+        <div class="negotiable-box" id="web-live-negotiable">Giá còn có thể thương lượng</div>
+
+        <div class="commitments-box">
+            <ul class="commitments-list">
+                <li><span class="icon">✓</span> Cam kết vàng bạc đúng chuẩn, có giấy kiểm định chất lượng vàng của cơ
+                    quan nhà nước được cấp phép</li>
+                <li><span class="icon">✓</span> Giá cả minh bạch, rõ ràng</li>
+                <li><span class="icon">↻</span> Giao dịch an toàn, uy tín</li>
+                <li><span class="icon">☎</span> Hỗ trợ khách hàng nhanh chóng 24/7</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="tradingview-container">
+        <div class="tradingview-box">
+            <div class="tradingview-header">
+                <span class="tradingview-dot"></span> Tỷ giá Vàng thế giới trực tuyến (XAU/USD)
+            </div>
+            <div class="tradingview-widget-container" style="height: 400px; width: 100%;">
+                <iframe
+                    src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_chart&symbol=FX_IDC%3AXAUUSD&interval=D&symboledit=0&saveimage=1&toolbarbg=f1f3f6&studies=%5B%5D&theme=light&style=1&timezone=Asia%2FHo_Chi_Minh&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=vi&utm_source=vangkimbao&utm_medium=widget&utm_campaign=chart&utm_term=FX_IDC%3AXAUUSD"
                     style="width: 100%; height: 100%; border: none; margin: 0; padding: 0;" allowfullscreen></iframe>
+            </div>
+        </div>
+
+        <div class="tradingview-box">
+            <div class="summary-header">
+                BẢNG TÓM TẮT THÔNG TIN QUY ĐỔI GIÁ VÀNG THẾ GIỚI
+            </div>
+            <table class="summary-table">
+                <tbody>
+                    <tr>
+                        <td>Giá thời điểm hiện tại<br><small>(Đơn vị: USD/Ounce)</small></td>
+                        <td id="sum-price-usd">Đang cập nhật...</td>
+                    </tr>
+                    <tr>
+                        <td>Biến động 24h qua<br><small>(Quy ra % và USD)</small></td>
+                        <td id="sum-change">Đang cập nhật...</td>
+                    </tr>
+                    <tr>
+                        <td>Giá quy đổi 1 Ounce<br><small>(Quy ra VNĐ theo tỷ giá USD/VND hiện hành)</small></td>
+                        <td id="sum-price-ounce-vnd" style="color: #d9534f;">Đang cập nhật...</td>
+                    </tr>
+                    <tr>
+                        <td>Trọng lượng quy đổi</td>
+                        <td id="sum-weight-conv">1 Ounce &approx; 0.8294 Lượng vàng<br><small>(hay 1 Lượng &approx;
+                                1.20565 Ounce)</small></td>
+                    </tr>
+                    <tr>
+                        <td>Giá quy đổi 1 Lượng (Cây)<br><small>(Quy ra VNĐ)</small></td>
+                        <td id="sum-price-tael-vnd" style="color: #2f9e44; font-size: 18px;">Đang cập nhật...</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 
-    <!-- Khung Bảng Tóm Tắt Mới -->
-    <div class="tradingview-box">
-        <div class="summary-header">
-            BẢNG TÓM TẮT THÔNG TIN QUY ĐỔI GIÁ VÀNG THẾ GIỚI
-        </div>
-        <table class="summary-table">
-            <tbody>
-                <tr>
-                    <td>Giá thời điểm hiện tại<br><small>(Đơn vị: USD/Ounce)</small></td>
-                    <td id="sum-price-usd">Đang cập nhật...</td>
-                </tr>
-                <tr>
-                    <td>Biến động 24h qua<br><small>(Quy ra % và USD)</small></td>
-                    <td id="sum-change">Đang cập nhật...</td>
-                </tr>
-                <tr>
-                    <td>Giá quy đổi 1 Ounce<br><small>(Quy ra VNĐ theo tỷ giá USD/VND hiện hành)</small></td>
-                    <td id="sum-price-ounce-vnd" style="color: #d9534f;">Đang cập nhật...</td>
-                </tr>
-                <tr>
-                    <td>Trọng lượng quy đổi</td>
-                    <td id="sum-weight-conv">1 Ounce &approx; 0.8294 Lượng vàng<br><small>(hay 1 Lượng &approx; 1.20565 Ounce)</small></td>
-                </tr>
-                <tr>
-                    <td>Giá quy đổi 1 Lượng (Cây)<br><small>(Quy ra VNĐ)</small></td>
-                    <td id="sum-price-tael-vnd" style="color: #2f9e44; font-size: 18px;">Đang cập nhật...</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<div class="map-section">
-    <h3>Địa chỉ cửa hàng trên bản đồ</h3>
-    <div class="map-wrapper">
-        <iframe src="https://maps.google.com/maps?q=22.3488931,105.383241&hl=vi&z=17&output=embed" 
+    <div class="map-section">
+        <h3>Địa chỉ cửa hàng trên bản đồ</h3>
+        <div class="map-wrapper">
+            <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3690.1252778176745!2d105.38066071063756!3d22.348898041047708!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x36cb6b00661fcb2f%3A0x64530c081263ae2a!2zVsOgbmcgYuG6oWMgS2ltIELhuqNv!5e0!3m2!1svi!2s!4v1781164778163!5m2!1svi!2s"
                 width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        </div>
     </div>
-</div>
 
-<div class="tv-footer-container">
-    <div class="tv-moving-text" id="tv-live-marquee"></div>
-</div>
+    <div class="tv-footer-container">
+        <div class="tv-moving-text" id="tv-live-marquee"></div>
+    </div>
 
-<footer>
-    <h3>CÔNG TY TNHH MTV THUẬN PHÁT TUYÊN QUANG</h3>
-    <p><strong>Thương hiệu độc quyền:</strong> VÀNG KIM BẢO</p>
-    <p><strong>Mã số thuế doanh nghiệp:</strong> 5000900828</p>
-    <p><strong>Trụ sở chính:</strong> Số 259 Nguyễn Tất Thành, xã Nà Hang, tỉnh Tuyên Quang</p>
-    <a href="tel:0989865333" class="footer-hotline">☎ 0989.865.333 — 0981.681.929</a>
-</footer>
+    <footer>
+        <h3>CÔNG TY TNHH MTV THUẬN PHÁT TUYÊN QUANG</h3>
+        <p><strong>Thương hiệu độc quyền:</strong> VÀNG KIM BẢO</p>
+        <p><strong>Mã số thuế doanh nghiệp:</strong> 5000900828</p>
+        <p><strong>Trụ sở chính:</strong> Số 259 Nguyễn Tất Thành, xã Nà Hang, tỉnh Tuyên Quang</p>
+        <a href="tel:0989865333" class="footer-hotline">☎ 0989.865.333 — 0981.681.929</a>
+    </footer>
 
-<script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyCsoGBzs2HLgvUazOJQY4kRqcQb3tUKNDY",
-        authDomain: "vangkimbao.firebaseapp.com",
-        databaseURL: "https://vangkimbao-default-rtdb.firebaseio.com",
-        projectId: "vangkimbao",
-        storageBucket: "vangkimbao.firebasestorage.app",
-        messagingSenderId: "453403966918",
-        appId: "1:453403966918:web:d4220c7bfbda6538ddc6c7"
-    };
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCsoGBzs2HLgvUazOJQY4kRqcQb3tUKNDY",
+            authDomain: "vangkimbao.firebaseapp.com",
+            databaseURL: "https://vangkimbao-default-rtdb.firebaseio.com",
+            projectId: "vangkimbao",
+            storageBucket: "vangkimbao.firebasestorage.app",
+            messagingSenderId: "453403966918",
+            appId: "1:453403966918:web:d4220c7bfbda6538ddc6c7"
+        };
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
-    let currentTvPassword = "031220"; 
+        // Lưu hash SHA-256 của mật khẩu, KHÔNG lưu plaintext
+        // Hash của "031220" — thay bằng hash của mật khẩu mới nếu cần đổi
+        let currentTvPasswordHash = "db13a5fbefb0c2092d7516034472dfc66abf5dd53b943c8dfaba0821f576083e";
 
-    const fallbackData = [
-        { name: "Vàng Nhẫn Kim Bảo 9999", buy: "7,850,000", sell: "8,020,000" },
-        { name: "Vàng Nữ Trang 24K", buy: "7,700,000", sell: "7,950,000" },
-        { name: "Vàng Công Nghệ Ý 18K", buy: "5,800,000", sell: "6,050,000" }
-    ];
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            return Array.from(new Uint8Array(hashBuffer))
+                .map(b => b.toString(16).padStart(2, '0')).join('');
+        }
 
-    // ĐỒNG BỘ DỮ LIỆU TỪ FIREBASE
-    db.ref('kimbao_sync_data').on('value', (snapshot) => {
-        const serverData = snapshot.val();
-        
-        let list = (serverData && serverData.vbtb_cloned_data) ? serverData.vbtb_cloned_data : fallbackData;
-        const localTime = serverData ? serverData.vbtb_cloned_time : null;
+        function escapeHTML(str) {
+            if (str == null) return '';
+            const div = document.createElement('div');
+            div.appendChild(document.createTextNode(String(str)));
+            return div.innerHTML;
+        }
 
-        const tbody = document.getElementById('web-table-body');
-        tbody.innerHTML = '';
-        const now = Date.now();
+        const fallbackData = [
+            { name: "Vàng Nhẫn Kim Bảo 9999", buy: "7,850,000", sell: "8,020,000" },
+            { name: "Vàng Nữ Trang 24K", buy: "7,700,000", sell: "7,950,000" },
+            { name: "Vàng Công Nghệ Ý 18K", buy: "5,800,000", sell: "6,050,000" }
+        ];
 
-        list.forEach(item => {
-            let trendIcon = '<span class="trend-icon" style="color: #d4af37;">▶</span>';
-            
-            if (item.last_updated && (now - item.last_updated) <= 8 * 60 * 60 * 1000) {
-                if (item.trend === 'up') {
-                    trendIcon = '<span class="trend-icon" style="color: #2f9e44;">▲</span>';
-                } else if (item.trend === 'down') {
-                    trendIcon = '<span class="trend-icon" style="color: #e03131;">▼</span>';
+        // ĐỒNG BỘ DỮ LIỆU TỪ FIREBASE
+        db.ref('kimbao_sync_data').on('value', (snapshot) => {
+            const serverData = snapshot.val();
+
+            let list = (serverData && serverData.vbtb_cloned_data) ? serverData.vbtb_cloned_data : fallbackData;
+            const localTime = serverData ? serverData.vbtb_cloned_time : null;
+
+            const tbody = document.getElementById('web-table-body');
+            tbody.innerHTML = '';
+            const now = Date.now();
+
+            list.forEach(item => {
+                let trendIcon = '<span class="trend-icon" style="color: #d4af37;">▶</span>';
+
+                if (item.last_updated && (now - item.last_updated) <= 8 * 60 * 60 * 1000) {
+                    if (item.trend === 'up') {
+                        trendIcon = '<span class="trend-icon" style="color: #2f9e44;">▲</span>';
+                    } else if (item.trend === 'down') {
+                        trendIcon = '<span class="trend-icon" style="color: #e03131;">▼</span>';
+                    }
                 }
-            }
 
-            let rowClass = "";
-            if (item.showWeb === false) rowClass += " hide-web";
-            if (item.showTv === false) rowClass += " hide-tv";
+                let rowClass = "";
+                if (item.showWeb === false) rowClass += " hide-web";
+                if (item.showTv === false) rowClass += " hide-tv";
 
-            tbody.innerHTML += `<tr class="${rowClass}">
-                <td class="gold-type"><strong>${item.name}</strong></td>
-                <td class="price-buy">${item.buy}</td>
-                <td class="price-sell">${item.sell}</td>
+                tbody.innerHTML += `<tr class="${escapeHTML(rowClass)}">
+                <td class="gold-type"><strong>${escapeHTML(item.name)}</strong></td>
+                <td class="price-buy">${escapeHTML(item.buy)}</td>
+                <td class="price-sell">${escapeHTML(item.sell)}</td>
                 <td>${trendIcon}</td>
             </tr>`;
+            });
+
+            document.getElementById('live-time').innerText = "Cập nhật hệ thống lúc: " + (localTime ? localTime : "Mặc định hệ thống");
+
+            if (!serverData) return;
+
+            if (serverData.tv_password_hash) {
+                currentTvPasswordHash = serverData.tv_password_hash;
+            }
+
+            document.getElementById('tv-live-brand').innerText = serverData.tv_txt_brand || "Vàng Kim Bảo";
+            document.getElementById('tv-live-address').innerText = serverData.tv_txt_address || "Số 259 Nguyễn Tất Thành, xã Nà Hang, tỉnh Tuyên Quang";
+            document.getElementById('tv-live-hotline').innerText = serverData.tv_txt_hotline || "HOTLINE TRỢ GIÁ: 0989.865.333";
+            document.getElementById('web-live-negotiable').innerText = serverData.web_txt_negotiable || "Giá còn có thể thương lượng";
+
+            const marqueeTxt = serverData.tv_txt_marquee || "VÀNG BẠC KIM BẢO — GIỮ TÍN NHIỆM HƠN GIỮ VÀNG ——— HOTLINE TRỢ GIÁ: 0989.865.333";
+            const marqueeDiv = document.getElementById('tv-live-marquee');
+            if (marqueeDiv.innerText !== marqueeTxt) marqueeDiv.innerText = marqueeTxt;
+
+            const root = document.documentElement;
+            root.style.setProperty('--tv-marquee-duration', serverData.tv_marquee_speed || "25s");
+
+            if (serverData.colors) {
+                for (const [key, val] of Object.entries(serverData.colors)) {
+                    if (val) root.style.setProperty(`--tv-${key}`, val);
+                }
+            }
         });
-        
-        document.getElementById('live-time').innerText = "Cập nhật hệ thống lúc: " + (localTime ? localTime : "Mặc định hệ thống");
 
-        if(!serverData) return;
-
-        if (serverData.tv_password) {
-            currentTvPassword = serverData.tv_password;
+        // CÁC HÀM XỬ LÝ GIAO DIỆN TV MODE FULLSCREEN
+        function enterFullscreenMax(element) {
+            if (element.requestFullscreen) element.requestFullscreen();
+            else if (element.webkitRequestFullscreen) element.webkitRequestFullscreen();
+            else if (element.mozRequestFullScreen) element.mozRequestFullScreen();
+            else if (element.msRequestFullscreen) element.msRequestFullscreen();
         }
 
-        document.getElementById('tv-live-brand').innerText = serverData.tv_txt_brand || "Vàng Kim Bảo";
-        document.getElementById('tv-live-address').innerText = serverData.tv_txt_address || "Số 259 Nguyễn Tất Thành, xã Nà Hang, tỉnh Tuyên Quang";
-        document.getElementById('tv-live-hotline').innerText = serverData.tv_txt_hotline || "HOTLINE TRỢ GIÁ: 0989.865.333";
-        document.getElementById('web-live-negotiable').innerText = serverData.web_txt_negotiable || "Giá còn có thể thương lượng";
-        
-        const marqueeTxt = serverData.tv_txt_marquee || "VÀNG BẠC KIM BẢO — GIỮ TÍN NHIỆM HƠN GIỮ VÀNG ——— HOTLINE TRỢ GIÁ: 0989.865.333";
-        const marqueeDiv = document.getElementById('tv-live-marquee');
-        if(marqueeDiv.innerText !== marqueeTxt) marqueeDiv.innerText = marqueeTxt;
+        function exitFullscreenMax() {
+            if (document.exitFullscreen) document.exitFullscreen();
+            else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+            else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+            else if (document.msExitFullscreen) document.msExitFullscreen();
+        }
 
-        const root = document.documentElement;
-        root.style.setProperty('--tv-marquee-duration', serverData.tv_marquee_speed || "25s");
-        
-        if(serverData.colors) {
-            for (const [key, val] of Object.entries(serverData.colors)) {
-                if(val) root.style.setProperty(`--tv-${key}`, val);
+        function toggleTVMode() {
+            const body = document.body;
+            if (!body.classList.contains('tv-mode')) {
+                document.getElementById('passwordModal').style.display = 'flex';
+                document.getElementById('tvPasswordInput').value = '';
+                document.getElementById('tvPasswordInput').focus();
+            } else {
+                exitFullscreenMax();
+                body.classList.remove('tv-mode');
             }
         }
-    });
 
-    // CÁC HÀM XỬ LÝ GIAO DIỆN TV MODE FULLSCREEN
-    function enterFullscreenMax(element) {
-        if (element.requestFullscreen) element.requestFullscreen();
-        else if (element.webkitRequestFullscreen) element.webkitRequestFullscreen();
-        else if (element.mozRequestFullScreen) element.mozRequestFullScreen();
-        else if (element.msRequestFullscreen) element.msRequestFullscreen();
-    }
-
-    function exitFullscreenMax() {
-        if (document.exitFullscreen) document.exitFullscreen();
-        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-        else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
-        else if (document.msExitFullscreen) document.msExitFullscreen();
-    }
-
-    function toggleTVMode() {
-        const body = document.body;
-        if(!body.classList.contains('tv-mode')) {
-            document.getElementById('passwordModal').style.display = 'flex';
-            document.getElementById('tvPasswordInput').value = '';
-            document.getElementById('tvPasswordInput').focus();
-        } else {
-            exitFullscreenMax();
-            body.classList.remove('tv-mode');
+        function closePasswordModal() {
+            document.getElementById('passwordModal').style.display = 'none';
         }
-    }
 
-    function closePasswordModal() {
-        document.getElementById('passwordModal').style.display = 'none';
-    }
+        async function submitPassword() {
+            const pass = document.getElementById('tvPasswordInput').value;
+            const inputHash = await hashPassword(pass);
+            if (inputHash !== currentTvPasswordHash) {
+                alert("Mật khẩu bảo mật không chính xác!");
+                return;
+            }
 
-    function submitPassword() {
-        const pass = document.getElementById('tvPasswordInput').value;
-        if (pass !== currentTvPassword) {
-            alert("❌ Mật khẩu bảo mật không chính xác!");
-            return;
-        }
-        
-        closePasswordModal();
-        enterFullscreenMax(document.documentElement);
-        document.body.classList.add('tv-mode');
-    }
-
-    document.getElementById('tvPasswordInput').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') submitPassword();
-    });
-
-    const handleFullscreenChange = () => {
-        if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
-            document.body.classList.remove('tv-mode');
-        }
-    };
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
-    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
-
-    window.addEventListener('keydown', function(e) {
-        if (e.key === 'f' || e.key === 'F') toggleTVMode();
-        if (e.key === 'Escape') {
-            exitFullscreenMax();
-            document.body.classList.remove('tv-mode');
             closePasswordModal();
+            enterFullscreenMax(document.documentElement);
+            document.body.classList.add('tv-mode');
         }
-    });
 
-    // =========================================================================
-    // HÀM XỬ LÝ LẤY DỮ LIỆU TÓM TẮT GIÁ VÀNG THẾ GIỚI
-    // =========================================================================
-    async function updateGoldSummary() {
-    try {
-        // 1. Lấy tỷ giá USD/VND tự động từ nguồn miễn phí
-        let exchangeRate = 26398; // Tỷ giá dự phòng
-        try {
-            const fxRes = await fetch("https://open.er-api.com/v6/latest/USD");
-            const fxData = await fxRes.json();
-            if (fxData && fxData.rates && fxData.rates.VND) {
-                exchangeRate = fxData.rates.VND;
+        document.getElementById('tvPasswordInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') submitPassword();
+        });
+
+        const handleFullscreenChange = () => {
+            if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
+                document.body.classList.remove('tv-mode');
             }
-        } catch (fxError) {
-            console.warn("Dùng tỷ giá dự phòng.", fxError);
-        }
+        };
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+        document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+        document.addEventListener('MSFullscreenChange', handleFullscreenChange);
 
-        // 2. Lấy giá Vàng tham chiếu (PAX Gold - bám sát XAU/USD 1:1)
-        // API này mở hoàn toàn, không cần key, không giới hạn
-        const res = await fetch("https://api.binance.com/api/v3/ticker/24hr?symbol=PAXGUSDT");
-        const data = await res.json();
+        window.addEventListener('keydown', function (e) {
+            if (e.key === 'f' || e.key === 'F') toggleTVMode();
+            if (e.key === 'Escape') {
+                exitFullscreenMax();
+                document.body.classList.remove('tv-mode');
+                closePasswordModal();
+            }
+        });
 
-        if (data && data.lastPrice) {
-            // Ép kiểu dữ liệu về số thực
-            const currentPriceUSD = parseFloat(data.lastPrice);
-            const changeUSD = parseFloat(data.priceChange);
-            const changePct = parseFloat(data.priceChangePercent);
-            
-            const troyOunceToTaels = 1.205653; // Tỷ lệ quy đổi 1 Lượng = 1.205653 Ounce
+        // =========================================================================
+        // HÀM XỬ LÝ LẤY DỮ LIỆU TÓM TẮT GIÁ VÀNG THẾ GIỚI
+        // =========================================================================
+        async function updateGoldSummary() {
+            try {
+                // 1. Lấy tỷ giá USD/VND tự động từ nguồn miễn phí
+                let exchangeRate = 26398; // Tỷ giá dự phòng
+                try {
+                    const fxRes = await fetch("https://open.er-api.com/v6/latest/USD");
+                    const fxData = await fxRes.json();
+                    if (fxData && fxData.rates && fxData.rates.VND) {
+                        exchangeRate = fxData.rates.VND;
+                    }
+                } catch (fxError) {
+                    console.warn("Dùng tỷ giá dự phòng.", fxError);
+                }
 
-            // Cập nhật: Giá USD/Ounce
-            document.getElementById('sum-price-usd').innerHTML = `<strong>${currentPriceUSD.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</strong> USD/Ounce`;
+                // 2. Lấy giá Vàng tham chiếu (PAX Gold - bám sát XAU/USD 1:1)
+                // API này mở hoàn toàn, không cần key, không giới hạn
+                const res = await fetch("https://api.binance.com/api/v3/ticker/24hr?symbol=PAXGUSDT");
+                const data = await res.json();
 
-            // Cập nhật: Biến động 24h
-            const isUp = changeUSD >= 0;
-            const trend = isUp ? '▲' : '▼';
-            const color = isUp ? '#2f9e44' : '#e03131'; 
-            const sign = isUp ? '+' : '';
-            
-            document.getElementById('sum-change').innerHTML = `<span style="color: ${color}; font-weight: bold;">
+                if (data && data.lastPrice) {
+                    // Ép kiểu dữ liệu về số thực
+                    const currentPriceUSD = parseFloat(data.lastPrice);
+                    const changeUSD = parseFloat(data.priceChange);
+                    const changePct = parseFloat(data.priceChangePercent);
+
+                    const troyOunceToTaels = 1.205653; // Tỷ lệ quy đổi 1 Lượng = 1.205653 Ounce
+
+                    // Cập nhật: Giá USD/Ounce
+                    document.getElementById('sum-price-usd').innerHTML = `<strong>${currentPriceUSD.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong> USD/Ounce`;
+
+                    // Cập nhật: Biến động 24h
+                    const isUp = changeUSD >= 0;
+                    const trend = isUp ? '▲' : '▼';
+                    const color = isUp ? '#2f9e44' : '#e03131';
+                    const sign = isUp ? '+' : '';
+
+                    document.getElementById('sum-change').innerHTML = `<span style="color: ${color}; font-weight: bold;">
                 ${trend} ${sign}${changeUSD.toFixed(2)} USD (${sign}${changePct.toFixed(2)}%)
             </span>`;
 
-            // Cập nhật: Giá 1 Ounce (VNĐ)
-            const priceOunceVND = currentPriceUSD * exchangeRate;
-            document.getElementById('sum-price-ounce-vnd').innerHTML = `<strong>${Math.round(priceOunceVND).toLocaleString('vi-VN')}</strong> VNĐ <br><small style="color:#777;">(Tỷ giá tham khảo: 1 USD = ${exchangeRate.toLocaleString('vi-VN')} VNĐ)</small>`;
+                    // Cập nhật: Giá 1 Ounce (VNĐ)
+                    const priceOunceVND = currentPriceUSD * exchangeRate;
+                    document.getElementById('sum-price-ounce-vnd').innerHTML = `<strong>${Math.round(priceOunceVND).toLocaleString('vi-VN')}</strong> VNĐ <br><small style="color:#777;">(Tỷ giá tham khảo: 1 USD = ${exchangeRate.toLocaleString('vi-VN')} VNĐ)</small>`;
 
-            // Cập nhật: Giá 1 Lượng (Cây) (VNĐ)
-            const priceTaelVND = priceOunceVND * troyOunceToTaels;
-            document.getElementById('sum-price-tael-vnd').innerHTML = `<strong>${Math.round(priceTaelVND).toLocaleString('vi-VN')}</strong> VNĐ`;
-        } else {
-            throw new Error("Lỗi cấu trúc dữ liệu");
+                    // Cập nhật: Giá 1 Lượng (Cây) (VNĐ)
+                    const priceTaelVND = priceOunceVND * troyOunceToTaels;
+                    document.getElementById('sum-price-tael-vnd').innerHTML = `<strong>${Math.round(priceTaelVND).toLocaleString('vi-VN')}</strong> VNĐ`;
+                } else {
+                    throw new Error("Lỗi cấu trúc dữ liệu");
+                }
+
+            } catch (error) {
+                console.error("Lỗi khi tải dữ liệu giá vàng:", error);
+                document.getElementById('sum-price-usd').innerHTML = "<span style='color:red;'>Đang cập nhật dữ liệu...</span>";
+            }
         }
 
-    } catch (error) {
-        console.error("Lỗi khi tải dữ liệu giá vàng:", error);
-        document.getElementById('sum-price-usd').innerHTML = "<span style='color:red;'>Đang cập nhật dữ liệu...</span>";
-    }
-}
+        // Chạy ngay khi mở trang
+        updateGoldSummary();
 
-// Chạy ngay khi mở trang
-updateGoldSummary();
+        // Làm mới mỗi 5 phút (300,000 milliseconds)
+        setInterval(updateGoldSummary, 300000);
 
-// Làm mới mỗi 5 phút (300,000 milliseconds)
-setInterval(updateGoldSummary, 300000);
-</script>
+    </script>
 </body>
+
 </html>
