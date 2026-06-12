@@ -9,6 +9,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Vàng Kim Bảo">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline'; connect-src 'self' https://*.firebaseio.com wss://*.firebaseio.com https://*.googleapis.com https://api.binance.com https://open.er-api.com; frame-src https://s.tradingview.com https://www.google.com; img-src 'self' data: blob:; object-src 'none';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
 
     <title>Vàng Kim Bảo - Cập nhật giá vàng mới nhất - Mua Bán Vàng Uy Tín - Tin Cậy</title>
     <style>
@@ -1050,7 +1052,10 @@
             <div class="tradingview-widget-container" style="height: 400px; width: 100%;">
                 <iframe
                     src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_chart&symbol=FX_IDC%3AXAUUSD&interval=D&symboledit=0&saveimage=1&toolbarbg=f1f3f6&studies=%5B%5D&theme=light&style=1&timezone=Asia%2FHo_Chi_Minh&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=vi&utm_source=vangkimbao&utm_medium=widget&utm_campaign=chart&utm_term=FX_IDC%3AXAUUSD"
-                    style="width: 100%; height: 100%; border: none; margin: 0; padding: 0;" allowfullscreen></iframe>
+                    style="width: 100%; height: 100%; border: none; margin: 0; padding: 0;"
+                    sandbox="allow-scripts allow-same-origin allow-popups"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
             </div>
         </div>
 
@@ -1091,7 +1096,10 @@
         <div class="map-wrapper">
             <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3690.1252778176745!2d105.38066071063756!3d22.348898041047708!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x36cb6b00661fcb2f%3A0x64530c081263ae2a!2zVsOgbmcgYuG6oWMgS2ltIELhuqNv!5e0!3m2!1svi!2s!4v1781164778163!5m2!1svi!2s"
-                width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                width="100%" height="100%" style="border:0;"
+                sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen="" loading="lazy"></iframe>
         </div>
     </div>
 
@@ -1121,9 +1129,10 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // Lưu hash SHA-256 của mật khẩu, KHÔNG lưu plaintext
-        // Hash của "031220" — thay bằng hash của mật khẩu mới nếu cần đổi
+        // Mật khẩu lưu dưới dạng SHA-256 hash — KHÔNG lưu plaintext
         let currentTvPasswordHash = "db13a5fbefb0c2092d7516034472dfc66abf5dd53b943c8dfaba0821f576083e";
+        const MAX_TV_ATTEMPTS = 5;
+        const TV_LOCKOUT_MS = 10 * 60 * 1000;
 
         async function hashPassword(password) {
             const encoder = new TextEncoder();
@@ -1239,13 +1248,31 @@
         }
 
         async function submitPassword() {
-            const pass = document.getElementById('tvPasswordInput').value;
-            const inputHash = await hashPassword(pass);
-            if (inputHash !== currentTvPasswordHash) {
-                alert("Mật khẩu bảo mật không chính xác!");
+            const lockoutUntil = parseInt(sessionStorage.getItem('tvLockoutUntil') || '0');
+            if (Date.now() < lockoutUntil) {
+                const remaining = Math.ceil((lockoutUntil - Date.now()) / 60000);
+                alert(`⛔ Tạm khóa! Vui lòng thử lại sau ${remaining} phút.`);
                 return;
             }
 
+            const pass = document.getElementById('tvPasswordInput').value;
+            const inputHash = await hashPassword(pass);
+            if (inputHash !== currentTvPasswordHash) {
+                let attempts = parseInt(sessionStorage.getItem('tvLoginAttempts') || '0') + 1;
+                sessionStorage.setItem('tvLoginAttempts', attempts);
+                if (attempts >= MAX_TV_ATTEMPTS) {
+                    const lockoutTime = Date.now() + TV_LOCKOUT_MS;
+                    sessionStorage.setItem('tvLockoutUntil', lockoutTime);
+                    sessionStorage.removeItem('tvLoginAttempts');
+                    alert('⛔ Quá nhiều lần thử sai! Tạm khóa 10 phút.');
+                } else {
+                    alert(`❌ Mật khẩu không chính xác! Còn ${MAX_TV_ATTEMPTS - attempts} lần thử.`);
+                }
+                return;
+            }
+
+            sessionStorage.removeItem('tvLoginAttempts');
+            sessionStorage.removeItem('tvLockoutUntil');
             closePasswordModal();
             enterFullscreenMax(document.documentElement);
             document.body.classList.add('tv-mode');
