@@ -3,8 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; connect-src 'self' https://*.firebaseio.com wss://*.firebaseio.com https://*.firebaseapp.com https://*.googleapis.com; img-src 'self' data: blob:; object-src 'none';">
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <title>Hệ Thống Quản Trị Động - Vàng Kim Bảo</title>
     <style>
         :root { --bordeaux: #6b0f1a; --bordeaux-dark: #4a0911; --gold: #d4af37; --bg-light: #f8f9fa; }
@@ -78,9 +76,9 @@
 <div class="lock-screen" id="lockScreen">
     <h2>Hệ Thống Bảng Giá</h2>
     <p>Vui lòng nhập mật khẩu quản trị viên để tiếp tục</p>
-    <input type="password" id="passwordInput" placeholder="Nhập mật khẩu tại đây..." autocomplete="current-password" onkeydown="if(event.key==='Enter') verifyPassword()">
+    <input type="password" id="passwordInput" placeholder="Nhập mật khẩu tại đây..." onkeydown="if(event.key==='Enter') verifyPassword()">
     <button onclick="verifyPassword()">🔓 Đăng Nhập Hệ Thống</button>
-    <div class="error-msg" id="errorMsg"></div>
+    <div class="error-msg" id="errorMsg">❌ Mật khẩu chưa chính xác! Vui lòng thử lại.</div>
 </div>
 
 <div class="admin-content" id="adminContent">
@@ -175,33 +173,11 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // Mật khẩu lưu dưới dạng SHA-256 hash — KHÔNG lưu plaintext
-    const ADMIN_PASSWORD_HASH = "db13a5fbefb0c2092d7516034472dfc66abf5dd53b943c8dfaba0821f576083e";
-    const MAX_LOGIN_ATTEMPTS = 5;
-    const LOCKOUT_DURATION_MS = 30 * 60 * 1000;
-
-    async function hashPassword(password) {
-        const encoder = new TextEncoder();
-        const data = encoder.encode(password);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-        return Array.from(new Uint8Array(hashBuffer))
-            .map(b => b.toString(16).padStart(2, '0')).join('');
-    }
-
-    function escapeAttr(str) {
-        if (str == null) return '';
-        return String(str)
-            .replace(/&/g, '&amp;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#x27;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;');
-    }
-
+    const ADMIN_PASSWORD = "031220";
     let currentSavedProducts = [];
     let fullHistoryData = [];
     let priceChartInstance = null;
-    let currentChartTimeframe = 'week';
+    let currentChartTimeframe = 'week'; // Thêm biến lưu mốc thời gian hiện tại
 
     const defaultProducts = [
         { name: "Vàng Nhẫn Kim Bảo 9999", buy: "7,850,000", sell: "8,020,000", showWeb: true, showTv: true },
@@ -215,37 +191,14 @@
         loadPriceHistory();
     };
 
-    async function verifyPassword() {
+    function verifyPassword() {
         const input = document.getElementById('passwordInput').value;
         const errorMsg = document.getElementById('errorMsg');
-
-        const lockoutUntil = parseInt(sessionStorage.getItem('adminLockoutUntil') || '0');
-        if (Date.now() < lockoutUntil) {
-            const remaining = Math.ceil((lockoutUntil - Date.now()) / 60000);
-            errorMsg.textContent = `⛔ Tài khoản tạm khóa! Vui lòng thử lại sau ${remaining} phút.`;
-            errorMsg.style.display = 'block';
-            document.getElementById('passwordInput').value = '';
-            return;
-        }
-
-        const inputHash = await hashPassword(input);
-        if (inputHash === ADMIN_PASSWORD_HASH) {
+        if (input === ADMIN_PASSWORD) {
             sessionStorage.setItem('isAdminLoggedIn', 'true');
-            sessionStorage.removeItem('adminLoginAttempts');
-            sessionStorage.removeItem('adminLockoutUntil');
             errorMsg.style.display = 'none';
             showAdminDashboard();
         } else {
-            let attempts = parseInt(sessionStorage.getItem('adminLoginAttempts') || '0') + 1;
-            sessionStorage.setItem('adminLoginAttempts', attempts);
-            if (attempts >= MAX_LOGIN_ATTEMPTS) {
-                const lockoutTime = Date.now() + LOCKOUT_DURATION_MS;
-                sessionStorage.setItem('adminLockoutUntil', lockoutTime);
-                sessionStorage.removeItem('adminLoginAttempts');
-                errorMsg.textContent = '⛔ Quá nhiều lần thử sai! Tài khoản bị khóa 30 phút.';
-            } else {
-                errorMsg.textContent = `❌ Mật khẩu chưa chính xác! Còn ${MAX_LOGIN_ATTEMPTS - attempts} lần thử.`;
-            }
             errorMsg.style.display = 'block';
             document.getElementById('passwordInput').value = '';
         }
@@ -296,14 +249,10 @@
     function addNewProductRow(name = '', buy = '', sell = '', showWeb = true, showTv = true) {
         const container = document.getElementById('gold-items-container');
         const rowId = `product-row-${productCounter}`;
-
+        
+        // Trạng thái checked của checkbox
         const webChecked = showWeb !== false ? 'checked' : '';
         const tvChecked = showTv !== false ? 'checked' : '';
-
-        // Escape dữ liệu từ Firebase trước khi chèn vào HTML attribute
-        const safeName = escapeAttr(name);
-        const safeBuy = escapeAttr(buy);
-        const safeSell = escapeAttr(sell);
 
         const rowHTML = `
             <div class="gold-row" id="${rowId}">
@@ -314,12 +263,12 @@
                 <div class="row" style="margin-bottom: 5px;">
                     <div class="col" style="flex: 2;">
                         <label>Tên loại vàng</label>
-                        <input type="text" class="input-g-name" value="${safeName}">
+                        <input type="text" class="input-g-name" value="${name}">
                     </div>
                     <div class="col">
                         <label>Giá Mua Vào (Chỉ)</label>
                         <div class="price-input-group">
-                            <input type="text" class="input-g-buy" value="${safeBuy}" oninput="formatCurrencyInput(this)" onwheel="handleWheelPrice(event, this)">
+                            <input type="text" class="input-g-buy" value="${buy}" oninput="formatCurrencyInput(this)" onwheel="handleWheelPrice(event, this)">
                             <div class="price-spinners">
                                 <button type="button" onclick="adjustPrice(this, 50000)" title="Tăng 50,000đ">▲</button>
                                 <button type="button" onclick="adjustPrice(this, -50000)" title="Giảm 50,000đ">▼</button>
@@ -329,7 +278,7 @@
                     <div class="col">
                         <label>Giá Bán Ra (Chỉ)</label>
                         <div class="price-input-group">
-                            <input type="text" class="input-g-sell" value="${safeSell}" oninput="formatCurrencyInput(this)" onwheel="handleWheelPrice(event, this)">
+                            <input type="text" class="input-g-sell" value="${sell}" oninput="formatCurrencyInput(this)" onwheel="handleWheelPrice(event, this)">
                             <div class="price-spinners">
                                 <button type="button" onclick="adjustPrice(this, 50000)" title="Tăng 50,000đ">▲</button>
                                 <button type="button" onclick="adjustPrice(this, -50000)" title="Giảm 50,000đ">▼</button>
@@ -437,26 +386,15 @@
 
     function loadCurrentSettings() {
         document.getElementById('gold-items-container').innerHTML = '';
-
-        let _settled = false;
-        const _timer = setTimeout(() => {
-            if (!_settled) {
-                _settled = true;
-                defaultProducts.forEach(item => addNewProductRow(item.name, item.buy, item.sell, item.showWeb, item.showTv));
-            }
-        }, 8000);
-
+        
         db.ref('kimbao_sync_data').once('value').then((snapshot) => {
-            if (_settled) return;
-            _settled = true;
-            clearTimeout(_timer);
-
             const serverData = snapshot.val();
-
+            
             let list = (serverData && serverData.vbtb_cloned_data) ? serverData.vbtb_cloned_data : defaultProducts;
             currentSavedProducts = list;
 
             list.forEach(item => {
+                // Truyền thêm showWeb, showTv (nếu dữ liệu cũ chưa có thì mặc định coi là true)
                 const sWeb = item.showWeb !== undefined ? item.showWeb : true;
                 const sTv = item.showTv !== undefined ? item.showTv : true;
                 addNewProductRow(item.name, item.buy, item.sell, sWeb, sTv);
@@ -478,9 +416,6 @@
                 }
             }
         }).catch(err => {
-            if (_settled) return;
-            _settled = true;
-            clearTimeout(_timer);
             defaultProducts.forEach(item => addNewProductRow(item.name, item.buy, item.sell, item.showWeb, item.showTv));
         });
     }
