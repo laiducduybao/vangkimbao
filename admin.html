@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; connect-src 'self' https://*.firebaseio.com wss://*.firebaseio.com https://*.googleapis.com; img-src 'self' data: blob:; object-src 'none';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; connect-src 'self' https://*.firebaseio.com wss://*.firebaseio.com https://*.firebaseapp.com https://*.googleapis.com; img-src 'self' data: blob:; object-src 'none';">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <title>Hệ Thống Quản Trị Động - Vàng Kim Bảo</title>
     <style>
@@ -437,15 +437,26 @@
 
     function loadCurrentSettings() {
         document.getElementById('gold-items-container').innerHTML = '';
-        
+
+        let _settled = false;
+        const _timer = setTimeout(() => {
+            if (!_settled) {
+                _settled = true;
+                defaultProducts.forEach(item => addNewProductRow(item.name, item.buy, item.sell, item.showWeb, item.showTv));
+            }
+        }, 8000);
+
         db.ref('kimbao_sync_data').once('value').then((snapshot) => {
+            if (_settled) return;
+            _settled = true;
+            clearTimeout(_timer);
+
             const serverData = snapshot.val();
-            
+
             let list = (serverData && serverData.vbtb_cloned_data) ? serverData.vbtb_cloned_data : defaultProducts;
             currentSavedProducts = list;
 
             list.forEach(item => {
-                // Truyền thêm showWeb, showTv (nếu dữ liệu cũ chưa có thì mặc định coi là true)
                 const sWeb = item.showWeb !== undefined ? item.showWeb : true;
                 const sTv = item.showTv !== undefined ? item.showTv : true;
                 addNewProductRow(item.name, item.buy, item.sell, sWeb, sTv);
@@ -467,6 +478,9 @@
                 }
             }
         }).catch(err => {
+            if (_settled) return;
+            _settled = true;
+            clearTimeout(_timer);
             defaultProducts.forEach(item => addNewProductRow(item.name, item.buy, item.sell, item.showWeb, item.showTv));
         });
     }
