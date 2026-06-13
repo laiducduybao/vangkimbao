@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Vàng Kim Bảo">
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline'; connect-src 'self' https://*.firebaseio.com wss://*.firebaseio.com https://*.googleapis.com https://api.binance.com https://open.er-api.com; frame-src https://s.tradingview.com https://www.google.com; img-src 'self' data: blob:; object-src 'none';">
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline'; connect-src 'self' https://*.firebaseio.com wss://*.firebaseio.com https://*.firebaseapp.com https://*.googleapis.com https://api.binance.com https://open.er-api.com; frame-src https://s.tradingview.com https://www.google.com; img-src 'self' data: blob:; object-src 'none';">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
 
     <title>Vàng Kim Bảo - Cập nhật giá vàng mới nhất - Mua Bán Vàng Uy Tín - Tin Cậy</title>
@@ -1128,28 +1128,41 @@
             { name: "Vàng Công Nghệ Ý 18K", buy: "5,800,000", sell: "6,050,000" }
         ];
 
-        // ĐỒNG BỘ DỮ LIỆU TỪ FIREBASE
-        db.ref('kimbao_sync_data').on('value', (snapshot) => {
-            const serverData = snapshot.val();
-
-            let list = (serverData && serverData.vbtb_cloned_data) ? serverData.vbtb_cloned_data : fallbackData;
-            const localTime = serverData ? serverData.vbtb_cloned_time : null;
-
+        // Hiển thị dữ liệu dự phòng nếu Firebase không kết nối được sau 10 giây
+        function renderRows(list) {
             const tbody = document.getElementById('web-table-body');
             tbody.innerHTML = '';
-            const now = Date.now();
-
             list.forEach(item => {
                 let rowClass = "";
                 if (item.showWeb === false) rowClass += " hide-web";
                 if (item.showTv === false) rowClass += " hide-tv";
-
                 tbody.innerHTML += `<tr class="${escapeHTML(rowClass)}">
                 <td class="gold-type"><strong>${escapeHTML(item.name)}</strong></td>
                 <td class="price-buy">${escapeHTML(item.buy)}</td>
                 <td class="price-sell">${escapeHTML(item.sell)}</td>
             </tr>`;
             });
+        }
+
+        let _fbConnected = false;
+        const _fbFallbackTimer = setTimeout(() => {
+            if (!_fbConnected) {
+                renderRows(fallbackData);
+                document.getElementById('live-time').innerText = "⚠️ Không kết nối được máy chủ — Đang hiển thị dữ liệu dự phòng";
+            }
+        }, 10000);
+
+        // ĐỒNG BỘ DỮ LIỆU TỪ FIREBASE
+        db.ref('kimbao_sync_data').on('value', (snapshot) => {
+            _fbConnected = true;
+            clearTimeout(_fbFallbackTimer);
+
+            const serverData = snapshot.val();
+
+            let list = (serverData && serverData.vbtb_cloned_data) ? serverData.vbtb_cloned_data : fallbackData;
+            const localTime = serverData ? serverData.vbtb_cloned_time : null;
+
+            renderRows(list);
 
             document.getElementById('live-time').innerText = "Cập nhật hệ thống lúc: " + (localTime ? localTime : "Mặc định hệ thống");
 
@@ -1176,6 +1189,11 @@
                     if (val) root.style.setProperty(`--tv-${key}`, val);
                 }
             }
+        }, (err) => {
+            _fbConnected = true;
+            clearTimeout(_fbFallbackTimer);
+            renderRows(fallbackData);
+            document.getElementById('live-time').innerText = "⚠️ Lỗi kết nối máy chủ — Đang hiển thị dữ liệu dự phòng";
         });
 
         // CÁC HÀM XỬ LÝ GIAO DIỆN TV MODE FULLSCREEN
