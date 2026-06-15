@@ -404,12 +404,6 @@
             color: #e03131;
         }
 
-        .trend-icon {
-            font-size: 18px;
-            display: inline-block;
-            vertical-align: middle;
-        }
-
         /* Nút Liên hệ nổi (Floating Contact) */
         .floating-contact {
             position: fixed;
@@ -653,30 +647,20 @@
                 font-size: 13px;
             }
 
-            .trend-icon {
-                font-size: 14px;
-            }
-
             table th:nth-child(1),
             table td:nth-child(1) {
-                width: 36% !important;
+                width: 40% !important;
                 text-align: left;
             }
 
             table th:nth-child(2),
             table td:nth-child(2) {
-                width: 26% !important;
+                width: 30% !important;
             }
 
             table th:nth-child(3),
             table td:nth-child(3) {
-                width: 26% !important;
-            }
-
-            table th:nth-child(4),
-            table td:nth-child(4) {
-                width: 12% !important;
-                text-align: center;
+                width: 30% !important;
             }
 
             .negotiable-box {
@@ -893,29 +877,17 @@
 
         body.tv-mode table th:nth-child(1),
         body.tv-mode table td:nth-child(1) {
-            width: 40% !important;
+            width: 50% !important;
         }
 
         body.tv-mode table th:nth-child(2),
         body.tv-mode table td:nth-child(2) {
-            width: 24% !important;
+            width: 25% !important;
         }
 
         body.tv-mode table th:nth-child(3),
         body.tv-mode table td:nth-child(3) {
-            width: 24% !important;
-        }
-
-        body.tv-mode table th:nth-child(4),
-        body.tv-mode table td:nth-child(4) {
-            width: 12% !important;
-            text-align: center;
-        }
-
-        body.tv-mode .trend-icon {
-            font-size: 40px !important;
-            line-height: 1;
-            margin-top: -3px;
+            width: 25% !important;
         }
 
         body.tv-mode .tv-footer-container {
@@ -1022,7 +994,6 @@
                         </th>
                         <th>Bán ra<br><small style="font-size:12px;font-weight:normal;opacity:0.8;">(VNĐ/Chỉ)</small>
                         </th>
-                        <th>Xu hướng</th>
                     </tr>
                 </thead>
                 <tbody id="web-table-body"></tbody>
@@ -1033,10 +1004,14 @@
 
         <div class="commitments-box">
             <ul class="commitments-list">
-                <li><span class="icon">🔬</span> 100% vàng được kiểm định bằng máy móc hiện đại, đảm bảo hàm lượng đúng như cam kết. Quý khách có thể kiểm tra trực tiếp tại cửa hàng.</li>
-                <li><span class="icon">💎</span> Giá cả minh bạch, rõ ràng. Mua bán nhanh chóng, thuận tiện. Hỗ trợ thu lại giá cao (tất cả các thương hiệu) hoặc đổi sang vàng mới, chất lượng cao.</li>
-                <li><span class="icon">↻</span> Giao dịch an toàn, uy tín. Đầy đủ hoá đơn, giấy đảm bảo, giấy kiểm định (nếu khách hàng có yêu cầu).</li>
-                <li><span class="icon">🤝</span> Hỗ trợ khách hàng nhanh chóng, chuyên nghiệp 24/7. Tư vấn miễn phí về đầu tư vàng, vệ sinh làm mới free với sản phẩm do cửa hàng cung cấp.</li>
+                <li><span class="icon">🔬</span> 100% vàng được kiểm định bằng máy móc hiện đại, đảm bảo hàm lượng đúng
+                    như cam kết. Quý khách có thể kiểm tra trực tiếp tại cửa hàng.</li>
+                <li><span class="icon">💎</span> Giá cả minh bạch, rõ ràng. Mua bán nhanh chóng, thuận tiện. Hỗ trợ thu
+                    lại giá cao (tất cả các thương hiệu) hoặc đổi sang vàng mới, chất lượng cao.</li>
+                <li><span class="icon">↻</span> Giao dịch an toàn, uy tín. Đầy đủ hoá đơn, giấy đảm bảo, giấy kiểm định
+                    (nếu khách hàng có yêu cầu).</li>
+                <li><span class="icon">🤝</span> Hỗ trợ khách hàng nhanh chóng, chuyên nghiệp 24/7. Tư vấn miễn phí về
+                    đầu tư vàng, vệ sinh làm mới free với sản phẩm do cửa hàng cung cấp.</li>
             </ul>
         </div>
     </div>
@@ -1157,16 +1132,6 @@
             const now = Date.now();
 
             list.forEach(item => {
-                let trendIcon = '<span class="trend-icon" style="color: #d4af37;">▶</span>';
-
-                if (item.last_updated && (now - item.last_updated) <= 8 * 60 * 60 * 1000) {
-                    if (item.trend === 'up') {
-                        trendIcon = '<span class="trend-icon" style="color: #2f9e44;">▲</span>';
-                    } else if (item.trend === 'down') {
-                        trendIcon = '<span class="trend-icon" style="color: #e03131;">▼</span>';
-                    }
-                }
-
                 let rowClass = "";
                 if (item.showWeb === false) rowClass += " hide-web";
                 if (item.showTv === false) rowClass += " hide-tv";
@@ -1175,7 +1140,6 @@
                 <td class="gold-type"><strong>${escapeHTML(item.name)}</strong></td>
                 <td class="price-buy">${escapeHTML(item.buy)}</td>
                 <td class="price-sell">${escapeHTML(item.sell)}</td>
-                <td>${trendIcon}</td>
             </tr>`;
             });
 
