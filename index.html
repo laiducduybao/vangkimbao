@@ -18,24 +18,6 @@
             --gold: #d4af37;
             --gold-light: #fdfaf0;
             --text-dark: #222222;
-
-            /* Cấu hình TV mặc định */
-            --tv-bg-main: #4a0911;
-            --tv-brand-txt: #d4af37;
-            --tv-addr-txt: #ffffff;
-            --tv-hl-bg: #6b0f1a;
-            --tv-hl-txt: #d4af37;
-            --tv-hl-border: #d4af37;
-            --tv-card-border: #d4af37;
-            --tv-card-bg: #ffffff;
-            --tv-th-bg: #f4f6f8;
-            --tv-th-txt: #555555;
-            --tv-td-txt: #222222;
-            --tv-td-border: #edf0f2;
-            --tv-mar-bg: #1a0205;
-            --tv-mar-txt: #d4af37;
-            --tv-mar-border: #d4af37;
-            --tv-marquee-duration: 25s;
         }
 
         * {
@@ -49,107 +31,6 @@
             background-color: #f7f9fa;
             color: var(--text-dark);
             transition: background 0.3s;
-        }
-
-        /* Nút điều khiển TV Mode */
-        .tv-toggle-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 99999;
-            background: rgba(107, 15, 26, 0.85);
-            color: #d4af37;
-            border: 2px solid #d4af37;
-            padding: 10px 18px;
-            font-size: 13px;
-            font-weight: bold;
-            border-radius: 30px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
-            opacity: 0.5;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .tv-toggle-btn:hover {
-            opacity: 1;
-            background: #6b0f1a;
-            transform: scale(1.05);
-        }
-
-        /* Bảng hiển thị nhập mật khẩu (Custom Modal) */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 100000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background: #fff;
-            padding: 30px;
-            border-radius: 12px;
-            text-align: center;
-            max-width: 350px;
-            width: 90%;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .modal-content h3 {
-            color: var(--bordeaux);
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            font-size: 18px;
-        }
-
-        .modal-content input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 20px;
-            border: 2px solid #edf0f2;
-            border-radius: 6px;
-            font-size: 16px;
-            text-align: center;
-            outline: none;
-            transition: border 0.3s;
-        }
-
-        .modal-content input:focus {
-            border-color: var(--gold);
-        }
-
-        .modal-btn {
-            background: var(--bordeaux);
-            color: var(--gold);
-            padding: 12px 20px;
-            border: none;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 16px;
-            width: 100%;
-            transition: background 0.3s;
-        }
-
-        .modal-btn:hover {
-            background: var(--bordeaux-dark);
-        }
-
-        .modal-close {
-            margin-top: 15px;
-            color: #777;
-            cursor: pointer;
-            font-size: 14px;
-            display: inline-block;
-            text-decoration: underline;
         }
 
         /* Giao diện thông thường */
@@ -199,11 +80,6 @@
             font-weight: 500;
             margin-bottom: 0;
             opacity: 0.9;
-        }
-
-        .tv-address-sub,
-        .tv-fixed-hotline {
-            display: none;
         }
 
         .marquee-box {
@@ -289,7 +165,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* KHU VỰC CAM KẾT CHẤT LƯỢNG */
         .commitments-box {
             background: linear-gradient(135deg, #ffffff 0%, #fdfaf0 100%);
             border: 2px solid var(--gold);
@@ -350,7 +225,6 @@
             box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
         }
 
-        /* Giao diện Bảng Vàng Trong Nước */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -404,7 +278,6 @@
             color: #e03131;
         }
 
-        /* Nút Liên hệ nổi (Floating Contact) */
         .floating-contact {
             position: fixed;
             bottom: 30px;
@@ -442,7 +315,6 @@
             background-color: #2f9e44;
         }
 
-        /* KHU VỰC KHUNG BIỂU ĐỒ TRADINGVIEW & TÓM TẮT */
         .tradingview-container {
             max-width: 1100px;
             margin: 30px auto 10px auto;
@@ -528,7 +400,6 @@
             font-size: 13px;
         }
 
-        /* BẢN ĐỒ GOOGLE MAPS */
         .map-section {
             max-width: 1100px;
             margin: 40px auto;
@@ -553,10 +424,6 @@
             border: 2px solid #e1e8ed;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
             height: 400px;
-        }
-
-        .tv-footer-container {
-            display: none;
         }
 
         footer {
@@ -587,9 +454,6 @@
             margin-top: 20px;
         }
 
-        /* ======================================================= */
-        /* CẤU HÌNH TỐI ƯU GIAO DIỆN ĐIỆN THOẠI (MOBILE MODE)      */
-        /* ======================================================= */
         @media (max-width: 767px) {
             .top-bar {
                 display: none;
@@ -756,179 +620,7 @@
             }
         }
 
-        /* ======================================================= */
-        /* CẤU HÌNH PHÓNG TO FULL MÀN HÌNH TỐI ƯU CHO TV MODE      */
-        /* ======================================================= */
-        body.tv-mode {
-            background-color: var(--tv-bg-main) !important;
-            overflow: hidden;
-        }
-
-        body.tv-mode .top-bar,
-        body.tv-mode .marquee-box,
-        body.tv-mode header h2,
-        body.tv-mode .tradingview-container,
-        body.tv-mode footer,
-        body.tv-mode .tv-toggle-btn,
-        body.tv-mode .map-section,
-        body.tv-mode .negotiable-box,
-        body.tv-mode .modal-overlay,
-        body.tv-mode .floating-contact,
-        body.tv-mode .commitments-box {
-            display: none !important;
-        }
-
-        body.tv-mode header {
-            background: transparent;
-            box-shadow: none;
-            padding: 25px 40px 5px 40px;
-            border-bottom: none;
-            text-align: left;
-        }
-
-        body.tv-mode header h1 {
-            color: var(--tv-brand-txt);
-            font-size: 52px;
-            letter-spacing: 2px;
-        }
-
-        body.tv-mode .tv-address-sub {
-            display: block !important;
-            color: var(--tv-addr-txt);
-            font-size: 20px;
-            font-weight: 500;
-            margin-top: 4px;
-        }
-
-        body.tv-mode .tv-fixed-hotline {
-            display: flex !important;
-            position: absolute;
-            top: 25px;
-            right: 40px;
-            background-color: var(--tv-hl-bg);
-            color: var(--tv-hl-txt);
-            border: 3px solid var(--tv-hl-border);
-            padding: 12px 25px;
-            font-size: 24px;
-            font-weight: 900;
-            border-radius: 40px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            align-items: center;
-        }
-
-        body.tv-mode .main-container {
-            max-width: 98%;
-            margin: 5px auto;
-            padding: 0;
-        }
-
-        body.tv-mode .tab-content {
-            border: 3px solid var(--tv-card-border);
-            background-color: var(--tv-card-bg);
-            border-radius: 16px;
-        }
-
-        body.tv-mode .card-header {
-            font-size: 28px;
-            padding: 10px;
-        }
-
-        body.tv-mode .time-bar {
-            font-size: 18px;
-            padding: 6px;
-        }
-
-        body.tv-mode th {
-            font-size: 24px;
-            padding: 12px;
-            background-color: var(--tv-th-bg);
-            color: var(--tv-th-txt);
-        }
-
-        body.tv-mode th:not(:last-child) {
-            border-right: 2px solid rgba(0, 0, 0, 0.1);
-        }
-
-        body.tv-mode td {
-            font-size: 34px;
-            padding: 14px 15px;
-            color: var(--tv-td-txt);
-            border-bottom: 2px solid var(--tv-td-border);
-            font-weight: 800;
-        }
-
-        body.tv-mode td:not(:last-child) {
-            border-right: 2px solid var(--tv-td-border);
-        }
-
-        body.tv-mode .gold-type {
-            font-size: 30px;
-            color: var(--tv-td-txt);
-            font-weight: 800;
-        }
-
-        body.tv-mode .price-buy {
-            color: #2f9e44 !important;
-        }
-
-        body.tv-mode .price-sell {
-            color: #e03131 !important;
-        }
-
-        body.tv-mode table th:nth-child(1),
-        body.tv-mode table td:nth-child(1) {
-            width: 50% !important;
-        }
-
-        body.tv-mode table th:nth-child(2),
-        body.tv-mode table td:nth-child(2) {
-            width: 25% !important;
-        }
-
-        body.tv-mode table th:nth-child(3),
-        body.tv-mode table td:nth-child(3) {
-            width: 25% !important;
-        }
-
-        body.tv-mode .tv-footer-container {
-            display: block !important;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: var(--tv-mar-bg);
-            border-top: 3px solid var(--tv-mar-border);
-            padding: 15px 0;
-            overflow: hidden;
-            z-index: 9998;
-        }
-
-        body.tv-mode .tv-moving-text {
-            display: inline-block;
-            white-space: nowrap;
-            color: var(--tv-mar-txt);
-            font-size: 28px;
-            font-weight: bold;
-            letter-spacing: 2px;
-            padding-left: 100%;
-            animation: moveRightToLeft var(--tv-marquee-duration) linear infinite;
-        }
-
-        @keyframes moveRightToLeft {
-            0% {
-                transform: translateX(0);
-            }
-
-            100% {
-                transform: translateX(-100%);
-            }
-        }
-
-        body:not(.tv-mode) tr.hide-web {
-            display: none !important;
-        }
-
-        body.tv-mode tr.hide-tv {
+        tr.hide-web {
             display: none !important;
         }
     </style>
@@ -939,24 +631,10 @@
 
 <body>
 
-    <button class="tv-toggle-btn" id="tvBtn" onclick="toggleTVMode()">
-        <span>📺</span> CHẾ ĐỘ FULL MÀN HÌNH
-    </button>
-
     <div class="floating-contact">
         <a href="https://zalo.me/0989865333" target="_blank" rel="noopener noreferrer" class="float-btn float-zalo"
             title="Chat Zalo số 0989865333">Z</a>
         <a href="tel:0989865333" class="float-btn float-phone" title="Gọi số 0989865333">📞</a>
-    </div>
-
-    <div class="modal-overlay" id="passwordModal">
-        <div class="modal-content">
-            <h3>Hệ thống trung tâm</h3>
-            <p style="font-size: 14px; color: #555; margin-bottom: 15px;">Vui lòng nhập mật khẩu xác thực:</p>
-            <input type="password" id="tvPasswordInput" placeholder="Nhập mật khẩu..." autocomplete="off">
-            <button class="modal-btn" onclick="submitPassword()">Xác nhận kích hoạt</button>
-            <span class="modal-close" onclick="closePasswordModal()">Hủy bỏ</span>
-        </div>
     </div>
 
     <div class="top-bar">
@@ -968,9 +646,6 @@
         <h1 id="tv-live-brand">Vàng Kim Bảo</h1>
         <h2>NƠI GIAO DỊCH VÀNG UY TÍN - TIN CẬY</h2>
         <h2 class="sub-title">THƯƠNG HIỆU ĐỘC QUYỀN THUỘC SỞ HỮU CỦA CÔNG TY TNHH MTV THUẬN PHÁT TUYÊN QUANG</h2>
-
-        <div class="tv-address-sub" id="tv-live-address">Đang tải địa chỉ...</div>
-        <div class="tv-fixed-hotline" id="tv-live-hotline">HOTLINE</div>
     </header>
 
     <div class="marquee-box">
@@ -1004,13 +679,16 @@
 
         <div class="commitments-box">
             <ul class="commitments-list">
+                <li><span class="icon">🏅</span> Vàng nhẫn tròn Kim Bảo là sản phẩm vàng trang sức mỹ nghệ được sản xuất
+                    tại công ty TNHH MTV Thuận Phát Tuyên Quang theo TCCS 01:2026/TPTQ.</li>
                 <li><span class="icon">🔬</span> 100% vàng được kiểm định bằng máy móc hiện đại, đảm bảo hàm lượng đúng
                     như cam kết. Quý khách có thể kiểm tra trực tiếp tại cửa hàng.</li>
                 <li><span class="icon">💎</span> Giá cả minh bạch, rõ ràng. Mua bán nhanh chóng, thuận tiện. Hỗ trợ thu
                     lại giá cao (tất cả các thương hiệu) hoặc đổi sang vàng mới, chất lượng cao.</li>
                 <li><span class="icon">↻</span> Giao dịch an toàn, uy tín. Đầy đủ hoá đơn, giấy đảm bảo, giấy kiểm định
                     (nếu khách hàng có yêu cầu).</li>
-                <li><span class="icon">🤝</span> Tư vấn, hỗ trợ khách hàng nhanh chóng, chuyên nghiệp 24/7. Vệ sinh làm mới miễn phí với sản phẩm do cửa hàng cung cấp.</li>
+                <li><span class="icon">🤝</span> Tư vấn, hỗ trợ khách hàng nhanh chóng, chuyên nghiệp 24/7. Vệ sinh làm
+                    mới miễn phí với sản phẩm do cửa hàng cung cấp.</li>
             </ul>
         </div>
     </div>
@@ -1022,7 +700,7 @@
             </div>
             <div class="tradingview-widget-container" style="height: 400px; width: 100%;">
                 <iframe
-                    src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_chart&symbol=FX_IDC%3AXAUUSD&interval=D&symboledit=0&saveimage=1&toolbarbg=f1f3f6&studies=%5B%5D&theme=light&style=1&timezone=Asia%2FHo_Chi_Minh&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=vi&utm_source=vangkimbao&utm_medium=widget&utm_campaign=chart&utm_term=FX_IDC%3AXAUUSD"
+                    src="https://www.tradingview-widget.com/embed-widget/advanced-chart/?locale=vi_VN#%7B%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%2C%22symbol%22%3A%22FX_IDC%3AXAUUSD%22%2C%22interval%22%3A%225%22%2C%22timezone%22%3A%22Asia%2FHo_Chi_Minh%22%2C%22theme%22%3A%22light%22%2C%22style%22%3A%221%22%2C%22backgroundColor%22%3A%22rgba(255%2C255%2C255%2C1)%22%2C%22withdateranges%22%3Atrue%2C%22hide_side_toolbar%22%3Atrue%2C%22allow_symbol_change%22%3Atrue%2C%22details%22%3Atrue%2C%22hotlist%22%3Atrue%2C%22support_host%22%3A%22https%3A%2F%2Fwww.tradingview.com%22%2C%22utm_source%22%3A%22giavang.org%22%2C%22utm_medium%22%3A%22widget_new%22%2C%22utm_campaign%22%3A%22advanced-chart%22%2C%22page-uri%22%3A%22giavang.org%2Fthe-gioi%2F%22%7D"
                     style="width: 100%; height: 100%; border: none; margin: 0; padding: 0;" allowfullscreen></iframe>
             </div>
         </div>
@@ -1068,10 +746,6 @@
         </div>
     </div>
 
-    <div class="tv-footer-container">
-        <div class="tv-moving-text" id="tv-live-marquee"></div>
-    </div>
-
     <footer>
         <h3>CÔNG TY TNHH MTV THUẬN PHÁT TUYÊN QUANG</h3>
         <p><strong>Thương hiệu độc quyền:</strong> VÀNG KIM BẢO</p>
@@ -1093,18 +767,6 @@
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
-
-        // Lưu hash SHA-256 của mật khẩu, KHÔNG lưu plaintext
-        // Hash của "031220" — thay bằng hash của mật khẩu mới nếu cần đổi
-        let currentTvPasswordHash = "db13a5fbefb0c2092d7516034472dfc66abf5dd53b943c8dfaba0821f576083e";
-
-        async function hashPassword(password) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(password);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            return Array.from(new Uint8Array(hashBuffer))
-                .map(b => b.toString(16).padStart(2, '0')).join('');
-        }
 
         function escapeHTML(str) {
             if (str == null) return '';
@@ -1128,12 +790,10 @@
 
             const tbody = document.getElementById('web-table-body');
             tbody.innerHTML = '';
-            const now = Date.now();
 
             list.forEach(item => {
                 let rowClass = "";
                 if (item.showWeb === false) rowClass += " hide-web";
-                if (item.showTv === false) rowClass += " hide-tv";
 
                 tbody.innerHTML += `<tr class="${escapeHTML(rowClass)}">
                 <td class="gold-type"><strong>${escapeHTML(item.name)}</strong></td>
@@ -1146,94 +806,8 @@
 
             if (!serverData) return;
 
-            if (serverData.tv_password_hash) {
-                currentTvPasswordHash = serverData.tv_password_hash;
-            }
-
             document.getElementById('tv-live-brand').innerText = serverData.tv_txt_brand || "Vàng Kim Bảo";
-            document.getElementById('tv-live-address').innerText = serverData.tv_txt_address || "Số 259 Nguyễn Tất Thành, xã Nà Hang, tỉnh Tuyên Quang";
-            document.getElementById('tv-live-hotline').innerText = serverData.tv_txt_hotline || "HOTLINE TRỢ GIÁ: 0989.865.333";
             document.getElementById('web-live-negotiable').innerText = serverData.web_txt_negotiable || "Giá còn có thể thương lượng";
-
-            const marqueeTxt = serverData.tv_txt_marquee || "VÀNG BẠC KIM BẢO — GIỮ TÍN NHIỆM HƠN GIỮ VÀNG ——— HOTLINE TRỢ GIÁ: 0989.865.333";
-            const marqueeDiv = document.getElementById('tv-live-marquee');
-            if (marqueeDiv.innerText !== marqueeTxt) marqueeDiv.innerText = marqueeTxt;
-
-            const root = document.documentElement;
-            root.style.setProperty('--tv-marquee-duration', serverData.tv_marquee_speed || "25s");
-
-            if (serverData.colors) {
-                for (const [key, val] of Object.entries(serverData.colors)) {
-                    if (val) root.style.setProperty(`--tv-${key}`, val);
-                }
-            }
-        });
-
-        // CÁC HÀM XỬ LÝ GIAO DIỆN TV MODE FULLSCREEN
-        function enterFullscreenMax(element) {
-            if (element.requestFullscreen) element.requestFullscreen();
-            else if (element.webkitRequestFullscreen) element.webkitRequestFullscreen();
-            else if (element.mozRequestFullScreen) element.mozRequestFullScreen();
-            else if (element.msRequestFullscreen) element.msRequestFullscreen();
-        }
-
-        function exitFullscreenMax() {
-            if (document.exitFullscreen) document.exitFullscreen();
-            else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-            else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
-            else if (document.msExitFullscreen) document.msExitFullscreen();
-        }
-
-        function toggleTVMode() {
-            const body = document.body;
-            if (!body.classList.contains('tv-mode')) {
-                document.getElementById('passwordModal').style.display = 'flex';
-                document.getElementById('tvPasswordInput').value = '';
-                document.getElementById('tvPasswordInput').focus();
-            } else {
-                exitFullscreenMax();
-                body.classList.remove('tv-mode');
-            }
-        }
-
-        function closePasswordModal() {
-            document.getElementById('passwordModal').style.display = 'none';
-        }
-
-        async function submitPassword() {
-            const pass = document.getElementById('tvPasswordInput').value;
-            const inputHash = await hashPassword(pass);
-            if (inputHash !== currentTvPasswordHash) {
-                alert("Mật khẩu bảo mật không chính xác!");
-                return;
-            }
-
-            closePasswordModal();
-            enterFullscreenMax(document.documentElement);
-            document.body.classList.add('tv-mode');
-        }
-
-        document.getElementById('tvPasswordInput').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') submitPassword();
-        });
-
-        const handleFullscreenChange = () => {
-            if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
-                document.body.classList.remove('tv-mode');
-            }
-        };
-        document.addEventListener('fullscreenchange', handleFullscreenChange);
-        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-        document.addEventListener('mozfullscreenchange', handleFullscreenChange);
-        document.addEventListener('MSFullscreenChange', handleFullscreenChange);
-
-        window.addEventListener('keydown', function (e) {
-            if (e.key === 'f' || e.key === 'F') toggleTVMode();
-            if (e.key === 'Escape') {
-                exitFullscreenMax();
-                document.body.classList.remove('tv-mode');
-                closePasswordModal();
-            }
         });
 
         // =========================================================================
@@ -1254,12 +828,10 @@
                 }
 
                 // 2. Lấy giá Vàng tham chiếu (PAX Gold - bám sát XAU/USD 1:1)
-                // API này mở hoàn toàn, không cần key, không giới hạn
                 const res = await fetch("https://api.binance.com/api/v3/ticker/24hr?symbol=PAXGUSDT");
                 const data = await res.json();
 
                 if (data && data.lastPrice) {
-                    // Ép kiểu dữ liệu về số thực
                     const currentPriceUSD = parseFloat(data.lastPrice);
                     const changeUSD = parseFloat(data.priceChange);
                     const changePct = parseFloat(data.priceChangePercent);
