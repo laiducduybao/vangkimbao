@@ -1,0 +1,12 @@
+{
+  "rules": {
+    "kimbao_sync_data": {
+      ".read": true,
+      ".write": "auth != null"
+    },
+    "kimbao_price_history": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    }
+  }
+}
