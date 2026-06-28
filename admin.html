@@ -1,545 +1,1002 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hệ Thống Quản Trị Động - Vàng Kim Bảo</title>
     <style>
-        :root { --bordeaux: #6b0f1a; --bordeaux-dark: #4a0911; --gold: #d4af37; --bg-light: #f8f9fa; }
+        :root {
+            --bordeaux: #6b0f1a;
+            --bordeaux-dark: #4a0911;
+            --gold: #d4af37;
+            --bg-light: #f8f9fa;
+        }
+
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+
         body { background-color: var(--bg-light); color: #333; padding: 30px 15px; }
 
         /* MÀN HÌNH KHÓA */
-        .lock-screen { max-width: 400px; margin: 100px auto; background: #ffffff; padding: 40px 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-top: 5px solid var(--bordeaux); text-align: center; }
+        .lock-screen {
+            max-width: 420px;
+            margin: 80px auto;
+            background: #ffffff;
+            padding: 40px 30px 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-top: 5px solid var(--bordeaux);
+            text-align: center;
+        }
+
         .lock-screen h2 { color: var(--bordeaux-dark); margin-bottom: 10px; font-size: 22px; text-transform: uppercase; }
         .lock-screen p { color: #666; font-size: 14px; margin-bottom: 25px; }
-        .lock-screen input[type="password"] { width: 100%; padding: 12px 15px; font-size: 16px; border: 2px solid #ddd; border-radius: 6px; margin-bottom: 20px; text-align: center; outline: none; }
+
+        .lock-screen input[type="password"] {
+            width: 100%; padding: 12px 15px; font-size: 16px;
+            border: 2px solid #ddd; border-radius: 6px; margin-bottom: 20px;
+            text-align: center; outline: none; transition: border 0.2s;
+        }
         .lock-screen input[type="password"]:focus { border-color: var(--bordeaux); }
-        .lock-screen button { background: var(--bordeaux); color: var(--gold); border: none; width: 100%; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; text-transform: uppercase; }
+
+        .lock-screen button {
+            background: var(--bordeaux); color: var(--gold); border: none;
+            width: 100%; padding: 12px; font-size: 16px; font-weight: bold;
+            border-radius: 6px; cursor: pointer; text-transform: uppercase;
+            transition: background 0.2s;
+        }
+        .lock-screen button:hover { background: var(--bordeaux-dark); }
+
         .error-msg { color: #dc3545; font-size: 13px; margin-top: 10px; display: none; font-weight: 600; }
+
+        /* Hướng dẫn đăng nhập */
+        .login-help {
+            margin-top: 22px;
+            text-align: left;
+            border-top: 1px solid #eee;
+            padding-top: 16px;
+        }
+
+        .login-help summary {
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--bordeaux);
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .login-help summary::before { content: "▶"; font-size: 10px; transition: transform 0.2s; }
+        .login-help[open] summary::before { transform: rotate(90deg); }
+
+        .login-help-body {
+            margin-top: 12px;
+            padding: 14px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #444;
+            line-height: 1.8;
+            border-left: 3px solid var(--gold);
+        }
+
+        .login-help-body code {
+            background: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: var(--bordeaux-dark);
+        }
+
+        .login-help-body a { color: var(--bordeaux); font-weight: 600; }
 
         /* NỘI DUNG QUẢN TRỊ */
         .admin-content { display: none; max-width: 900px; margin: 0 auto; }
 
-        .admin-header { display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, var(--bordeaux-dark) 0%, var(--bordeaux) 100%); padding: 20px; border-radius: 10px; color: #fff; margin-bottom: 30px; border-bottom: 3px solid var(--gold); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .admin-header h1 { color: var(--gold); font-size: 24px; text-transform: uppercase; }
-        .logout-btn { background: #6c757d; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, var(--bordeaux-dark) 0%, var(--bordeaux) 100%);
+            padding: 20px;
+            border-radius: 10px;
+            color: #fff;
+            margin-bottom: 30px;
+            border-bottom: 3px solid var(--gold);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
 
-        .panel-card { background: white; border-radius: 10px; padding: 25px; margin-bottom: 30px; border: 1px solid #e1e8ed; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
-        .panel-card h3 { color: var(--bordeaux); margin-bottom: 20px; border-left: 4px solid var(--gold); padding-left: 10px; font-size: 18px; text-transform: uppercase; font-weight: 800;}
-        
+        .admin-header h1 { color: var(--gold); font-size: 24px; text-transform: uppercase; }
+
+        .logout-btn {
+            background: #6c757d; color: white; border: none;
+            padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;
+        }
+
+        .panel-card {
+            background: white; border-radius: 10px; padding: 25px;
+            margin-bottom: 30px; border: 1px solid #e1e8ed;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        .panel-card h3 {
+            color: var(--bordeaux); margin-bottom: 20px;
+            border-left: 4px solid var(--gold); padding-left: 10px;
+            font-size: 18px; text-transform: uppercase; font-weight: 800;
+        }
+
         .row { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
-        .col { flex: 1; min-width: 180px; display: flex; flex-direction: column; justify-content: center;}
-        label { font-size: 13px; font-weight: 700; color: #555; margin-bottom: 6px; text-transform: uppercase; }
-        input[type="text"], select { padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 15px; font-weight: 600; }
-        
-        /* GIAO DIỆN HÀNG SẢN PHẨM MỚI */
-        .gold-row { background: #fffcf5; padding: 15px; border-radius: 6px; border: 1px solid #f3e9d2; margin-bottom: 15px; position: relative; }
-        .gold-row-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px dashed #f3e9d2; padding-bottom: 5px; }
+        .col { flex: 1; min-width: 180px; display: flex; flex-direction: column; justify-content: center; }
+
+        label {
+            font-size: 13px; font-weight: 700; color: #555;
+            margin-bottom: 6px; text-transform: uppercase;
+        }
+
+        input[type="text"], select {
+            padding: 10px; border: 1px solid #ccc;
+            border-radius: 5px; font-size: 15px; font-weight: 600;
+        }
+
+        /* GIAO DIỆN HÀNG SẢN PHẨM */
+        .gold-row {
+            background: #fffcf5; padding: 15px; border-radius: 6px;
+            border: 1px solid #f3e9d2; margin-bottom: 15px; position: relative;
+        }
+
+        .gold-row-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 10px; border-bottom: 1px dashed #f3e9d2; padding-bottom: 5px;
+        }
+
         .gold-row-title { font-weight: bold; color: var(--bordeaux-dark); font-size: 14px; text-transform: uppercase; }
-        
+
+        /* Tên sản phẩm + dropdown chọn nhanh */
+        .name-input-wrap { display: flex; gap: 6px; align-items: stretch; }
+
+        .name-input-wrap input[type="text"] { flex: 1; min-width: 0; }
+
+        .quick-select {
+            padding: 8px 6px; border: 1px solid #ccc; border-radius: 5px;
+            font-size: 13px; background: #fff; cursor: pointer;
+            color: var(--bordeaux-dark); font-weight: 600; max-width: 160px;
+        }
+
         /* BOX ĐIỀU CHỈNH GIÁ */
-        .price-input-group { display: flex; align-items: stretch; border: 1px solid #ccc; border-radius: 5px; overflow: hidden; background: #fff; height: 40px;}
-        .price-input-group input { border: none; flex: 1; padding: 0 10px; min-width: 0; outline: none; font-size: 15px; font-weight: 600;}
+        .price-input-group {
+            display: flex; align-items: stretch; border: 1px solid #ccc;
+            border-radius: 5px; overflow: hidden; background: #fff; height: 42px;
+        }
+
+        .price-input-group input {
+            border: none; flex: 1; padding: 0 10px; min-width: 0;
+            outline: none; font-size: 15px; font-weight: 600;
+        }
+
         .price-input-group input:focus { background: #fdfaf0; }
-        .price-spinners { display: flex; flex-direction: column; width: 34px; background: #e9ecef; border-left: 1px solid #ccc; }
-        .price-spinners button { flex: 1; border: none; background: transparent; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center; padding: 0; color: #555;}
+
+        .price-spinners {
+            display: flex; flex-direction: column; width: 34px;
+            background: #e9ecef; border-left: 1px solid #ccc;
+        }
+
+        .price-spinners button {
+            flex: 1; border: none; background: transparent; cursor: pointer;
+            font-size: 12px; display: flex; align-items: center;
+            justify-content: center; padding: 0; color: #555;
+            /* touch-action none để giữ tay không cuộn trang */
+            touch-action: none;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
         .price-spinners button:hover { background: #d4af37; color: #fff; }
         .price-spinners button:first-child { border-bottom: 1px solid #ccc; }
 
         /* STYLE CHECKBOX HIỂN THỊ */
-        .display-options { display: flex; gap: 20px; background: #fff; padding: 8px 15px; border-radius: 5px; border: 1px solid #e1e8ed; margin-top: 5px; }
-        .display-options label { margin-bottom: 0; display: flex; align-items: center; gap: 8px; cursor: pointer; text-transform: none; color: #222; font-weight: 600; font-size: 14px;}
+        .display-options {
+            display: flex; gap: 20px; background: #fff;
+            padding: 8px 15px; border-radius: 5px;
+            border: 1px solid #e1e8ed; margin-top: 5px;
+        }
+
+        .display-options label {
+            margin-bottom: 0; display: flex; align-items: center; gap: 8px;
+            cursor: pointer; text-transform: none; color: #222; font-weight: 600; font-size: 14px;
+        }
+
         .display-options input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--bordeaux); cursor: pointer; }
 
-        .btn-delete-item { background: #dc3545; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; }
-        .btn-add-item { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-size: 14px; font-weight: bold; cursor: pointer; margin-bottom: 20px; display: inline-flex; align-items: center; gap: 5px; }
-        .btn-submit { background: #28a745; color: white; border: none; padding: 15px; font-size: 18px; font-weight: bold; width: 100%; border-radius: 6px; cursor: pointer; text-transform: uppercase; box-shadow: 0 4px 6px rgba(40, 167, 69, 0.2); }
+        .btn-delete-item {
+            background: #dc3545; color: white; border: none;
+            padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer;
+        }
+
+        .btn-add-item {
+            background: #007bff; color: white; border: none;
+            padding: 10px 20px; border-radius: 5px; font-size: 14px; font-weight: bold;
+            cursor: pointer; margin-bottom: 20px; display: inline-flex; align-items: center; gap: 5px;
+        }
+
+        .btn-submit {
+            background: #28a745; color: white; border: none; padding: 15px;
+            font-size: 18px; font-weight: bold; width: 100%; border-radius: 6px;
+            cursor: pointer; text-transform: uppercase; box-shadow: 0 4px 6px rgba(40,167,69,0.2);
+        }
+
         .btn-submit:hover { background: #218838; }
 
+        /* STUDIO PHỐI MÀU */
         .color-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
-        .color-item { display: flex; align-items: center; justify-content: space-between; padding: 10px; background: #fdfdfd; border: 1px solid #eee; border-radius: 5px; }
+
+        .color-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px; background: #fdfdfd; border: 1px solid #eee; border-radius: 5px;
+        }
+
         .color-item input[type="color"] { width: 40px; height: 30px; border: none; cursor: pointer; }
 
+        /* BIỂU ĐỒ */
         .chart-filters { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
-        .btn-filter { background: #f4f6f8; border: 1px solid #ccc; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: bold; color: #555; transition: all 0.2s; }
+
+        .btn-filter {
+            background: #f4f6f8; border: 1px solid #ccc; padding: 8px 15px;
+            border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: bold;
+            color: #555; transition: all 0.2s;
+        }
+
         .btn-filter:hover { background: #e1e8ed; }
         .btn-filter.active { background: var(--bordeaux); color: var(--gold); border-color: var(--bordeaux); }
+
+        /* Điều khiển ghi chú web */
+        .negotiable-controls {
+            display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 8px;
+        }
+
+        .negotiable-controls .size-btn {
+            background: #e9ecef; border: 1px solid #ccc; width: 28px; height: 28px;
+            border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 14px;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+
+        .negotiable-controls .size-btn:hover { background: var(--gold); color: #fff; border-color: var(--gold); }
+
+        .size-display {
+            font-size: 13px; font-weight: 700; color: #555;
+            min-width: 50px; text-align: center;
+        }
+
+        .visible-toggle label {
+            display: flex; align-items: center; gap: 6px; cursor: pointer;
+            font-size: 13px; font-weight: 700; color: #555; text-transform: uppercase; margin: 0;
+        }
+
+        /* Marquee static option */
+        .marquee-options { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+        .marquee-options label {
+            display: flex; align-items: center; gap: 6px; cursor: pointer;
+            font-size: 13px; font-weight: 700; color: #555; text-transform: none; margin: 0;
+        }
     </style>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
 
-<div class="lock-screen" id="lockScreen">
-    <h2>Hệ Thống Bảng Giá</h2>
-    <p>Vui lòng nhập mật khẩu quản trị viên để tiếp tục</p>
-    <input type="password" id="passwordInput" placeholder="Nhập mật khẩu tại đây..." onkeydown="if(event.key==='Enter') verifyPassword()">
-    <button onclick="verifyPassword()">🔓 Đăng Nhập Hệ Thống</button>
-    <div class="error-msg" id="errorMsg">❌ Mật khẩu chưa chính xác! Vui lòng thử lại.</div>
-</div>
+    <div class="lock-screen" id="lockScreen">
+        <h2>Hệ Thống Bảng Giá</h2>
+        <p>Vui lòng nhập mật khẩu quản trị viên để tiếp tục</p>
+        <input type="password" id="passwordInput" placeholder="Nhập mật khẩu tại đây..."
+            onkeydown="if(event.key==='Enter') verifyPassword()">
+        <button onclick="verifyPassword()">🔓 Đăng Nhập Hệ Thống</button>
+        <div class="error-msg" id="errorMsg">❌ Mật khẩu chưa chính xác! Vui lòng thử lại.</div>
 
-<div class="admin-content" id="adminContent">
-    <div class="admin-header">
-        <div>
-            <h1>BÀN ĐIỀU KHIỂN CENTRAL</h1>
-            <p style="font-size: 12px; color: var(--gold); margin-top: 4px;">Quản lý sản phẩm linh hoạt - Tự động đồng bộ màn hình TV TOÀN CẦU</p>
-        </div>
-        <button class="logout-btn" onclick="logout()">🔒 Thoát (Khóa lại)</button>
+        <details class="login-help">
+            <summary>🔑 Hướng dẫn đăng nhập / đặt lại mật khẩu</summary>
+            <div class="login-help-body">
+                <p><strong>Tài khoản đăng nhập</strong> là <strong>Firebase Authentication</strong>.</p>
+                <p>Email mặc định: <code>admin@vangkimbao.com</code></p>
+                <br>
+                <p><strong>Để đặt lại mật khẩu:</strong></p>
+                <p>1. Truy cập <a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a></p>
+                <p>2. Chọn project <code>vangkimbao</code></p>
+                <p>3. Vào <strong>Authentication → Users</strong></p>
+                <p>4. Tìm email <code>admin@vangkimbao.com</code> → nhấn <strong>⋮ → Reset Password</strong></p>
+                <p>5. Kiểm tra hộp thư email để lấy link đặt lại mật khẩu</p>
+                <br>
+                <p><em>Nếu chưa có tài khoản, nhấn "Add user" và tạo mới với email trên.</em></p>
+            </div>
+        </details>
     </div>
 
-    <div class="panel-card">
-        <h3>1. Cập nhật Danh mục sản phẩm & Giá vàng</h3>
-        <div id="gold-items-container"></div>
-        <button type="button" class="btn-add-item" onclick="addNewProductRow('', '', '')">➕ Thêm sản phẩm kinh doanh mới</button>
-    </div>
-
-    <div class="panel-card">
-        <h3>📊 2. Biểu đồ biến động giá (Bán ra)</h3>
-        <div class="chart-filters">
-            <select id="productFilter" class="btn-filter" onchange="updateChart(currentChartTimeframe)" style="margin-right: 15px; cursor: pointer; font-weight: bold; padding: 8px 10px;">
-                <option value="all">Tất cả sản phẩm</option>
-            </select>
-            <button class="btn-filter" id="btn-day" onclick="updateChart('day')">Hôm nay</button>
-            <button class="btn-filter active" id="btn-week" onclick="updateChart('week')">7 Ngày qua</button>
-            <button class="btn-filter" id="btn-month" onclick="updateChart('month')">30 Ngày qua</button>
-            <button class="btn-filter" id="btn-year" onclick="updateChart('year')">1 Năm qua</button>
+    <div class="admin-content" id="adminContent">
+        <div class="admin-header">
+            <div>
+                <h1>BÀN ĐIỀU KHIỂN CENTRAL</h1>
+                <p style="font-size:12px;color:var(--gold);margin-top:4px;">Quản lý sản phẩm linh hoạt - Tự động đồng bộ màn hình TV TOÀN CẦU</p>
+            </div>
+            <button class="logout-btn" onclick="logout()">🔒 Thoát (Khóa lại)</button>
         </div>
-        <canvas id="priceChart" height="120"></canvas>
-    </div>
 
-    <div class="panel-card">
-        <h3>3. Cấu hình thông tin hiển thị trên màn hình TV & Web</h3>
-        <div class="row">
-            <div class="col"><label>Tên thương hiệu lớn</label><input type="text" id="tv-brand" value="Vàng Kim Bảo"></div>
-            <div class="col"><label>Dòng Địa chỉ</label><input type="text" id="tv-address" value="Số 259 Nguyễn Tất Thành, xã Nà Hang, tỉnh Tuyên Quang"></div>
+        <!-- PANEL 1: Sản phẩm & Giá -->
+        <div class="panel-card">
+            <h3>1. Cập nhật Danh mục sản phẩm & Giá vàng</h3>
+            <div id="gold-items-container"></div>
+            <button type="button" class="btn-add-item" onclick="addNewProductRow('','','')">➕ Thêm sản phẩm kinh doanh mới</button>
         </div>
-        <div class="row">
-            <div class="col"><label>Nội dung ô ghim Hotline</label><input type="text" id="tv-hotline" value="HOTLINE TRỢ GIÁ: 0989.865.333"></div>
-            <div class="col">
-                <label>Tốc độ chữ chạy đáy TV</label>
-                <select id="tv-marquee-speed">
-                    <option value="35s">Chạy rất chậm (Dễ đọc)</option>
-                    <option value="25s" selected>Chạy vừa phải (Khuyên dùng)</option>
-                    <option value="15s">Chạy nhanh</option>
+
+        <!-- PANEL 2: Biểu đồ lịch sử -->
+        <div class="panel-card">
+            <h3>📊 2. Biểu đồ biến động giá (Mua vào & Bán ra)</h3>
+            <div class="chart-filters">
+                <select id="productFilter" class="btn-filter"
+                    onchange="updateChart(currentChartTimeframe)"
+                    style="margin-right:15px;cursor:pointer;font-weight:bold;padding:8px 10px;">
+                    <option value="all">Tất cả sản phẩm</option>
                 </select>
+                <button class="btn-filter active" id="btn-week"  onclick="updateChart('week')">7 Ngày qua</button>
+                <button class="btn-filter"         id="btn-month" onclick="updateChart('month')">30 Ngày qua</button>
+                <button class="btn-filter"         id="btn-year"  onclick="updateChart('year')">1 Năm qua</button>
+                <button class="btn-filter"         id="btn-all"   onclick="updateChart('all')">Tất cả lịch sử</button>
+            </div>
+            <canvas id="priceChart" height="120"></canvas>
+        </div>
+
+        <!-- PANEL 3: Cấu hình TV & Web -->
+        <div class="panel-card">
+            <h3>3. Cấu hình thông tin hiển thị trên màn hình TV & Web</h3>
+            <div class="row">
+                <div class="col">
+                    <label>Tên thương hiệu lớn</label>
+                    <input type="text" id="tv-brand" value="Vàng Kim Bảo">
+                </div>
+                <div class="col">
+                    <label>Dòng Địa chỉ</label>
+                    <input type="text" id="tv-address" value="Số 259 Nguyễn Tất Thành, xã Nà Hang, tỉnh Tuyên Quang">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label>Nội dung ô ghim Hotline</label>
+                    <input type="text" id="tv-hotline" value="HOTLINE TRỢ GIÁ: 0989.865.333">
+                </div>
+                <div class="col">
+                    <label>Tốc độ chữ chạy đáy TV</label>
+                    <select id="tv-marquee-speed">
+                        <option value="35s">Chạy rất chậm (Dễ đọc)</option>
+                        <option value="25s" selected>Chạy vừa phải (Khuyên dùng)</option>
+                        <option value="15s">Chạy nhanh</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col" style="flex:2;">
+                    <label>Nội dung dòng chữ chạy đáy</label>
+                    <input type="text" id="tv-marquee"
+                        value="VÀNG BẠC KIM BẢO — GIỮ TÍN NHIỆM HƠN GIỮ VÀNG ——— CÔNG TY TNHH MTV THUẬN PHÁT TUYÊN QUANG ——— HOTLINE TRỢ GIÁ: 0989.865.333 — 0981.681.929">
+                    <div class="marquee-options">
+                        <label>
+                            <input type="checkbox" id="tv-marquee-static">
+                            Chữ đứng yên, căn giữa màn hình (không chạy)
+                        </label>
+                    </div>
+                </div>
+                <div class="col" style="flex:1;">
+                    <label>Ghi chú dưới bảng giá (Chỉ hiện Web)</label>
+                    <input type="text" id="web-negotiable" value="Giá còn có thể thương lượng">
+                    <div class="negotiable-controls">
+                        <button class="size-btn" onclick="adjustNegotiableSize(-1)" title="Giảm cỡ chữ">A-</button>
+                        <span class="size-display"><span id="neg-size-val">20</span>px</span>
+                        <button class="size-btn" onclick="adjustNegotiableSize(1)" title="Tăng cỡ chữ">A+</button>
+                        <input type="hidden" id="web-negotiable-size" value="20">
+                        <div class="visible-toggle">
+                            <label>
+                                <input type="checkbox" id="web-negotiable-visible" checked>
+                                Hiện
+                            </label>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col" style="flex: 2;"><label>Nội dung dòng chữ chạy đáy</label><input type="text" id="tv-marquee" value="VÀNG BẠC KIM BẢO — GIỮ TÍN NHIỆM HƠN GIỮ VÀNG ——— CÔNG TY TNHH MTV THUẬN PHÁT TUYÊN QUANG ——— HOTLINE TRỢ GIÁ: 0989.865.333 — 0981.681.929"></div>
-            <div class="col" style="flex: 1;"><label>Ghi chú dưới bảng giá (Chỉ hiện Web)</label><input type="text" id="web-negotiable" value="Giá còn có thể thương lượng"></div>
+
+        <!-- PANEL 4: Phối màu -->
+        <div class="panel-card">
+            <h3>4. Studio phối màu toàn diện</h3>
+            <div class="color-grid">
+                <div class="color-item"><label>Màu nền chính TV</label>         <input type="color" id="clr-bg-main"     value="#4a0911"></div>
+                <div class="color-item"><label>Màu chữ thương hiệu</label>       <input type="color" id="clr-brand-txt"   value="#d4af37"></div>
+                <div class="color-item"><label>Màu chữ địa chỉ</label>           <input type="color" id="clr-addr-txt"    value="#ffffff"></div>
+                <div class="color-item"><label>Màu nền ô Hotline</label>          <input type="color" id="clr-hl-bg"       value="#6b0f1a"></div>
+                <div class="color-item"><label>Màu chữ ô Hotline</label>          <input type="color" id="clr-hl-txt"      value="#d4af37"></div>
+                <div class="color-item"><label>Màu viền ô Hotline</label>         <input type="color" id="clr-hl-border"   value="#d4af37"></div>
+                <div class="color-item"><label>Màu viền khối bảng giá</label>     <input type="color" id="clr-card-border" value="#d4af37"></div>
+                <div class="color-item"><label>Màu nền lòng bảng giá</label>      <input type="color" id="clr-card-bg"     value="#ffffff"></div>
+                <div class="color-item"><label>Màu nền tiêu đề cột (Th)</label>   <input type="color" id="clr-th-bg"       value="#f4f6f8"></div>
+                <div class="color-item"><label>Màu chữ tiêu đề cột (Th)</label>   <input type="color" id="clr-th-txt"      value="#555555"></div>
+                <div class="color-item"><label>Màu chữ hàng giá vàng (Td)</label> <input type="color" id="clr-td-txt"      value="#222222"></div>
+                <div class="color-item"><label>Màu kẻ vạch ngang dọc</label>      <input type="color" id="clr-td-border"   value="#edf0f2"></div>
+                <div class="color-item"><label>Màu nền thanh chữ chạy</label>     <input type="color" id="clr-mar-bg"      value="#1a0205"></div>
+                <div class="color-item"><label>Màu chữ chạy đáy</label>           <input type="color" id="clr-mar-txt"     value="#d4af37"></div>
+                <div class="color-item"><label>Màu đường viền chữ chạy</label>    <input type="color" id="clr-mar-border"  value="#d4af37"></div>
+            </div>
+        </div>
+
+        <div style="position:sticky;bottom:20px;z-index:999;">
+            <button class="btn-submit" onclick="saveAndSync()">💾 CẬP NHẬT & ĐỒNG BỘ GIÁ NGAY LẬP TỨC</button>
         </div>
     </div>
 
-    <div class="panel-card">
-        <h3>4. Studio phối màu toàn diện</h3>
-        <div class="color-grid">
-            <div class="color-item"><label>Màu nền chính TV</label><input type="color" id="clr-bg-main" value="#4a0911"></div>
-            <div class="color-item"><label>Màu chữ thương hiệu</label><input type="color" id="clr-brand-txt" value="#d4af37"></div>
-            <div class="color-item"><label>Màu chữ địa chỉ</label><input type="color" id="clr-addr-txt" value="#ffffff"></div>
-            <div class="color-item"><label>Màu nền ô Hotline</label><input type="color" id="clr-hl-bg" value="#6b0f1a"></div>
-            <div class="color-item"><label>Màu chữ ô Hotline</label><input type="color" id="clr-hl-txt" value="#d4af37"></div>
-            <div class="color-item"><label>Màu viền ô Hotline</label><input type="color" id="clr-hl-border" value="#d4af37"></div>
-            <div class="color-item"><label>Màu viền khối bảng giá</label><input type="color" id="clr-card-border" value="#d4af37"></div>
-            <div class="color-item"><label>Màu nền lòng bảng giá</label><input type="color" id="clr-card-bg" value="#ffffff"></div>
-            <div class="color-item"><label>Màu nền tiêu đề cột (Th)</label><input type="color" id="clr-th-bg" value="#f4f6f8"></div>
-            <div class="color-item"><label>Màu chữ tiêu đề cột (Th)</label><input type="color" id="clr-th-txt" value="#555555"></div>
-            <div class="color-item"><label>Màu chữ hàng giá vàng (Td)</label><input type="color" id="clr-td-txt" value="#222222"></div>
-            <div class="color-item"><label>Màu kẻ vạch ngang dọc</label><input type="color" id="clr-td-border" value="#edf0f2"></div>
-            <div class="color-item"><label>Màu nền thanh chữ chạy</label><input type="color" id="clr-mar-bg" value="#1a0205"></div>
-            <div class="color-item"><label>Màu chữ chạy đáy</label><input type="color" id="clr-mar-txt" value="#d4af37"></div>
-            <div class="color-item"><label>Màu đường viền chữ chạy</label><input type="color" id="clr-mar-border" value="#d4af37"></div>
-        </div>
-    </div>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCsoGBzs2HLgvUazOJQY4kRqcQb3tUKNDY",
+            authDomain: "vangkimbao.firebaseapp.com",
+            databaseURL: "https://vangkimbao-default-rtdb.firebaseio.com",
+            projectId: "vangkimbao",
+            storageBucket: "vangkimbao.firebasestorage.app",
+            messagingSenderId: "453403966918",
+            appId: "1:453403966918:web:d4220c7bfbda6538ddc6c7"
+        };
 
-    <div style="position: sticky; bottom: 20px; z-index: 999;">
-        <button class="btn-submit" onclick="saveAndSync()">💾 CẬP NHẬT & ĐỒNG BỘ GIÁ NGAY LẬP TỨC</button>
-    </div>
-</div>
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
-<script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyCsoGBzs2HLgvUazOJQY4kRqcQb3tUKNDY",
-        authDomain: "vangkimbao.firebaseapp.com",
-        databaseURL: "https://vangkimbao-default-rtdb.firebaseio.com",
-        projectId: "vangkimbao",
-        storageBucket: "vangkimbao.firebasestorage.app",
-        messagingSenderId: "453403966918",
-        appId: "1:453403966918:web:d4220c7bfbda6538ddc6c7"
-    };
-    
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+        const ADMIN_EMAIL = "admin@vangkimbao.com";
+        let currentSavedProducts = [];
+        let fullHistoryData    = [];
+        let savedProductNames  = []; // danh sách tên sản phẩm đã dùng
+        let priceChartInstance = null;
+        let currentChartTimeframe = 'week';
 
-    const ADMIN_PASSWORD = "031220";
-    let currentSavedProducts = [];
-    let fullHistoryData = [];
-    let priceChartInstance = null;
-    let currentChartTimeframe = 'week'; // Thêm biến lưu mốc thời gian hiện tại
+        const defaultProducts = [
+            { name: "Vàng Nhẫn Kim Bảo 9999", buy: "7,850,000", sell: "8,020,000", showWeb: true, showTv: true },
+            { name: "Vàng Nữ Trang 24K",       buy: "7,700,000", sell: "7,950,000", showWeb: true, showTv: true },
+            { name: "Vàng Công Nghệ Ý 18K",    buy: "5,800,000", sell: "6,050,000", showWeb: true, showTv: true }
+        ];
 
-    const defaultProducts = [
-        { name: "Vàng Nhẫn Kim Bảo 9999", buy: "7,850,000", sell: "8,020,000", showWeb: true, showTv: true },
-        { name: "Vàng Nữ Trang 24K", buy: "7,700,000", sell: "7,950,000", showWeb: true, showTv: true },
-        { name: "Vàng Công Nghệ Ý 18K", buy: "5,800,000", sell: "6,050,000", showWeb: true, showTv: true }
-    ];
+        /* ===================== XÁC THỰC ===================== */
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                document.getElementById('lockScreen').style.display    = 'none';
+                document.getElementById('adminContent').style.display  = 'block';
+                loadSavedProductNames();
+                loadCurrentSettings();
+                loadPriceHistory();
+            } else {
+                document.getElementById('lockScreen').style.display    = 'block';
+                document.getElementById('adminContent').style.display  = 'none';
+            }
+        });
 
-    window.onload = function() {
-        if (sessionStorage.getItem('isAdminLoggedIn') === 'true') showAdminDashboard();
-        loadCurrentSettings();
-        loadPriceHistory();
-    };
-
-    function verifyPassword() {
-        const input = document.getElementById('passwordInput').value;
-        const errorMsg = document.getElementById('errorMsg');
-        if (input === ADMIN_PASSWORD) {
-            sessionStorage.setItem('isAdminLoggedIn', 'true');
-            errorMsg.style.display = 'none';
-            showAdminDashboard();
-        } else {
-            errorMsg.style.display = 'block';
-            document.getElementById('passwordInput').value = '';
+        async function verifyPassword() {
+            const password = document.getElementById('passwordInput').value;
+            const errorMsg = document.getElementById('errorMsg');
+            const loginBtn = document.querySelector('.lock-screen button');
+            loginBtn.disabled = true;
+            loginBtn.textContent = '⏳ Đang xác thực...';
+            try {
+                await firebase.auth().signInWithEmailAndPassword(ADMIN_EMAIL, password);
+                errorMsg.style.display = 'none';
+            } catch (e) {
+                errorMsg.style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '🔓 Đăng Nhập Hệ Thống';
+            }
         }
-    }
 
-    function showAdminDashboard() {
-        document.getElementById('lockScreen').style.display = 'none';
-        document.getElementById('adminContent').style.display = 'block';
-    }
+        function logout() { firebase.auth().signOut().then(() => window.location.reload()); }
 
-    function logout() {
-        sessionStorage.removeItem('isAdminLoggedIn');
-        document.getElementById('passwordInput').value = '';
-        document.getElementById('lockScreen').style.display = 'block';
-        document.getElementById('adminContent').style.display = 'none';
-    }
+        /* ===================== ĐỊNH DẠNG TIỀN ===================== */
+        function formatCurrencyInput(el) {
+            let v = el.value.replace(/\D/g, '');
+            if (v === '') { el.value = ''; return; }
+            el.value = Number(v).toLocaleString('en-US');
+        }
 
-    function formatCurrencyInput(inputElement) {
-        let value = inputElement.value.replace(/\D/g, "");
-        if (value === "") { inputElement.value = ""; return; }
-        inputElement.value = Number(value).toLocaleString('en-US');
-    }
-
-    // XỬ LÝ LĂN CHUỘT (Tăng giảm 10k)
-    function handleWheelPrice(event, inputElement) {
-        event.preventDefault(); // Chống cuộn trang
-        let val = parseInt(inputElement.value.replace(/,/g, '')) || 0;
-        if (event.deltaY < 0) {
-            val += 10000; // Cuộn lên -> Tăng 10k
-        } else {
-            val -= 10000; // Cuộn xuống -> Giảm 10k
+        /* ===================== CUỘN CHUỘT TRÊN INPUT ===================== */
+        function handleWheelPrice(event, el) {
+            event.preventDefault();
+            let val = parseInt(el.value.replace(/,/g, '')) || 0;
+            val += event.deltaY < 0 ? 10000 : -10000;
             if (val < 0) val = 0;
+            el.value = val.toLocaleString('en-US');
         }
-        inputElement.value = val.toLocaleString('en-US');
-    }
 
-    // XỬ LÝ NÚT BẤM (Tăng giảm 50k)
-    function adjustPrice(btnElement, amount) {
-        // Lấy thẻ input nằm cùng cấp với khối chứa nút bấm
-        const inputElement = btnElement.parentElement.previousElementSibling;
-        let val = parseInt(inputElement.value.replace(/,/g, '')) || 0;
-        val += amount;
-        if (val < 0) val = 0;
-        inputElement.value = val.toLocaleString('en-US');
-    }
+        /* ===================== GIỮ TAY / CHUỘT LIÊN TỤC ===================== */
+        let _continuousTimer = null;
+        let _continuousDelay = null;
 
-    let productCounter = 0;
-    function addNewProductRow(name = '', buy = '', sell = '', showWeb = true, showTv = true) {
-        const container = document.getElementById('gold-items-container');
-        const rowId = `product-row-${productCounter}`;
-        
-        // Trạng thái checked của checkbox
-        const webChecked = showWeb !== false ? 'checked' : '';
-        const tvChecked = showTv !== false ? 'checked' : '';
+        function _adjustInput(el, amount) {
+            let val = parseInt(el.value.replace(/,/g, '')) || 0;
+            val += amount;
+            if (val < 0) val = 0;
+            el.value = val.toLocaleString('en-US');
+        }
 
-        const rowHTML = `
+        function startContinuousAdjust(btn, amount) {
+            stopContinuousAdjust();
+            const el = btn.parentElement.previousElementSibling;
+            // Một lần ngay lập tức
+            _adjustInput(el, amount);
+            // Sau 500ms bắt đầu lặp mỗi 120ms
+            _continuousDelay = setTimeout(() => {
+                _continuousTimer = setInterval(() => _adjustInput(el, amount), 120);
+            }, 500);
+        }
+
+        function stopContinuousAdjust() {
+            if (_continuousTimer) { clearInterval(_continuousTimer);  _continuousTimer = null; }
+            if (_continuousDelay) { clearTimeout(_continuousDelay);   _continuousDelay = null; }
+        }
+
+        /* ===================== DROPDOWN SẢN PHẨM ===================== */
+        function loadSavedProductNames() {
+            db.ref('kimbao_product_names').on('value', snap => {
+                savedProductNames = snap.val() || [];
+                // Cập nhật tất cả dropdown hiện có
+                document.querySelectorAll('.quick-select').forEach(sel => populateQuickSelect(sel));
+            });
+        }
+
+        function populateQuickSelect(selectEl) {
+            const current = selectEl.value;
+            selectEl.innerHTML = '<option value="">— Chọn nhanh —</option>';
+            savedProductNames.forEach(name => {
+                const opt = document.createElement('option');
+                opt.value = name;
+                opt.textContent = name;
+                selectEl.appendChild(opt);
+            });
+            if (savedProductNames.includes(current)) selectEl.value = current;
+        }
+
+        function onQuickSelectChange(selectEl) {
+            const name = selectEl.value;
+            if (!name) return;
+            const row = selectEl.closest('.gold-row');
+            row.querySelector('.input-g-name').value = name;
+            row.dataset.selectedFromList = name;
+            selectEl.value = '';
+        }
+
+        function mergeProductName(name) {
+            if (!name || savedProductNames.includes(name)) return;
+            savedProductNames.push(name);
+            db.ref('kimbao_product_names').set(savedProductNames);
+        }
+
+        function removeProductNameFromList(name) {
+            const idx = savedProductNames.indexOf(name);
+            if (idx === -1) return;
+            savedProductNames.splice(idx, 1);
+            db.ref('kimbao_product_names').set(savedProductNames);
+        }
+
+        /* ===================== THÊM / XÓA HÀNG SẢN PHẨM ===================== */
+        let productCounter = 0;
+
+        function addNewProductRow(name = '', buy = '', sell = '', showWeb = true, showTv = true) {
+            const container = document.getElementById('gold-items-container');
+            const rowId = `product-row-${productCounter++}`;
+            const webChecked = showWeb !== false ? 'checked' : '';
+            const tvChecked  = showTv  !== false ? 'checked' : '';
+
+            const escName = name.replace(/"/g, '&quot;');
+            const escBuy  = buy.replace(/"/g, '&quot;');
+            const escSell = sell.replace(/"/g, '&quot;');
+
+            const rowHTML = `
             <div class="gold-row" id="${rowId}">
                 <div class="gold-row-header">
                     <div class="gold-row-title">Sản phẩm sản xuất / Kinh doanh</div>
                     <button type="button" class="btn-delete-item" onclick="deleteProductRow('${rowId}')">🗑 Xóa sản phẩm này</button>
                 </div>
-                <div class="row" style="margin-bottom: 5px;">
-                    <div class="col" style="flex: 2;">
+                <div class="row" style="margin-bottom:5px;">
+                    <div class="col" style="flex:2;">
                         <label>Tên loại vàng</label>
-                        <input type="text" class="input-g-name" value="${name}">
+                        <div class="name-input-wrap">
+                            <input type="text" class="input-g-name" value="${escName}">
+                            <select class="quick-select" onchange="onQuickSelectChange(this)">
+                                <option value="">— Chọn nhanh —</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="col">
                         <label>Giá Mua Vào (Chỉ)</label>
                         <div class="price-input-group">
-                            <input type="text" class="input-g-buy" value="${buy}" oninput="formatCurrencyInput(this)" onwheel="handleWheelPrice(event, this)">
+                            <input type="text" class="input-g-buy" value="${escBuy}"
+                                oninput="formatCurrencyInput(this)" onwheel="handleWheelPrice(event,this)">
                             <div class="price-spinners">
-                                <button type="button" onclick="adjustPrice(this, 50000)" title="Tăng 50,000đ">▲</button>
-                                <button type="button" onclick="adjustPrice(this, -50000)" title="Giảm 50,000đ">▼</button>
+                                <button type="button"
+                                    onmousedown="startContinuousAdjust(this,50000)"
+                                    onmouseup="stopContinuousAdjust()"
+                                    onmouseleave="stopContinuousAdjust()"
+                                    ontouchstart="startContinuousAdjust(this,10000);event.preventDefault()"
+                                    ontouchend="stopContinuousAdjust()"
+                                    ontouchcancel="stopContinuousAdjust()"
+                                    title="Tăng (giữ để liên tục)">▲</button>
+                                <button type="button"
+                                    onmousedown="startContinuousAdjust(this,-50000)"
+                                    onmouseup="stopContinuousAdjust()"
+                                    onmouseleave="stopContinuousAdjust()"
+                                    ontouchstart="startContinuousAdjust(this,-10000);event.preventDefault()"
+                                    ontouchend="stopContinuousAdjust()"
+                                    ontouchcancel="stopContinuousAdjust()"
+                                    title="Giảm (giữ để liên tục)">▼</button>
                             </div>
                         </div>
                     </div>
                     <div class="col">
                         <label>Giá Bán Ra (Chỉ)</label>
                         <div class="price-input-group">
-                            <input type="text" class="input-g-sell" value="${sell}" oninput="formatCurrencyInput(this)" onwheel="handleWheelPrice(event, this)">
+                            <input type="text" class="input-g-sell" value="${escSell}"
+                                oninput="formatCurrencyInput(this)" onwheel="handleWheelPrice(event,this)">
                             <div class="price-spinners">
-                                <button type="button" onclick="adjustPrice(this, 50000)" title="Tăng 50,000đ">▲</button>
-                                <button type="button" onclick="adjustPrice(this, -50000)" title="Giảm 50,000đ">▼</button>
+                                <button type="button"
+                                    onmousedown="startContinuousAdjust(this,50000)"
+                                    onmouseup="stopContinuousAdjust()"
+                                    onmouseleave="stopContinuousAdjust()"
+                                    ontouchstart="startContinuousAdjust(this,10000);event.preventDefault()"
+                                    ontouchend="stopContinuousAdjust()"
+                                    ontouchcancel="stopContinuousAdjust()"
+                                    title="Tăng (giữ để liên tục)">▲</button>
+                                <button type="button"
+                                    onmousedown="startContinuousAdjust(this,-50000)"
+                                    onmouseup="stopContinuousAdjust()"
+                                    onmouseleave="stopContinuousAdjust()"
+                                    ontouchstart="startContinuousAdjust(this,-10000);event.preventDefault()"
+                                    ontouchend="stopContinuousAdjust()"
+                                    ontouchcancel="stopContinuousAdjust()"
+                                    title="Giảm (giữ để liên tục)">▼</button>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="display-options">
-                    <label>
-                        <input type="checkbox" class="cb-show-web" ${webChecked}> Mở hiển thị trên Web/Mobile
-                    </label>
-                    <label>
-                        <input type="checkbox" class="cb-show-tv" ${tvChecked}> Mở hiển thị trên màn hình TV
-                    </label>
+                    <label><input type="checkbox" class="cb-show-web" ${webChecked}> Mở hiển thị trên Web/Mobile</label>
+                    <label><input type="checkbox" class="cb-show-tv"  ${tvChecked}> Mở hiển thị trên màn hình TV</label>
                 </div>
-            </div>
-        `;
-        container.insertAdjacentHTML('beforeend', rowHTML);
-        productCounter++;
-    }
+            </div>`;
 
-    function deleteProductRow(rowId) {
-        const rowElement = document.getElementById(rowId);
-        if (rowElement) rowElement.remove();
-    }
-
-    function saveAndSync() {
-        let goldData = [];
-        const rows = document.querySelectorAll('.gold-row');
-        const nowMs = Date.now();
-
-        rows.forEach((row) => {
-            const nameVal = row.querySelector('.input-g-name').value.trim();
-            const buyVal = row.querySelector('.input-g-buy').value.trim() || "0";
-            const sellValStr = row.querySelector('.input-g-sell').value.trim() || "0";
-            
-            // Đọc trạng thái 2 checkbox
-            const showWeb = row.querySelector('.cb-show-web').checked;
-            const showTv = row.querySelector('.cb-show-tv').checked;
-
-            const sellValNum = parseInt(sellValStr.replace(/,/g, ''));
-
-            let trend = 'flat';
-            const oldProduct = currentSavedProducts.find(p => p.name === nameVal);
-            if (oldProduct) {
-                const oldSellNum = parseInt(oldProduct.sell.replace(/,/g, ''));
-                if (sellValNum > oldSellNum) trend = 'up';
-                else if (sellValNum < oldSellNum) trend = 'down';
-            }
-
-            if(nameVal !== "") {
-                goldData.push({
-                    name: nameVal,
-                    buy: buyVal,
-                    sell: sellValStr,
-                    trend: trend,
-                    last_updated: nowMs,
-                    showWeb: showWeb,
-                    showTv: showTv
-                });
-            }
-        });
-
-        if(goldData.length === 0) {
-            alert("⚠️ Cảnh báo: Bạn phải giữ lại ít nhất 1 sản phẩm trên bảng giá!");
-            return;
+            container.insertAdjacentHTML('beforeend', rowHTML);
+            // Điền dropdown cho hàng vừa thêm
+            const row = document.getElementById(rowId);
+            populateQuickSelect(row.querySelector('.quick-select'));
         }
 
-        const now = new Date();
-        const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')} - Ngày ${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()}`;
-
-        const syncPayload = {
-            vbtb_cloned_data: goldData,
-            vbtb_cloned_time: timeStr,
-            tv_txt_brand: document.getElementById('tv-brand').value,
-            tv_txt_address: document.getElementById('tv-address').value,
-            tv_txt_hotline: document.getElementById('tv-hotline').value,
-            tv_txt_marquee: document.getElementById('tv-marquee').value,
-            web_txt_negotiable: document.getElementById('web-negotiable').value,
-            tv_marquee_speed: document.getElementById('tv-marquee-speed').value,
-            colors: {}
-        };
-
-        const colorKeys = ['bg-main', 'brand-txt', 'addr-txt', 'hl-bg', 'hl-txt', 'hl-border', 'card-border', 'card-bg', 'th-bg', 'th-txt', 'td-txt', 'td-border', 'mar-bg', 'mar-txt', 'mar-border'];
-        colorKeys.forEach(key => {
-            syncPayload.colors[key] = document.getElementById('clr-' + key).value;
-        });
-
-        db.ref('kimbao_sync_data').set(syncPayload, (error) => {
-            if (error) {
-                alert("❌ Lỗi đồng bộ đám mây: " + error.message);
-            } else {
-                currentSavedProducts = goldData;
-                
-                const historyRef = db.ref('kimbao_price_history').push();
-                historyRef.set({
-                    timestamp: nowMs,
-                    data: goldData
-                });
-
-                alert(`🎉 ĐỒNG BỘ ĐÁM MÂY THÀNH CÔNG!\nDữ liệu bảng giá mới đã lập tức phát đến tất cả màn hình của khách hàng.`);
+        function deleteProductRow(rowId) {
+            const row = document.getElementById(rowId);
+            if (!row) return;
+            // Nếu tên được chọn từ danh sách → xóa khỏi danh sách lưu
+            if (row.dataset.selectedFromList) {
+                removeProductNameFromList(row.dataset.selectedFromList);
             }
-        });
-    }
+            row.remove();
+        }
 
-    function loadCurrentSettings() {
-        document.getElementById('gold-items-container').innerHTML = '';
-        
-        db.ref('kimbao_sync_data').once('value').then((snapshot) => {
-            const serverData = snapshot.val();
-            
-            let list = (serverData && serverData.vbtb_cloned_data) ? serverData.vbtb_cloned_data : defaultProducts;
-            currentSavedProducts = list;
+        /* ===================== GHI CHÚ WEB: KÍCH THƯỚC & ẨN/HIỆN ===================== */
+        function adjustNegotiableSize(delta) {
+            const hidden = document.getElementById('web-negotiable-size');
+            let size = parseInt(hidden.value) || 20;
+            size = Math.max(12, Math.min(48, size + delta));
+            hidden.value = size;
+            document.getElementById('neg-size-val').textContent = size;
+        }
 
-            list.forEach(item => {
-                // Truyền thêm showWeb, showTv (nếu dữ liệu cũ chưa có thì mặc định coi là true)
-                const sWeb = item.showWeb !== undefined ? item.showWeb : true;
-                const sTv = item.showTv !== undefined ? item.showTv : true;
-                addNewProductRow(item.name, item.buy, item.sell, sWeb, sTv);
-            });
+        /* ===================== LƯU & ĐỒNG BỘ ===================== */
+        function saveAndSync() {
+            let goldData = [];
+            const nowMs  = Date.now();
+            const rows   = document.querySelectorAll('.gold-row');
 
-            if(!serverData) return;
+            rows.forEach(row => {
+                const nameVal    = row.querySelector('.input-g-name').value.trim();
+                const buyVal     = row.querySelector('.input-g-buy').value.trim()  || '0';
+                const sellValStr = row.querySelector('.input-g-sell').value.trim() || '0';
+                const showWeb    = row.querySelector('.cb-show-web').checked;
+                const showTv     = row.querySelector('.cb-show-tv').checked;
+                const sellValNum = parseInt(sellValStr.replace(/,/g, ''));
 
-            if(serverData.tv_txt_brand) document.getElementById('tv-brand').value = serverData.tv_txt_brand;
-            if(serverData.tv_txt_address) document.getElementById('tv-address').value = serverData.tv_txt_address;
-            if(serverData.tv_txt_hotline) document.getElementById('tv-hotline').value = serverData.tv_txt_hotline;
-            if(serverData.tv_txt_marquee) document.getElementById('tv-marquee').value = serverData.tv_txt_marquee;
-            if(serverData.web_txt_negotiable) document.getElementById('web-negotiable').value = serverData.web_txt_negotiable;
-            if(serverData.tv_marquee_speed) document.getElementById('tv-marquee-speed').value = serverData.tv_marquee_speed;
-
-            if(serverData.colors) {
-                for (const [key, val] of Object.entries(serverData.colors)) {
-                    const inputEl = document.getElementById('clr-' + key);
-                    if(inputEl) inputEl.value = val;
+                let trend = 'flat';
+                const oldP = currentSavedProducts.find(p => p.name === nameVal);
+                if (oldP) {
+                    const oldSell = parseInt(oldP.sell.replace(/,/g, ''));
+                    if (sellValNum > oldSell) trend = 'up';
+                    else if (sellValNum < oldSell) trend = 'down';
                 }
-            }
-        }).catch(err => {
-            defaultProducts.forEach(item => addNewProductRow(item.name, item.buy, item.sell, item.showWeb, item.showTv));
-        });
-    }
 
-    function loadPriceHistory() {
-        db.ref('kimbao_price_history').on('value', snap => {
-            const data = snap.val();
-            fullHistoryData = [];
-            if(data) {
-                Object.keys(data).forEach(key => {
-                    fullHistoryData.push(data[key]);
-                });
-            }
-            updateChart('week');
-        });
-    }
-
-    function updateChart(timeframe) {
-        currentChartTimeframe = timeframe; // Cập nhật mốc thời gian
-
-        // Bỏ qua thẻ Select khi cập nhật class active cho nút bấm
-        document.querySelectorAll('.btn-filter:not(select)').forEach(btn => btn.classList.remove('active'));
-        document.getElementById('btn-' + timeframe).classList.add('active');
-
-        const now = Date.now();
-        let limit = 0;
-        if(timeframe === 'day') limit = now - 24*60*60*1000;
-        if(timeframe === 'week') limit = now - 7*24*60*60*1000;
-        if(timeframe === 'month') limit = now - 30*24*60*60*1000;
-        if(timeframe === 'year') limit = now - 365*24*60*60*1000;
-
-        const filtered = fullHistoryData.filter(item => item.timestamp >= limit);
-
-        const labels = filtered.map(item => {
-            const d = new Date(item.timestamp);
-            if(timeframe === 'day') return `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
-            return `${d.getDate()}/${d.getMonth()+1}`;
-        });
-
-        const productNames = new Set();
-        filtered.forEach(item => item.data.forEach(p => productNames.add(p.name)));
-
-        // Tự động cập nhật danh sách option cho Select dựa trên dữ liệu sản phẩm
-        const selectEl = document.getElementById('productFilter');
-        const currentSelected = selectEl.value;
-        selectEl.innerHTML = '<option value="all">Tất cả sản phẩm</option>';
-        productNames.forEach(name => {
-            const option = document.createElement('option');
-            option.value = name;
-            option.textContent = name;
-            selectEl.appendChild(option);
-        });
-        // Giữ lại lựa chọn hiện tại nếu nó vẫn tồn tại trong danh sách
-        if (Array.from(productNames).includes(currentSelected)) {
-            selectEl.value = currentSelected;
-        } else {
-            selectEl.value = 'all';
-        }
-
-        const colors = ['#d4af37', '#6b0f1a', '#28a745', '#007bff', '#6f42c1', '#e03131'];
-        let colorIdx = 0;
-
-        // Xử lý logic lọc biểu đồ: NẾU người dùng chọn 1 sản phẩm cụ thể thì chỉ hiện món đó
-        const selectedProduct = selectEl.value;
-        let displayNames = Array.from(productNames);
-        if (selectedProduct !== 'all') {
-            displayNames = [selectedProduct];
-        }
-
-        const datasets = displayNames.map(name => {
-            const dataPoints = filtered.map(item => {
-                const prod = item.data.find(p => p.name === name);
-                return prod ? parseInt(prod.sell.replace(/,/g, '')) : null;
+                if (nameVal) {
+                    goldData.push({ name: nameVal, buy: buyVal, sell: sellValStr, trend, last_updated: nowMs, showWeb, showTv });
+                    mergeProductName(nameVal); // thêm vào danh sách lưu nếu chưa có
+                }
             });
-            const color = colors[colorIdx % colors.length];
-            colorIdx++;
-            return {
-                label: name,
-                data: dataPoints,
-                borderColor: color,
-                backgroundColor: color,
-                fill: false,
-                tension: 0.1,
-                borderWidth: 2,
-                pointRadius: 3
-            };
-        });
 
-        const ctx = document.getElementById('priceChart').getContext('2d');
-        
-        if(priceChartInstance) {
-            priceChartInstance.destroy();
+            if (goldData.length === 0) {
+                alert('⚠️ Cảnh báo: Bạn phải giữ lại ít nhất 1 sản phẩm trên bảng giá!');
+                return;
+            }
+
+            const now     = new Date();
+            const timeStr = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')} - Ngày ${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()}`;
+
+            const colorKeys   = ['bg-main','brand-txt','addr-txt','hl-bg','hl-txt','hl-border','card-border','card-bg','th-bg','th-txt','td-txt','td-border','mar-bg','mar-txt','mar-border'];
+            const colorsObj   = {};
+            colorKeys.forEach(k => { colorsObj[k] = document.getElementById('clr-' + k).value; });
+
+            const syncPayload = {
+                vbtb_cloned_data:      goldData,
+                vbtb_cloned_time:      timeStr,
+                tv_txt_brand:          document.getElementById('tv-brand').value,
+                tv_txt_address:        document.getElementById('tv-address').value,
+                tv_txt_hotline:        document.getElementById('tv-hotline').value,
+                tv_txt_marquee:        document.getElementById('tv-marquee').value,
+                tv_marquee_static:     document.getElementById('tv-marquee-static').checked,
+                web_txt_negotiable:    document.getElementById('web-negotiable').value,
+                web_negotiable_size:   parseInt(document.getElementById('web-negotiable-size').value) || 20,
+                web_negotiable_visible: document.getElementById('web-negotiable-visible').checked,
+                tv_marquee_speed:      document.getElementById('tv-marquee-speed').value,
+                colors: colorsObj
+            };
+
+            db.ref('kimbao_sync_data').set(syncPayload, error => {
+                if (error) {
+                    alert('❌ Lỗi đồng bộ đám mây: ' + error.message);
+                } else {
+                    currentSavedProducts = goldData;
+                    db.ref('kimbao_price_history').push({ timestamp: nowMs, data: goldData });
+                    alert('🎉 ĐỒNG BỘ ĐÁM MÂY THÀNH CÔNG!\nDữ liệu bảng giá mới đã lập tức phát đến tất cả màn hình.');
+                }
+            });
         }
 
-        priceChartInstance = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: datasets
-            },
-            options: {
-                responsive: true,
-                interaction: { mode: 'index', intersect: false },
-                plugins: {
-                    legend: { position: 'top' },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                let label = context.dataset.label || '';
-                                if (label) { label += ': '; }
-                                if (context.parsed.y !== null) {
-                                    label += new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(context.parsed.y);
+        /* ===================== TẢI CÀI ĐẶT HIỆN TẠI ===================== */
+        function loadCurrentSettings() {
+            document.getElementById('gold-items-container').innerHTML = '';
+
+            db.ref('kimbao_sync_data').once('value').then(snapshot => {
+                const serverData = snapshot.val();
+                const list = (serverData && serverData.vbtb_cloned_data) ? serverData.vbtb_cloned_data : defaultProducts;
+                currentSavedProducts = list;
+
+                list.forEach(item => {
+                    const sWeb = item.showWeb !== undefined ? item.showWeb : true;
+                    const sTv  = item.showTv  !== undefined ? item.showTv  : true;
+                    addNewProductRow(item.name, item.buy, item.sell, sWeb, sTv);
+                });
+
+                if (!serverData) return;
+
+                if (serverData.tv_txt_brand)    document.getElementById('tv-brand').value    = serverData.tv_txt_brand;
+                if (serverData.tv_txt_address)  document.getElementById('tv-address').value  = serverData.tv_txt_address;
+                if (serverData.tv_txt_hotline)  document.getElementById('tv-hotline').value  = serverData.tv_txt_hotline;
+                if (serverData.tv_txt_marquee)  document.getElementById('tv-marquee').value  = serverData.tv_txt_marquee;
+                if (serverData.tv_marquee_speed) document.getElementById('tv-marquee-speed').value = serverData.tv_marquee_speed;
+
+                document.getElementById('tv-marquee-static').checked = !!serverData.tv_marquee_static;
+
+                if (serverData.web_txt_negotiable)    document.getElementById('web-negotiable').value = serverData.web_txt_negotiable;
+                if (serverData.web_negotiable_size) {
+                    document.getElementById('web-negotiable-size').value   = serverData.web_negotiable_size;
+                    document.getElementById('neg-size-val').textContent    = serverData.web_negotiable_size;
+                }
+                if (serverData.web_negotiable_visible !== undefined) {
+                    document.getElementById('web-negotiable-visible').checked = serverData.web_negotiable_visible !== false;
+                }
+
+                if (serverData.colors) {
+                    for (const [key, val] of Object.entries(serverData.colors)) {
+                        const el = document.getElementById('clr-' + key);
+                        if (el) el.value = val;
+                    }
+                }
+            }).catch(() => {
+                defaultProducts.forEach(p => addNewProductRow(p.name, p.buy, p.sell, p.showWeb, p.showTv));
+            });
+        }
+
+        /* ===================== LỊCH SỬ GIÁ ===================== */
+        const DAYS_30 = 30 * 24 * 60 * 60 * 1000;
+
+        function loadPriceHistory() {
+            db.ref('kimbao_price_history').on('value', snap => {
+                const raw = snap.val();
+                fullHistoryData = [];
+                if (raw) {
+                    Object.values(raw).forEach(entry => fullHistoryData.push(entry));
+                }
+                fullHistoryData.sort((a, b) => a.timestamp - b.timestamp);
+
+                // Dọn dẹp sản phẩm > 30 ngày không cập nhật
+                cleanStaleProducts();
+
+                updateChart(currentChartTimeframe);
+            });
+        }
+
+        function cleanStaleProducts() {
+            if (!currentSavedProducts.length) return;
+            const now = Date.now();
+            const stale = currentSavedProducts.filter(p => {
+                return p.last_updated && (now - p.last_updated > DAYS_30);
+            });
+            if (!stale.length) return;
+
+            stale.forEach(p => {
+                removeProductNameFromList(p.name);
+            });
+            // Xóa khỏi danh sách sản phẩm hiện tại & đồng bộ
+            const fresh = currentSavedProducts.filter(p => !stale.includes(p));
+            if (fresh.length !== currentSavedProducts.length) {
+                currentSavedProducts = fresh;
+                // Không tự động xóa khỏi Firebase sync_data để tránh mất dữ liệu bất ngờ
+                // Chỉ xóa khỏi product_names list
+            }
+        }
+
+        /* ===================== CẬP NHẬT BIỂU ĐỒ ===================== */
+        function updateChart(timeframe) {
+            currentChartTimeframe = timeframe;
+
+            document.querySelectorAll('.btn-filter:not(select)').forEach(b => b.classList.remove('active'));
+            const activeBtn = document.getElementById('btn-' + timeframe);
+            if (activeBtn) activeBtn.classList.add('active');
+
+            const now = Date.now();
+            let limitMs = 0;
+            if (timeframe === 'week')  limitMs = now - 7   * 24 * 60 * 60 * 1000;
+            if (timeframe === 'month') limitMs = now - 30  * 24 * 60 * 60 * 1000;
+            if (timeframe === 'year')  limitMs = now - 365 * 24 * 60 * 60 * 1000;
+
+            const filtered = limitMs > 0
+                ? fullHistoryData.filter(e => e.timestamp >= limitMs)
+                : fullHistoryData;
+
+            // Tập hợp tên sản phẩm trong dữ liệu lọc
+            const productNames = new Set();
+            filtered.forEach(e => e.data && e.data.forEach(p => productNames.add(p.name)));
+
+            // Cập nhật dropdown lọc sản phẩm
+            const selectEl = document.getElementById('productFilter');
+            const prevSelected = selectEl.value;
+            selectEl.innerHTML = '<option value="all">Tất cả sản phẩm</option>';
+            productNames.forEach(name => {
+                const opt = document.createElement('option');
+                opt.value = name; opt.textContent = name;
+                selectEl.appendChild(opt);
+            });
+            selectEl.value = productNames.has(prevSelected) ? prevSelected : 'all';
+
+            const selectedProduct = selectEl.value;
+            const displayNames = selectedProduct === 'all' ? Array.from(productNames) : [selectedProduct];
+
+            // Build dữ liệu theo ngày (giá giữ lâu nhất trong 7:00–21:00)
+            const allDayKeys = new Set();
+            const productDailyBuy  = {};
+            const productDailySell = {};
+
+            displayNames.forEach(name => {
+                // Lịch sử riêng cho sản phẩm này
+                const history = filtered
+                    .filter(e => e.data && e.data.some(p => p.name === name))
+                    .map(e => {
+                        const p = e.data.find(x => x.name === name);
+                        return {
+                            ts:   e.timestamp,
+                            buy:  parseInt(p.buy.replace(/,/g, '')),
+                            sell: parseInt(p.sell.replace(/,/g, ''))
+                        };
+                    });
+
+                // Nhóm theo ngày
+                const days = {};
+                history.forEach(entry => {
+                    const d   = new Date(entry.ts);
+                    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+                    if (!days[key]) days[key] = [];
+                    days[key].push(entry);
+                });
+
+                productDailyBuy[name]  = {};
+                productDailySell[name] = {};
+
+                Object.entries(days).forEach(([key, dayEntries]) => {
+                    const [yr, mo, dy] = key.split('-').map(Number);
+                    const win7  = new Date(yr, mo-1, dy, 7,  0, 0, 0).getTime();
+                    const win21 = new Date(yr, mo-1, dy, 21, 0, 0, 0).getTime();
+
+                    // Chỉ lấy các điểm trong 7:00–21:00
+                    const inWindow = dayEntries.filter(e => e.ts >= win7 && e.ts < win21);
+
+                    if (inWindow.length === 0) return; // Bỏ qua ngày không có dữ liệu trong khung giờ
+
+                    // Tính duration từng khoảng
+                    const periods = [];
+                    for (let i = 0; i < inWindow.length; i++) {
+                        const startTs = inWindow[i].ts;
+                        const endTs   = i < inWindow.length - 1
+                            ? inWindow[i+1].ts
+                            : win21;
+                        periods.push({ dur: endTs - startTs, buy: inWindow[i].buy, sell: inWindow[i].sell });
+                    }
+
+                    const best = periods.reduce((mx, p) => p.dur > mx.dur ? p : mx, periods[0]);
+                    productDailyBuy[name][key]  = best.buy;
+                    productDailySell[name][key] = best.sell;
+                    allDayKeys.add(key);
+                });
+            });
+
+            // Sắp xếp trục X
+            const sortedKeys = Array.from(allDayKeys).sort();
+            const labels = sortedKeys.map(key => {
+                const [, mo, dy] = key.split('-');
+                return `${parseInt(dy)}/${parseInt(mo)}`;
+            });
+
+            // Tạo datasets — 2 đường/sản phẩm
+            const datasets = [];
+            displayNames.forEach((name, idx) => {
+                const shortName = displayNames.length > 1 ? name : null;
+
+                datasets.push({
+                    label:           shortName ? `${name} — Mua` : 'Giá Mua Vào',
+                    data:            sortedKeys.map(k => productDailyBuy[name]  ? (productDailyBuy[name][k]  ?? null) : null),
+                    borderColor:     '#2f9e44',
+                    backgroundColor: '#2f9e44',
+                    fill:            false,
+                    tension:         0.15,
+                    borderWidth:     2.5,
+                    pointRadius:     3,
+                    borderDash:      [6, 3]
+                });
+
+                datasets.push({
+                    label:           shortName ? `${name} — Bán` : 'Giá Bán Ra',
+                    data:            sortedKeys.map(k => productDailySell[name] ? (productDailySell[name][k] ?? null) : null),
+                    borderColor:     '#e03131',
+                    backgroundColor: '#e03131',
+                    fill:            false,
+                    tension:         0.15,
+                    borderWidth:     2.5,
+                    pointRadius:     3
+                });
+            });
+
+            const ctx = document.getElementById('priceChart').getContext('2d');
+            if (priceChartInstance) priceChartInstance.destroy();
+
+            priceChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: { labels, datasets },
+                options: {
+                    responsive:  true,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: {
+                            callbacks: {
+                                label(ctx) {
+                                    if (ctx.parsed.y === null) return null;
+                                    return `${ctx.dataset.label}: ${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(ctx.parsed.y)}`;
                                 }
-                                return label;
                             }
                         }
+                    },
+                    scales: {
+                        y: { ticks: { callback: v => v.toLocaleString('vi-VN') } }
                     }
-                },
-                scales: {
-                    y: { ticks: { callback: function(value) { return value.toLocaleString('vi-VN'); } } }
                 }
-            }
-        });
-    }
-</script>
+            });
+        }
+    </script>
 </body>
+
 </html>
