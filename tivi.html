@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Bảng Giá Tivi - Vàng Kim Bảo</title>
+    <style>
+        :root {
+            --bordeaux: #6b0f1a;
+            --bordeaux-dark: #4a0911;
+            --gold: #d4af37;
+            --gold-light: #fdfaf0;
+            --text-dark: #222222;
+
+            /* Cấu hình TV mặc định */
+            --tv-bg-main: #4a0911;
+            --tv-brand-txt: #d4af37;
+            --tv-addr-txt: #ffffff;
+            --tv-hl-bg: #6b0f1a;
+            --tv-hl-txt: #d4af37;
+            --tv-hl-border: #d4af37;
+            --tv-card-border: #d4af37;
+            --tv-card-bg: #ffffff;
+            --tv-th-bg: #f4f6f8;
+            --tv-th-txt: #555555;
+            --tv-td-txt: #222222;
+            --tv-td-border: #edf0f2;
+            --tv-mar-bg: #1a0205;
+            --tv-mar-txt: #d4af37;
+            --tv-mar-border: #d4af37;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        /* THIẾT LẬP BỐ CỤC FLEX TOÀN MÀN HÌNH - KHÔNG CHO PHÉP SCROLL */
+        body.tv-mode {
+            background-color: var(--tv-bg-main) !important;
+            overflow: hidden;
+            /* Cấm xuất hiện thanh cuộn */
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            /* Kích thước tuyệt đối 100% chiều cao màn hình */
+        }
+
+        #startOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+            color: #fff;
+            z-index: 999999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        #startOverlay h1 {
+            font-size: 40px;
+            color: var(--tv-brand-txt);
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        #startOverlay p {
+            font-size: 20px;
+            color: #aaa;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        /* HEADER CỐ ĐỊNH KÍCH THƯỚC */
+        body.tv-mode header {
+            flex-shrink: 0;
+            /* Không cho phép header bị bóp méo */
+            padding: 25px 40px 10px 40px;
+            position: relative;
+        }
+
+        body.tv-mode header h1 {
+            color: var(--tv-brand-txt);
+            font-size: 56px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+
+        body.tv-mode .tv-address-sub {
+            display: block !important;
+            color: var(--tv-addr-txt);
+            font-size: 22px;
+            font-weight: 500;
+            margin-top: 6px;
+        }
+
+        body.tv-mode .tv-right-panel {
+            position: absolute;
+            top: 25px;
+            right: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 12px;
+        }
+
+        body.tv-mode .tv-fixed-hotline {
+            display: flex !important;
+            background-color: var(--tv-hl-bg);
+            color: var(--tv-hl-txt);
+            border: 3px solid var(--tv-hl-border);
+            padding: 10px 28px;
+            font-size: 24px;
+            font-weight: 900;
+            border-radius: 40px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        body.tv-mode .tv-clock {
+            color: var(--tv-brand-txt);
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+            padding-right: 10px;
+        }
+
+        /* KHUNG CHỨA CHÍNH TỰ ĐỘNG ĐIỀN ĐẦY KHÔNG GIAN TRỐNG */
+        body.tv-mode .main-container {
+            flex-grow: 1;
+            /* Chiếm 100% không gian giữa Header và Footer */
+            display: flex;
+            flex-direction: column;
+            max-width: 96%;
+            width: 100%;
+            margin: 10px auto 20px auto;
+            padding: 0;
+            min-height: 0;
+            /* Quan trọng để bảng bên trong không tràn ra ngoài */
+        }
+
+        body.tv-mode .tab-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            border: 3px solid var(--tv-card-border);
+            background-color: var(--tv-card-bg);
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            /* Cắt bỏ mọi thứ tràn ra */
+        }
+
+        body.tv-mode .card-header {
+            flex-shrink: 0;
+            background: var(--bordeaux);
+            color: var(--gold);
+            font-size: 30px;
+            padding: 14px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        body.tv-mode .time-bar {
+            flex-shrink: 0;
+            font-size: 18px;
+            padding: 8px;
+            text-align: center;
+            background-color: var(--gold-light);
+            color: var(--bordeaux);
+            font-style: italic;
+            font-weight: 600;
+            border-bottom: 2px solid var(--tv-td-border);
+        }
+
+        /* LỚP BỌC BẢNG (Giúp bảng chiếm trọn không gian dư) */
+        body.tv-mode .table-wrapper {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        body.tv-mode table {
+            width: 100%;
+            height: 100%;
+            /* Bảng tự động ép kéo dãn 100% không gian của thẻ bọc */
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        body.tv-mode th {
+            font-size: 24px;
+            padding: 12px 12px;
+            background-color: var(--tv-th-bg);
+            color: var(--tv-th-txt);
+            text-transform: uppercase;
+            font-weight: 700;
+            border-bottom: 3px solid #dbdee0;
+            height: 1px;
+            /* Mẹo CSS để thead chiếm không gian nhỏ nhất có thể */
+        }
+
+        body.tv-mode th:not(:last-child) {
+            border-right: 2px solid rgba(0, 0, 0, 0.08);
+        }
+
+        /* TỐI ƯU CỠ CHỮ THÔNG MINH - TỰ ĐỘNG CANH GIỮA THEO CHIỀU CAO (KHÔNG DÙNG PADDING DỌC) */
+        body.tv-mode td {
+            /* Cỡ chữ giá tiền tự nhảy lớn theo chiều cao tivi, nhỏ nhất 32px, đẹp nhất là 5.5vh, kịch trần 54px */
+            font-size: clamp(32px, 5.5vh, 54px);
+            padding: 0 15px;
+            /* ÉP PADDING BẰNG 0 ĐỂ DÒNG CO DÃN TỐI ĐA */
+            color: var(--tv-td-txt);
+            border-bottom: 2px solid var(--tv-td-border);
+            font-weight: 800;
+            text-align: center;
+        }
+
+        body.tv-mode td:not(:last-child) {
+            border-right: 2px solid var(--tv-td-border);
+        }
+
+        body.tv-mode .gold-type {
+            font-size: clamp(28px, 5vh, 46px);
+            /* Chữ tên sản phẩm cực kì to và rõ nét */
+            color: var(--tv-td-txt);
+            font-weight: 800;
+            text-align: left;
+            padding-left: 35px;
+        }
+
+        body.tv-mode .price-buy {
+            color: #2f9e44 !important;
+        }
+
+        body.tv-mode .price-sell {
+            color: #e03131 !important;
+        }
+
+        /* BỐ CỤC CHUẨN TỶ LỆ 50 - 25 - 25 */
+        body.tv-mode table th:nth-child(1),
+        body.tv-mode table td:nth-child(1) {
+            width: 50% !important;
+        }
+
+        body.tv-mode table th:nth-child(2),
+        body.tv-mode table td:nth-child(2) {
+            width: 25% !important;
+        }
+
+        body.tv-mode table th:nth-child(3),
+        body.tv-mode table td:nth-child(3) {
+            width: 25% !important;
+        }
+
+        /* FOOTER CHUYỂN SANG DẠNG CHÈN KHỐI TĨNH (Tránh tuyệt đối việc đè lên bảng chữ) */
+        body.tv-mode .tv-footer-container {
+            flex-shrink: 0;
+            /* Gắn cứng xuống đáy màn hình */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            background-color: var(--tv-mar-bg);
+            border-top: 3px solid var(--tv-mar-border);
+            padding: 16px 0;
+        }
+
+        body.tv-mode .tv-static-text {
+            color: var(--tv-mar-txt);
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-align: center;
+            width: 100%;
+        }
+
+        body.tv-mode tr.hide-tv {
+            display: none !important;
+        }
+    </style>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+</head>
+
+<body class="tv-mode">
+
+    <div id="startOverlay" onclick="startTV()">
+        <h1>BẢNG GIÁ VÀNG TIVI</h1>
+        <p>👆 Nhấp chuột vào bất kỳ đâu để bật toàn màn hình</p>
+    </div>
+
+    <header>
+        <h1 id="tv-live-brand">Vàng Kim Bảo</h1>
+        <div class="tv-address-sub" id="tv-live-address">Đang tải địa chỉ...</div>
+
+        <div class="tv-right-panel">
+            <div class="tv-fixed-hotline" id="tv-live-hotline">HOTLINE</div>
+            <div class="tv-clock" id="tv-clock-realtime">00:00:00</div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="tab-content" id="tab-price">
+            <div class="card-header">
+                BẢNG GIÁ VÀNG TRỰC TUYẾN
+            </div>
+            <div class="time-bar" id="live-time">Đang kết nối máy chủ đám mây...</div>
+
+            <!-- THẺ BỌC BẢNG GIÚP BẢNG TỰ ĐỘNG CHIA ĐỀU CHIỀU CAO -->
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sản phẩm vàng</th>
+                            <th>Mua vào<br><small
+                                    style="font-size:14px;font-weight:normal;opacity:0.8;">(VNĐ/Chỉ)</small></th>
+                            <th>Bán ra<br><small
+                                    style="font-size:14px;font-weight:normal;opacity:0.8;">(VNĐ/Chỉ)</small></th>
+                        </tr>
+                    </thead>
+                    <tbody id="web-table-body"></tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- FOOTER ĐÃ ĐƯỢC CHUYỂN THÀNH KHỐI CỐ ĐỊNH PHÍA DƯỚI -->
+    <div class="tv-footer-container">
+        <div class="tv-static-text" id="tv-live-marquee">Đang tải thông báo...</div>
+    </div>
+
+    <script>
+        function startTV() {
+            document.getElementById('startOverlay').style.display = 'none';
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) {
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) {
+                elem.msRequestFullscreen();
+            }
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const hh = String(now.getHours()).padStart(2, '0');
+            const mm = String(now.getMinutes()).padStart(2, '0');
+            const ss = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('tv-clock-realtime').innerText = `${hh}:${mm}:${ss}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCsoGBzs2HLgvUazOJQY4kRqcQb3tUKNDY",
+            authDomain: "vangkimbao.firebaseapp.com",
+            databaseURL: "https://vangkimbao-default-rtdb.firebaseio.com",
+            projectId: "vangkimbao",
+            storageBucket: "vangkimbao.firebasestorage.app",
+            messagingSenderId: "453403966918",
+            appId: "1:453403966918:web:d4220c7bfbda6538ddc6c7"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        function escapeHTML(str) {
+            if (str == null) return '';
+            const div = document.createElement('div');
+            div.appendChild(document.createTextNode(String(str)));
+            return div.innerHTML;
+        }
+
+        const fallbackData = [
+            { name: "Vàng Nhẫn Kim Bảo 9999", buy: "7,850,000", sell: "8,020,000" },
+            { name: "Vàng Nữ Trang 24K", buy: "7,700,000", sell: "7,950,000" },
+            { name: "Vàng Công Nghệ Ý 18K", buy: "5,800,000", sell: "6,050,000" }
+        ];
+
+        db.ref('kimbao_sync_data').on('value', (snapshot) => {
+            const serverData = snapshot.val();
+
+            let list = (serverData && serverData.vbtb_cloned_data) ? serverData.vbtb_cloned_data : fallbackData;
+            const localTime = serverData ? serverData.vbtb_cloned_time : null;
+
+            const tbody = document.getElementById('web-table-body');
+            tbody.innerHTML = '';
+
+            list.forEach(item => {
+                let rowClass = "";
+                if (item.showTv === false) rowClass += " hide-tv";
+
+                tbody.innerHTML += `<tr class="${escapeHTML(rowClass)}">
+                <td class="gold-type">${escapeHTML(item.name)}</td>
+                <td class="price-buy">${escapeHTML(item.buy)}</td>
+                <td class="price-sell">${escapeHTML(item.sell)}</td>
+            </tr>`;
+            });
+
+            document.getElementById('live-time').innerText = "Dữ liệu máy chủ cập nhật lúc: " + (localTime ? localTime : "Mặc định hệ thống");
+
+            if (!serverData) return;
+
+            document.getElementById('tv-live-brand').innerText = serverData.tv_txt_brand || "Vàng Kim Bảo";
+            document.getElementById('tv-live-address').innerText = serverData.tv_txt_address || "Số 259 Nguyễn Tất Thành, xã Nà Hang, tỉnh Tuyên Quang";
+            document.getElementById('tv-live-hotline').innerText = serverData.tv_txt_hotline || "HOTLINE TRỢ GIÁ: 0989.865.333";
+
+            const marqueeTxt = serverData.tv_txt_marquee || "VÀNG BẠC KIM BẢO — GIỮ TÍN NHIỆM HƠN GIỮ VÀNG ——— HOTLINE TRỢ GIÁ: 0989.865.333";
+            document.getElementById('tv-live-marquee').innerText = marqueeTxt;
+
+            const root = document.documentElement;
+            if (serverData.colors) {
+                for (const [key, val] of Object.entries(serverData.colors)) {
+                    if (val) root.style.setProperty(`--tv-${key}`, val);
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
