@@ -30,6 +30,7 @@
             --tv-mar-bg: #1a0205;
             --tv-mar-txt: #d4af37;
             --tv-mar-border: #d4af37;
+            --tv-marquee-duration: 25s;
         }
 
         * {
@@ -297,6 +298,30 @@
             width: 100%;
         }
 
+        body.tv-mode .tv-moving-text {
+            display: inline-block;
+            white-space: nowrap;
+            color: var(--tv-mar-txt);
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            padding-left: 100%;
+            animation: marqueeScroll var(--tv-marquee-duration) linear infinite;
+        }
+
+        body.tv-mode .tv-moving-text.static-mode {
+            padding-left: 0;
+            animation: none;
+            text-align: center;
+            width: 100%;
+            display: block;
+        }
+
+        @keyframes marqueeScroll {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+
         body.tv-mode tr.hide-tv {
             display: none !important;
         }
@@ -351,7 +376,7 @@
 
     <!-- FOOTER ĐÃ ĐƯỢC CHUYỂN THÀNH KHỐI CỐ ĐỊNH PHÍA DƯỚI -->
     <div class="tv-footer-container">
-        <div class="tv-static-text" id="tv-live-marquee">Đang tải thông báo...</div>
+        <div class="tv-moving-text" id="tv-live-marquee">Đang tải thông báo...</div>
     </div>
 
     <script>
@@ -366,6 +391,25 @@
                 elem.msRequestFullscreen();
             }
         }
+
+        function fitTableRows() {
+            const wrap  = document.querySelector('.table-wrapper');
+            const thead = wrap ? wrap.querySelector('thead') : null;
+            const tbody = document.getElementById('web-table-body');
+            if (!wrap || !thead || !tbody) return;
+            const visibleRows = Array.from(tbody.querySelectorAll('tr')).filter(
+                r => !r.classList.contains('hide-tv')
+            );
+            if (visibleRows.length === 0) return;
+            const rowH = Math.floor((wrap.clientHeight - thead.offsetHeight) / visibleRows.length);
+            if (rowH <= 0) return;
+            visibleRows.forEach(r => { r.style.height = rowH + 'px'; });
+        }
+
+        window.addEventListener('resize', fitTableRows);
+        ['fullscreenchange', 'webkitfullscreenchange'].forEach(ev =>
+            document.addEventListener(ev, () => setTimeout(fitTableRows, 150))
+        );
 
         function updateClock() {
             const now = new Date();
@@ -432,7 +476,18 @@
             document.getElementById('tv-live-hotline').innerText = serverData.tv_txt_hotline || "HOTLINE TRỢ GIÁ: 0989.865.333";
 
             const marqueeTxt = serverData.tv_txt_marquee || "VÀNG BẠC KIM BẢO — GIỮ TÍN NHIỆM HƠN GIỮ VÀNG ——— HOTLINE TRỢ GIÁ: 0989.865.333";
-            document.getElementById('tv-live-marquee').innerText = marqueeTxt;
+            const marqueeEl = document.getElementById('tv-live-marquee');
+            marqueeEl.innerText = marqueeTxt;
+            if (serverData.tv_marquee_static) {
+                marqueeEl.classList.add('static-mode');
+            } else {
+                marqueeEl.classList.remove('static-mode');
+            }
+            if (serverData.tv_marquee_speed) {
+                document.documentElement.style.setProperty('--tv-marquee-duration', serverData.tv_marquee_speed);
+            }
+
+            fitTableRows();
 
             const root = document.documentElement;
             if (serverData.colors) {
