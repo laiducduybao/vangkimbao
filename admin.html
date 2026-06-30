@@ -153,17 +153,6 @@
 
         .gold-row-title { font-weight: bold; color: var(--bordeaux-dark); font-size: 14px; text-transform: uppercase; }
 
-        /* Tên sản phẩm + dropdown chọn nhanh */
-        .name-input-wrap { display: flex; gap: 6px; align-items: stretch; }
-
-        .name-input-wrap input[type="text"] { flex: 1; min-width: 0; }
-
-        .quick-select {
-            padding: 8px 6px; border: 1px solid #ccc; border-radius: 5px;
-            font-size: 13px; background: #fff; cursor: pointer;
-            color: var(--bordeaux-dark); font-weight: 600; max-width: 160px;
-        }
-
         /* BOX ĐIỀU CHỈNH GIÁ */
         .price-input-group {
             display: flex; align-items: stretch; border: 1px solid #ccc;
@@ -214,6 +203,12 @@
             padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer;
         }
 
+        .btn-reorder-item {
+            background: #e9ecef; color: #495057; border: 1px solid #ced4da;
+            padding: 3px 9px; border-radius: 4px; font-size: 13px; cursor: pointer; line-height: 1;
+        }
+        .btn-reorder-item:hover { background: #d0d7de; }
+
         .btn-add-item {
             background: #007bff; color: white; border: none;
             padding: 10px 20px; border-radius: 5px; font-size: 14px; font-weight: bold;
@@ -249,6 +244,31 @@
 
         .btn-filter:hover { background: #e1e8ed; }
         .btn-filter.active { background: var(--bordeaux); color: var(--gold); border-color: var(--bordeaux); }
+
+        /* Bộ lọc sản phẩm biểu đồ — chip tùy chỉnh */
+        .product-filter-wrap { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+
+        .pf-item {
+            display: inline-flex; align-items: stretch;
+            background: #f4f6f8; border: 1px solid #ccc; border-radius: 5px; overflow: hidden;
+            transition: background 0.15s, border-color 0.15s;
+        }
+        .pf-item.active { background: var(--bordeaux); border-color: var(--bordeaux); }
+
+        .pf-name {
+            background: none; border: none; padding: 7px 13px;
+            font-size: 14px; font-weight: bold; color: #555; cursor: pointer;
+        }
+        .pf-item.active .pf-name { color: var(--gold); }
+        .pf-name:hover { text-decoration: underline; }
+
+        .pf-del {
+            background: none; border: none; border-left: 1px solid rgba(0,0,0,0.12);
+            padding: 5px 9px; cursor: pointer; font-size: 13px; color: #c00; line-height: 1;
+        }
+        .pf-item.active .pf-del { border-left-color: rgba(255,255,255,0.25); color: #ffaaaa; }
+        .pf-del:hover { background: rgba(200,0,0,0.12); }
+
 
         /* Điều khiển ghi chú web */
         .negotiable-controls {
@@ -335,17 +355,37 @@
         <div class="panel-card">
             <h3>📊 2. Biểu đồ biến động giá (Mua vào & Bán ra)</h3>
             <div class="chart-filters">
-                <select id="productFilter" class="btn-filter"
-                    onchange="updateChart(currentChartTimeframe)"
-                    style="margin-right:15px;cursor:pointer;font-weight:bold;padding:8px 10px;">
-                    <option value="all">Tất cả sản phẩm</option>
-                </select>
+                <div id="productFilterWrap" class="product-filter-wrap"></div>
                 <button class="btn-filter active" id="btn-week"  onclick="updateChart('week')">7 Ngày qua</button>
                 <button class="btn-filter"         id="btn-month" onclick="updateChart('month')">30 Ngày qua</button>
                 <button class="btn-filter"         id="btn-year"  onclick="updateChart('year')">1 Năm qua</button>
                 <button class="btn-filter"         id="btn-all"   onclick="updateChart('all')">Tất cả lịch sử</button>
             </div>
             <canvas id="priceChart" height="120"></canvas>
+
+            <!-- Công cụ gộp lịch sử giá -->
+            <details style="margin-top:18px;">
+                <summary style="cursor:pointer;font-weight:700;color:var(--bordeaux-dark);font-size:14px;user-select:none;">
+                    🔀 Gộp lịch sử giá của 2 sản phẩm
+                </summary>
+                <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;">
+                    <div style="display:flex;flex-direction:column;gap:4px;flex:1;min-width:200px;">
+                        <label style="font-size:13px;font-weight:600;">Tên sản phẩm CẦN GỘP VÀO (sẽ bị xóa tên này)</label>
+                        <input type="text" id="merge-from" style="padding:8px 10px;border:1px solid #ccc;border-radius:5px;font-size:14px;"
+                               placeholder="Tên cũ cần gộp...">
+                    </div>
+                    <div style="font-size:20px;padding-bottom:6px;">→</div>
+                    <div style="display:flex;flex-direction:column;gap:4px;flex:1;min-width:200px;">
+                        <label style="font-size:13px;font-weight:600;">Tên sản phẩm GIỮ LẠI (lịch sử sẽ gộp vào đây)</label>
+                        <input type="text" id="merge-to" style="padding:8px 10px;border:1px solid #ccc;border-radius:5px;font-size:14px;"
+                               placeholder="Tên mới giữ lại...">
+                    </div>
+                    <button onclick="mergeProductHistory()" style="padding:9px 20px;background:var(--bordeaux);color:var(--gold);border:none;border-radius:5px;font-weight:700;cursor:pointer;white-space:nowrap;">
+                        Gộp lịch sử
+                    </button>
+                </div>
+                <p style="margin-top:8px;font-size:12px;color:#888;">Toàn bộ bản ghi lịch sử của tên "Gộp vào" sẽ được đổi sang tên "Giữ lại". Không thể hoàn tác.</p>
+            </details>
         </div>
 
         <!-- PANEL 3: Cấu hình TV & Web -->
@@ -449,10 +489,10 @@
 
         const ADMIN_EMAIL = "admin@vangkimbao.com";
         let currentSavedProducts = [];
-        let fullHistoryData    = [];
-        let savedProductNames  = []; // danh sách tên sản phẩm đã dùng
-        let priceChartInstance = null;
+        let fullHistoryData       = [];
+        let priceChartInstance    = null;
         let currentChartTimeframe = 'week';
+        let selectedProductFilter = 'all';
 
         const defaultProducts = [
             { name: "Vàng Nhẫn Kim Bảo 9999", buy: "7,850,000", sell: "8,020,000", showWeb: true, showTv: true },
@@ -465,7 +505,6 @@
             if (user) {
                 document.getElementById('lockScreen').style.display    = 'none';
                 document.getElementById('adminContent').style.display  = 'block';
-                loadSavedProductNames();
                 loadCurrentSettings();
                 loadPriceHistory();
             } else {
@@ -511,8 +550,9 @@
         }
 
         /* ===================== GIỮ TAY / CHUỘT LIÊN TỤC ===================== */
-        let _continuousTimer = null;
-        let _continuousDelay = null;
+        let _continuousTimer    = null;
+        let _continuousDelay    = null;
+        let _touchIsContinuous  = false;
 
         function _adjustInput(el, amount) {
             let val = parseInt(el.value.replace(/,/g, '')) || 0;
@@ -537,48 +577,26 @@
             if (_continuousDelay) { clearTimeout(_continuousDelay);   _continuousDelay = null; }
         }
 
-        /* ===================== DROPDOWN SẢN PHẨM ===================== */
-        function loadSavedProductNames() {
-            db.ref('kimbao_product_names').on('value', snap => {
-                savedProductNames = snap.val() || [];
-                // Cập nhật tất cả dropdown hiện có
-                document.querySelectorAll('.quick-select').forEach(sel => populateQuickSelect(sel));
-            });
+        // Mobile: giữ → liên tục 10,000 | nhấn nhanh → 1 lần 50,000
+        function startTouchAdjust(btn, continuousAmount) {
+            stopContinuousAdjust();
+            _touchIsContinuous = false;
+            const el = btn.parentElement.previousElementSibling;
+            _continuousDelay = setTimeout(() => {
+                _touchIsContinuous = true;
+                _adjustInput(el, continuousAmount);
+                _continuousTimer = setInterval(() => _adjustInput(el, continuousAmount), 120);
+            }, 500);
         }
 
-        function populateQuickSelect(selectEl) {
-            const current = selectEl.value;
-            selectEl.innerHTML = '<option value="">— Chọn nhanh —</option>';
-            savedProductNames.forEach(name => {
-                const opt = document.createElement('option');
-                opt.value = name;
-                opt.textContent = name;
-                selectEl.appendChild(opt);
-            });
-            if (savedProductNames.includes(current)) selectEl.value = current;
+        function endTouchAdjust(btn, tapAmount) {
+            const wasContinuous = _touchIsContinuous;
+            stopContinuousAdjust();
+            if (!wasContinuous) {
+                _adjustInput(btn.parentElement.previousElementSibling, tapAmount);
+            }
         }
 
-        function onQuickSelectChange(selectEl) {
-            const name = selectEl.value;
-            if (!name) return;
-            const row = selectEl.closest('.gold-row');
-            row.querySelector('.input-g-name').value = name;
-            row.dataset.selectedFromList = name;
-            selectEl.value = '';
-        }
-
-        function mergeProductName(name) {
-            if (!name || savedProductNames.includes(name)) return;
-            savedProductNames.push(name);
-            db.ref('kimbao_product_names').set(savedProductNames);
-        }
-
-        function removeProductNameFromList(name) {
-            const idx = savedProductNames.indexOf(name);
-            if (idx === -1) return;
-            savedProductNames.splice(idx, 1);
-            db.ref('kimbao_product_names').set(savedProductNames);
-        }
 
         /* ===================== THÊM / XÓA HÀNG SẢN PHẨM ===================== */
         let productCounter = 0;
@@ -597,17 +615,16 @@
             <div class="gold-row" id="${rowId}">
                 <div class="gold-row-header">
                     <div class="gold-row-title">Sản phẩm sản xuất / Kinh doanh</div>
-                    <button type="button" class="btn-delete-item" onclick="deleteProductRow('${rowId}')">🗑 Xóa sản phẩm này</button>
+                    <div style="display:flex;gap:6px;align-items:center;">
+                        <button type="button" class="btn-reorder-item" onclick="reorderProductTv(this.closest('.gold-row').querySelector('.input-g-name').value.trim(),'up')" title="Dịch lên">▲</button>
+                        <button type="button" class="btn-reorder-item" onclick="reorderProductTv(this.closest('.gold-row').querySelector('.input-g-name').value.trim(),'down')" title="Dịch xuống">▼</button>
+                        <button type="button" class="btn-delete-item" onclick="deleteProductRow('${rowId}')">🗑 Xóa sản phẩm này</button>
+                    </div>
                 </div>
                 <div class="row" style="margin-bottom:5px;">
                     <div class="col" style="flex:2;">
                         <label>Tên loại vàng</label>
-                        <div class="name-input-wrap">
-                            <input type="text" class="input-g-name" value="${escName}">
-                            <select class="quick-select" onchange="onQuickSelectChange(this)">
-                                <option value="">— Chọn nhanh —</option>
-                            </select>
-                        </div>
+                        <input type="text" class="input-g-name" value="${escName}">
                     </div>
                     <div class="col">
                         <label>Giá Mua Vào (Chỉ)</label>
@@ -619,18 +636,18 @@
                                     onmousedown="startContinuousAdjust(this,50000)"
                                     onmouseup="stopContinuousAdjust()"
                                     onmouseleave="stopContinuousAdjust()"
-                                    ontouchstart="startContinuousAdjust(this,10000);event.preventDefault()"
-                                    ontouchend="stopContinuousAdjust()"
+                                    ontouchstart="startTouchAdjust(this,10000);event.preventDefault()"
+                                    ontouchend="endTouchAdjust(this,50000)"
                                     ontouchcancel="stopContinuousAdjust()"
-                                    title="Tăng (giữ để liên tục)">▲</button>
+                                    title="Tăng (giữ→10k liên tục | nhấn nhanh→50k)">▲</button>
                                 <button type="button"
                                     onmousedown="startContinuousAdjust(this,-50000)"
                                     onmouseup="stopContinuousAdjust()"
                                     onmouseleave="stopContinuousAdjust()"
-                                    ontouchstart="startContinuousAdjust(this,-10000);event.preventDefault()"
-                                    ontouchend="stopContinuousAdjust()"
+                                    ontouchstart="startTouchAdjust(this,-10000);event.preventDefault()"
+                                    ontouchend="endTouchAdjust(this,-50000)"
                                     ontouchcancel="stopContinuousAdjust()"
-                                    title="Giảm (giữ để liên tục)">▼</button>
+                                    title="Giảm (giữ→10k liên tục | nhấn nhanh→50k)">▼</button>
                             </div>
                         </div>
                     </div>
@@ -644,18 +661,18 @@
                                     onmousedown="startContinuousAdjust(this,50000)"
                                     onmouseup="stopContinuousAdjust()"
                                     onmouseleave="stopContinuousAdjust()"
-                                    ontouchstart="startContinuousAdjust(this,10000);event.preventDefault()"
-                                    ontouchend="stopContinuousAdjust()"
+                                    ontouchstart="startTouchAdjust(this,10000);event.preventDefault()"
+                                    ontouchend="endTouchAdjust(this,50000)"
                                     ontouchcancel="stopContinuousAdjust()"
-                                    title="Tăng (giữ để liên tục)">▲</button>
+                                    title="Tăng (giữ→10k liên tục | nhấn nhanh→50k)">▲</button>
                                 <button type="button"
                                     onmousedown="startContinuousAdjust(this,-50000)"
                                     onmouseup="stopContinuousAdjust()"
                                     onmouseleave="stopContinuousAdjust()"
-                                    ontouchstart="startContinuousAdjust(this,-10000);event.preventDefault()"
-                                    ontouchend="stopContinuousAdjust()"
+                                    ontouchstart="startTouchAdjust(this,-10000);event.preventDefault()"
+                                    ontouchend="endTouchAdjust(this,-50000)"
                                     ontouchcancel="stopContinuousAdjust()"
-                                    title="Giảm (giữ để liên tục)">▼</button>
+                                    title="Giảm (giữ→10k liên tục | nhấn nhanh→50k)">▼</button>
                             </div>
                         </div>
                     </div>
@@ -667,18 +684,13 @@
             </div>`;
 
             container.insertAdjacentHTML('beforeend', rowHTML);
-            // Điền dropdown cho hàng vừa thêm
-            const row = document.getElementById(rowId);
-            populateQuickSelect(row.querySelector('.quick-select'));
+            // Ghi nhớ tên gốc để phát hiện đổi tên khi lưu
+            document.getElementById(rowId).dataset.originalName = name;
         }
 
         function deleteProductRow(rowId) {
             const row = document.getElementById(rowId);
             if (!row) return;
-            // Nếu tên được chọn từ danh sách → xóa khỏi danh sách lưu
-            if (row.dataset.selectedFromList) {
-                removeProductNameFromList(row.dataset.selectedFromList);
-            }
             row.remove();
         }
 
@@ -691,22 +703,71 @@
             document.getElementById('neg-size-val').textContent = size;
         }
 
+        /* ===================== ĐỔI TÊN SẢN PHẨM TRONG LỊCH SỬ ===================== */
+        async function renameProductsInHistory(renames) {
+            const snap = await db.ref('kimbao_price_history').once('value');
+            const raw  = snap.val();
+            if (!raw) return;
+
+            const updates = {};
+            Object.entries(raw).forEach(([key, entry]) => {
+                if (!entry.data) return;
+                let changed = false;
+                const newData = entry.data.map(p => {
+                    const match = renames.find(r => r.oldName === p.name);
+                    if (match) { changed = true; return { ...p, name: match.newName }; }
+                    return p;
+                });
+                if (changed) updates[key] = { ...entry, data: newData };
+            });
+
+            if (Object.keys(updates).length > 0) {
+                await db.ref('kimbao_price_history').update(updates);
+            }
+        }
+
+        function mergeProductHistory() {
+            const fromName = document.getElementById('merge-from').value.trim();
+            const toName   = document.getElementById('merge-to').value.trim();
+            if (!fromName || !toName) { alert('⚠️ Vui lòng nhập đủ cả hai tên sản phẩm.'); return; }
+            if (fromName === toName)  { alert('⚠️ Hai tên sản phẩm phải khác nhau.'); return; }
+
+            if (!confirm(`Gộp toàn bộ lịch sử của:\n"${fromName}"\n\nvào:\n"${toName}"?\n\nHành động này không thể hoàn tác.`)) return;
+
+            renameProductsInHistory([{ oldName: fromName, newName: toName }])
+                .then(() => {
+                    alert(`✅ Đã gộp xong lịch sử của "${fromName}" vào "${toName}".`);
+                    document.getElementById('merge-from').value = '';
+                    document.getElementById('merge-to').value   = '';
+                })
+                .catch(err => alert('❌ Lỗi khi gộp: ' + err.message));
+        }
+
         /* ===================== LƯU & ĐỒNG BỘ ===================== */
         function saveAndSync() {
             let goldData = [];
             const nowMs  = Date.now();
             const rows   = document.querySelectorAll('.gold-row');
+            const renames = []; // { row, oldName, newName }
 
             rows.forEach(row => {
-                const nameVal    = row.querySelector('.input-g-name').value.trim();
-                const buyVal     = row.querySelector('.input-g-buy').value.trim()  || '0';
-                const sellValStr = row.querySelector('.input-g-sell').value.trim() || '0';
-                const showWeb    = row.querySelector('.cb-show-web').checked;
-                const showTv     = row.querySelector('.cb-show-tv').checked;
-                const sellValNum = parseInt(sellValStr.replace(/,/g, ''));
+                const nameVal      = row.querySelector('.input-g-name').value.trim();
+                const buyVal       = row.querySelector('.input-g-buy').value.trim()  || '0';
+                const sellValStr   = row.querySelector('.input-g-sell').value.trim() || '0';
+                const showWeb      = row.querySelector('.cb-show-web').checked;
+                const showTv       = row.querySelector('.cb-show-tv').checked;
+                const sellValNum   = parseInt(sellValStr.replace(/,/g, ''));
+                const originalName = row.dataset.originalName || '';
 
+                // Phát hiện đổi tên: tên cũ khác tên mới và tên cũ đã tồn tại
+                if (originalName && originalName !== nameVal) {
+                    renames.push({ row, oldName: originalName, newName: nameVal });
+                }
+
+                // So sánh giá với tên gốc (để tính trend đúng khi đổi tên)
+                const lookupName = originalName || nameVal;
                 let trend = 'flat';
-                const oldP = currentSavedProducts.find(p => p.name === nameVal);
+                const oldP = currentSavedProducts.find(p => p.name === lookupName);
                 if (oldP) {
                     const oldSell = parseInt(oldP.sell.replace(/,/g, ''));
                     if (sellValNum > oldSell) trend = 'up';
@@ -715,12 +776,23 @@
 
                 if (nameVal) {
                     goldData.push({ name: nameVal, buy: buyVal, sell: sellValStr, trend, last_updated: nowMs, showWeb, showTv });
-                    mergeProductName(nameVal); // thêm vào danh sách lưu nếu chưa có
                 }
             });
 
             if (goldData.length === 0) {
                 alert('⚠️ Cảnh báo: Bạn phải giữ lại ít nhất 1 sản phẩm trên bảng giá!');
+                return;
+            }
+
+            // Kiểm tra trùng tên sản phẩm
+            const nameSeen = new Set();
+            const duplicates = [];
+            goldData.forEach(p => {
+                if (nameSeen.has(p.name)) { if (!duplicates.includes(p.name)) duplicates.push(p.name); }
+                else nameSeen.add(p.name);
+            });
+            if (duplicates.length > 0) {
+                alert('⚠️ Tên sản phẩm bị trùng lặp:\n\n' + duplicates.map(n => `• ${n}`).join('\n') + '\n\nVui lòng đổi tên hoặc xóa bớt trước khi lưu.');
                 return;
             }
 
@@ -749,10 +821,27 @@
             db.ref('kimbao_sync_data').set(syncPayload, error => {
                 if (error) {
                     alert('❌ Lỗi đồng bộ đám mây: ' + error.message);
-                } else {
-                    currentSavedProducts = goldData;
+                    return;
+                }
+
+                currentSavedProducts = goldData;
+
+                const finish = () => {
+                    // Cập nhật tên gốc trong DOM sau khi lưu thành công
+                    document.querySelectorAll('.gold-row').forEach(r => {
+                        const n = r.querySelector('.input-g-name').value.trim();
+                        if (n) r.dataset.originalName = n;
+                    });
                     db.ref('kimbao_price_history').push({ timestamp: nowMs, data: goldData });
                     alert('🎉 ĐỒNG BỘ ĐÁM MÂY THÀNH CÔNG!\nDữ liệu bảng giá mới đã lập tức phát đến tất cả màn hình.');
+                };
+
+                if (renames.length > 0) {
+                    renameProductsInHistory(renames).then(finish).catch(err => {
+                        alert('❌ Lỗi đổi tên lịch sử: ' + err.message);
+                    });
+                } else {
+                    finish();
                 }
             });
         }
@@ -841,11 +930,115 @@
             }
         }
 
+        /* ===================== BỘ LỌC SẢN PHẨM BIỂU ĐỒ ===================== */
+        function populateProductFilterUI(names) {
+            const wrap = document.getElementById('productFilterWrap');
+            wrap.innerHTML = '';
+
+            // Chip "Tất cả sản phẩm"
+            const allItem = document.createElement('div');
+            allItem.className = 'pf-item' + (selectedProductFilter === 'all' ? ' active' : '');
+            const allBtn = document.createElement('button');
+            allBtn.className = 'pf-name';
+            allBtn.textContent = 'Tất cả sản phẩm';
+            allBtn.onclick = () => selectProductFilter('all');
+            allItem.appendChild(allBtn);
+            wrap.appendChild(allItem);
+
+            // Chip từng sản phẩm
+            names.forEach(name => {
+                const item = document.createElement('div');
+                item.className = 'pf-item' + (selectedProductFilter === name ? ' active' : '');
+
+                const nameBtn = document.createElement('button');
+                nameBtn.className = 'pf-name';
+                nameBtn.textContent = name;
+                nameBtn.onclick = () => selectProductFilter(name);
+
+                item.appendChild(nameBtn);
+
+                const delBtn = document.createElement('button');
+                delBtn.className = 'pf-del';
+                delBtn.textContent = '🗑';
+                delBtn.title = 'Xóa toàn bộ lịch sử giá của sản phẩm này';
+                delBtn.onclick = () => confirmDeleteProductHistory(name);
+
+                item.appendChild(delBtn);
+                wrap.appendChild(item);
+            });
+        }
+
+        function selectProductFilter(name) {
+            selectedProductFilter = name;
+            updateChart(currentChartTimeframe);
+        }
+
+        function reorderProductTv(name, direction) {
+            const container = document.getElementById('gold-items-container');
+            const rows      = Array.from(container.querySelectorAll('.gold-row'));
+            const idx       = rows.findIndex(r => r.querySelector('.input-g-name').value.trim() === name);
+            if (idx === -1) return;
+            const newIdx = direction === 'up' ? idx - 1 : idx + 1;
+            if (newIdx < 0 || newIdx >= rows.length) return;
+
+            // Hoán đổi vị trí DOM trong Panel 1
+            if (direction === 'up') {
+                container.insertBefore(rows[idx], rows[newIdx]);
+            } else {
+                container.insertBefore(rows[newIdx], rows[idx]);
+            }
+
+            // Đồng bộ currentSavedProducts theo thứ tự mới
+            const newOrder = Array.from(container.querySelectorAll('.gold-row'))
+                .map(r => r.querySelector('.input-g-name').value.trim())
+                .map(n => currentSavedProducts.find(p => p.name === n))
+                .filter(Boolean);
+
+            if (newOrder.length > 0) {
+                currentSavedProducts = newOrder;
+                db.ref('kimbao_sync_data').update({ vbtb_cloned_data: currentSavedProducts });
+            }
+
+            updateChart(currentChartTimeframe);
+        }
+
+        function confirmDeleteProductHistory(name) {
+            if (!confirm(`Xóa toàn bộ lịch sử giá của:\n"${name}"?\n\nHành động này không thể hoàn tác.`)) return;
+
+            db.ref('kimbao_price_history').once('value').then(snap => {
+                const raw = snap.val();
+                if (!raw) { alert('Không có dữ liệu lịch sử.'); return; }
+
+                const updates = {};
+                Object.entries(raw).forEach(([key, entry]) => {
+                    if (!entry.data) return;
+                    const newData = entry.data.filter(p => p.name !== name);
+                    if (newData.length === 0) {
+                        updates[key] = null;                    // xóa cả bản ghi
+                    } else if (newData.length < entry.data.length) {
+                        updates[key] = { ...entry, data: newData }; // chỉ bỏ sản phẩm này
+                    }
+                });
+
+                if (Object.keys(updates).length === 0) {
+                    alert(`Không tìm thấy dữ liệu lịch sử của "${name}".`);
+                    return;
+                }
+
+                db.ref('kimbao_price_history').update(updates)
+                    .then(() => {
+                        if (selectedProductFilter === name) selectedProductFilter = 'all';
+                        alert(`✅ Đã xóa toàn bộ lịch sử giá của "${name}".`);
+                    })
+                    .catch(err => alert('❌ Lỗi khi xóa: ' + err.message));
+            });
+        }
+
         /* ===================== CẬP NHẬT BIỂU ĐỒ ===================== */
         function updateChart(timeframe) {
             currentChartTimeframe = timeframe;
 
-            document.querySelectorAll('.btn-filter:not(select)').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
             const activeBtn = document.getElementById('btn-' + timeframe);
             if (activeBtn) activeBtn.classList.add('active');
 
@@ -863,18 +1056,13 @@
             const productNames = new Set();
             filtered.forEach(e => e.data && e.data.forEach(p => productNames.add(p.name)));
 
-            // Cập nhật dropdown lọc sản phẩm
-            const selectEl = document.getElementById('productFilter');
-            const prevSelected = selectEl.value;
-            selectEl.innerHTML = '<option value="all">Tất cả sản phẩm</option>';
-            productNames.forEach(name => {
-                const opt = document.createElement('option');
-                opt.value = name; opt.textContent = name;
-                selectEl.appendChild(opt);
-            });
-            selectEl.value = productNames.has(prevSelected) ? prevSelected : 'all';
+            // Cập nhật danh sách chip lọc sản phẩm
+            if (selectedProductFilter !== 'all' && !productNames.has(selectedProductFilter)) {
+                selectedProductFilter = 'all';
+            }
+            populateProductFilterUI(productNames);
 
-            const selectedProduct = selectEl.value;
+            const selectedProduct = selectedProductFilter;
             const displayNames = selectedProduct === 'all' ? Array.from(productNames) : [selectedProduct];
 
             // Build dữ liệu theo ngày (giá giữ lâu nhất trong 7:00–21:00)
